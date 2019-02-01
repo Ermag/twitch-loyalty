@@ -9,9 +9,15 @@ module.exports = {
 		},
 		config: {
 			entry: 'src/config.js',
-			template: 'public/index.html', // the source template
-			filename: 'config.html', // output as dist/index.html
+			template: 'public/index.html',
+			filename: 'config.html',
 			title: 'Config'
+		},
+		live: {
+			entry: 'src/live.js',
+			template: 'public/index.html',
+			filename: 'live.html',
+			title: 'Live'
 		}
 	}
 }
