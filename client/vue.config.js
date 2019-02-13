@@ -1,11 +1,11 @@
 module.exports = {
 	runtimeCompiler: true,
 	pages: {
-		index: {
-			entry: 'src/main.js',
+		viewer: {
+			entry: 'src/viewer.js',
 			template: 'public/index.html', // the source template
 			filename: 'index.html', // output as dist/index.html
-			title: 'Index'
+			title: 'Viewer'
 		},
 		config: {
 			entry: 'src/config.js',
