@@ -1,6 +1,9 @@
 <template>
-	<v-app dark>
-		<v-layout>
+	<v-app :dark="isDarkTheme">
+		<div v-if="isLoading" class="ma-3 text-xs-center">
+			<v-progress-circular :size="70" :width="7" color="primary" indeterminate></v-progress-circular>
+		</div>
+		<v-layout v-else>
 			<v-flex sm12 md8 offset-md2>
 				<v-card>
 					<v-alert v-model="isNewInstall" color="success" icon="check_circle" dismissible>
@@ -71,6 +74,7 @@
 
 <script>
 	import { APP_CONFIG } from './utils/constants'
+	import Authentication from './utils/twitch'
 	import Rewards from './components/Rewards'
 
 	export default {
@@ -81,11 +85,32 @@
 		data () {
 			return {
 				...APP_CONFIG,
+				isDarkTheme: false,
+				isLoading: true,
 				isNewInstall: !localStorage.getItem('loyal-config-dismissed_OFF'),
 				isPointsInfo: true,
 				isRewardDialog: false,
 				tab: null,
 				tabs: ['Rewards', 'Analytics', 'Options']
+			}
+		},
+		created () {
+			this.twitch = window.Twitch ? window.Twitch.ext : null
+
+			if (this.twitch) {
+				this.twitch.onContext((context, delta) => {
+					this.isDarkTheme = context.theme === 'dark'
+				})
+
+				this.twitch.onAuthorized(auth => {
+					this.Auth = new Authentication(auth)
+
+					if (this.Auth.isAuthenticated()) {
+						this.axios.defaults.headers.common['Content-Type'] = 'application/json'
+						this.axios.defaults.headers.common['Authorization'] = `Bearer ${this.Auth.getToken()}`
+						this.isLoading = false
+					}
+				})
 			}
 		},
 		watch: {

@@ -32,6 +32,10 @@
 				<v-card-title class="headline grey darken-2" primary-title>{{ reward.id === false ? 'Add' : 'Edit' }} Reward</v-card-title>
 
 				<v-card-text>
+					<v-alert :value="true" color="info" icon="info" outline>
+						Try adding creative rewards for your viwers, like playing a game together, do a challenge, show a magic trick, draw, play music etc.
+					</v-alert>
+
 					<v-form ref="addForm">
 						<v-container grid-list-md>
 							<v-layout wrap>
@@ -153,9 +157,6 @@
 				}
 			}
 		},
-		created () {
-			this.fetchRewards()
-		},
 		methods: {
 			setMessage (type, text) {
 				this.message.type = type
@@ -227,6 +228,9 @@
 				this.setMessage('success', 'You have successfuly deleted the reward.')
 				this.isDeleteDialog = false
 			}
+		},
+		created () {
+			this.fetchRewards()
 		}
 	}
 </script>

@@ -1,5 +1,5 @@
 export const APP_CONFIG = {
-	NAME: 'Loyalty',
+	NAME: 'Alter',
 	POINTS_NAME: 'Coins',
 	STARTING_POINTS: 240,
 	BASE_POINTS: 1,
