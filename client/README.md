@@ -1,4 +1,4 @@
-# twitch-loyalty-client
+# twitch-alter
 
 ## Project setup
 ```

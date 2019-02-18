@@ -207,7 +207,7 @@
 			},
 			saveReward () {
 				if (this.$refs.addForm.validate()) {
-					console.log(this.reward)
+					// TODO: Make POST request
 					this.setMessage('success', 'You have successfuly added reward.')
 				}
 			},
@@ -216,11 +216,11 @@
 				this.toDelete = reward.id
 			},
 			fetchRewards () {
-				// TODO: Get request
+				// TODO: GET request
 				// this.rewards.isLoading = true
 			},
 			removeReward () {
-				// TODO: Meke delete request
+				// TODO: Make DELETE request
 				this.rewards.data = this.rewards.data.filter(reward => {
 					return this.toDelete !== reward.id
 				})

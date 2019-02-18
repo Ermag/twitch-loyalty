@@ -3,6 +3,11 @@
 		<div v-if="isLoading" class="ma-3 text-xs-center">
 			<v-progress-circular :size="70" :width="7" color="primary" indeterminate></v-progress-circular>
 		</div>
+		<div v-else-if="hasError" class="ma-3 text-xs-center">
+			<v-alert :value="true" color="error">
+				Something went wrong :( Please, try again later!
+			</v-alert>
+		</div>
 		<v-layout v-else>
 			<v-flex sm12 md8 offset-md2>
 				<v-card>
@@ -87,6 +92,7 @@
 				...APP_CONFIG,
 				isDarkTheme: false,
 				isLoading: true,
+				hasError: false,
 				isNewInstall: !localStorage.getItem('loyal-config-dismissed_OFF'),
 				isPointsInfo: true,
 				isRewardDialog: false,
@@ -108,8 +114,20 @@
 					if (this.Auth.isAuthenticated()) {
 						this.axios.defaults.headers.common['Content-Type'] = 'application/json'
 						this.axios.defaults.headers.common['Authorization'] = `Bearer ${this.Auth.getToken()}`
-						this.isLoading = false
+						this.fetchChannel()
 					}
+				})
+			}
+		},
+		methods: {
+			fetchChannel () {
+				this.axios.get(`${process.env.VUE_APP_API}channel?tid=${this.Auth.getChannelId()}`).then(res => {
+					console.log(res.data)
+					this.POINTS_NAME = res.data.pointsName
+				}).catch(() => {
+					this.hasError = true
+				}).then(() => {
+					this.isLoading = false
 				})
 			}
 		},

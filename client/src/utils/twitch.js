@@ -59,6 +59,10 @@ export default class Authentication {
 		return this.state.userId
 	}
 
+	getChannelId () {
+		return this.state.channelId
+	}
+
 	getOpaqueId () {
 		return this.state.opaqueId
 	}
