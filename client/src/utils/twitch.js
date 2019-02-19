@@ -8,8 +8,8 @@ export default class Authentication {
 		let token = auth.token
 		let opaqueId = auth.userId
 		let isMod = false
-		let role = ''
-		let userId = ''
+		let role = null
+		let userId = null
 
 		try {
 			let decoded = jwt.decode(token)
