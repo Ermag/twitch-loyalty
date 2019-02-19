@@ -17,7 +17,7 @@
 					</v-alert>
 
 					<v-alert v-model="isPointsInfo" color="info" icon="info" dismissible>
-						Viewers start with {{ STARTING_POINTS }} {{ POINTS_NAME }} and receive X amount every minute they watch your stream.
+						Viewers start with <Points :value="STARTING_POINTS" :name="POINTS_NAME" :img="POINTS_IMG" /> and receive <strong style="font-size: 15px;">X</strong> amount every minute they watch your stream.
 						<table class="table pt-2">
 							<thead>
 								<tr>
@@ -31,24 +31,24 @@
 							<tbody>
 								<tr>
 									<th class="text-xs-left">Viewer</th>
-									<td class="text-xs-right">{{ BASE_POINTS }}</td>
-									<td class="text-xs-right">{{ BASE_POINTS * 60 }}</td>
-									<td class="text-xs-right">{{ BASE_POINTS * 1440 }}</td>
-									<td class="text-xs-right">{{ BASE_POINTS * 10080 }}</td>
+									<td class="text-xs-right"><Points :value="BASE_POINTS" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
+									<td class="text-xs-right"><Points :value="BASE_POINTS * 60" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
+									<td class="text-xs-right"><Points :value="BASE_POINTS * 1440" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
+									<td class="text-xs-right"><Points :value="BASE_POINTS * 10080" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
 								</tr>
 								<tr>
 									<th class="text-xs-left">Follower</th>
-									<td class="text-xs-right">{{ BASE_POINTS * FOLLOWER_MULTIPLIER }}</td>
-									<td class="text-xs-right">{{ BASE_POINTS * 60 * FOLLOWER_MULTIPLIER }}</td>
-									<td class="text-xs-right">{{ BASE_POINTS * 1440 * FOLLOWER_MULTIPLIER }}</td>
-									<td class="text-xs-right">{{ BASE_POINTS * 10080 * FOLLOWER_MULTIPLIER }}</td>
+									<td class="text-xs-right"><Points :value="BASE_POINTS * FOLLOWER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
+									<td class="text-xs-right"><Points :value="BASE_POINTS * 60 * FOLLOWER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
+									<td class="text-xs-right"><Points :value="BASE_POINTS * 1440 * FOLLOWER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
+									<td class="text-xs-right"><Points :value="BASE_POINTS * 10080 * FOLLOWER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
 								</tr>
 								<tr>
 									<th class="text-xs-left">Subscriber </th>
-									<td class="text-xs-right">{{ BASE_POINTS * SUBSCRIBER_MULTIPLIER }}</td>
-									<td class="text-xs-right">{{ BASE_POINTS * 60 * SUBSCRIBER_MULTIPLIER }}</td>
-									<td class="text-xs-right">{{ BASE_POINTS * 1440 * SUBSCRIBER_MULTIPLIER }}</td>
-									<td class="text-xs-right">{{ BASE_POINTS * 10080 * SUBSCRIBER_MULTIPLIER }}</td>
+									<td class="text-xs-right"><Points :value="BASE_POINTS * SUBSCRIBER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
+									<td class="text-xs-right"><Points :value="BASE_POINTS * 60 * SUBSCRIBER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
+									<td class="text-xs-right"><Points :value="BASE_POINTS * 1440 * SUBSCRIBER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
+									<td class="text-xs-right"><Points :value="BASE_POINTS * 10080 * SUBSCRIBER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
 								</tr>
 							</tbody>
 						</table>
@@ -56,10 +56,11 @@
 
 					<v-tabs v-model="tab" grow>
 						<v-tabs-slider></v-tabs-slider>
-						<v-tab v-for="tab in tabs" :key="tab" :disabled="tab !== 'Rewards'">{{ tab }}</v-tab>
+						<v-tab v-for="tab in tabs" :key="tab" :disabled="tab === 'Analytics'">{{ tab }}</v-tab>
 
 						<v-tab-item v-for="tab in tabs" :key="tab">
-							<Rewards />
+							<Rewards v-if="tab === 'Rewards'" :channel="channel" :changeTab="changeTab" :POINTS_NAME="POINTS_NAME" :POINTS_IMG="POINTS_IMG" />
+							<Options v-if="tab === 'Options'" :channel="channel" />
 						</v-tab-item>
 					</v-tabs>
 				</v-card>
@@ -70,22 +71,26 @@
 
 <style scoped lang="scss">
 	.table thead th {
-		padding: 0 15px 5px 0;
+		padding: 0 20px 5px 0;
 	}
 	.table tbody td {
-		padding-right: 15px;
+		padding-right: 20px;
 	}
 </style>
 
 <script>
 	import { APP_CONFIG } from './utils/constants'
 	import Authentication from './utils/twitch'
+	import Points from './components/Points'
+	import Options from './components/Options'
 	import Rewards from './components/Rewards'
 
 	export default {
 		name: 'Config',
 		components: {
-			Rewards
+			Rewards,
+			Options,
+			Points
 		},
 		data () {
 			return {
@@ -96,8 +101,9 @@
 				isNewInstall: !localStorage.getItem('loyal-config-dismissed_OFF'),
 				isPointsInfo: true,
 				isRewardDialog: false,
+				channel: null,
 				tab: null,
-				tabs: ['Rewards', 'Analytics', 'Options']
+				tabs: ['Rewards', 'Options', 'Analytics']
 			}
 		},
 		created () {
@@ -122,13 +128,23 @@
 		methods: {
 			fetchChannel () {
 				this.axios.get(`${process.env.VUE_APP_API}channel?tid=${this.Auth.getChannelId()}`).then(res => {
-					console.log(res.data)
-					this.POINTS_NAME = res.data.pointsName
+					this.channel = res.data
+
+					if (this.channel.pointsName) {
+						this.POINTS_NAME = this.channel.pointsName
+					}
+
+					if (this.channel.pointsImg) {
+						this.POINTS_IMG = this.channel.pointsImg
+					}
 				}).catch(() => {
 					this.hasError = true
 				}).then(() => {
 					this.isLoading = false
 				})
+			},
+			changeTab (tab) {
+				this.tab = tab
 			}
 		},
 		watch: {

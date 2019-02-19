@@ -4,7 +4,8 @@
 	"private": true,
 	"scripts": {
 		"start": "node src/index.js",
-		"start-dev": "nodemon src/index.js"
+		"start-dev": "nodemon src/index.js",
+		"count": "cloc --exclude-dir=node_modules ."
 	},
 	"dependencies": {
 		"body-parser": "^1.18.3",
@@ -14,6 +15,7 @@
 		"morgan": "^1.9.1"
 	},
 	"devDependencies": {
+		"cloc": "^2.4.0",
 		"nodemon": "^1.18.10"
 	}
 }

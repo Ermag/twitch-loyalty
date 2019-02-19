@@ -15,6 +15,7 @@ const init = () => {
 	mongoose.connect(`mongodb+srv://${user}:${password}@${host}/test?retryWrites=true`, {
 		useNewUrlParser: true,
 		useCreateIndex: true,
+		useFindAndModify: false,
 		dbName: database
 	})
 }

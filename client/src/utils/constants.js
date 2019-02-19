@@ -1,6 +1,7 @@
 export const APP_CONFIG = {
 	NAME: 'Alter',
 	POINTS_NAME: 'Coins',
+	POINTS_IMG: 'coins.png',
 	STARTING_POINTS: 240,
 	BASE_POINTS: 1,
 	FOLLOWER_MULTIPLIER: 2,

@@ -1,20 +1,18 @@
 const mongoose = require('mongoose')
 
 let ChannelSchema = new mongoose.Schema({
-	tid: {
+	tid: { // Twitch Channel ID
 		type: String,
 		required: true,
 		unique: true
 	},
-	pointsName: {
-		type: String,
-		default: 'Coins'
-	},
-	pointsImg: {
-		type: String,
-		default: 'coins.png'
-	},
+	pointsName: String,
+	pointsImg: String,
 	createdAt: {
+		type: Date,
+		default: Date.now
+	},
+	updatedAt: {
 		type: Date,
 		default: Date.now
 	}

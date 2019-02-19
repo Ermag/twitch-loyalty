@@ -1,0 +1,104 @@
+const express = require('express')
+const RewardModel = require('../models/reward')
+const router = express.Router()
+const name = 'reward'
+
+// GET
+router.get(`/${name}`, (req, res) => {
+    if (!req.query.cid) {
+		return res.status(400).send('Missing valid channel ID.')
+	}
+
+    RewardModel.find({
+		channel: req.query.cid,
+		status: 1
+    }).sort('-createdAt').then(doc => {
+		res.json(doc)
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+})
+
+// POST
+router.post(`/${name}`, (req, res) => {
+	if (!req.body) {
+		return res.status(400).send('Request body is missing.')
+	}
+
+	// Check for valid name and points
+	if (!req.body.name || !req.body.name.length > 120 || req.body.points <= 0) {
+		return res.status(400).send('Request contains invalid data.')
+	}
+
+	// TODO: Check for max amount of rewards for the channel
+
+	let newReward = new RewardModel({
+		channel: req.body.channel,
+		name: req.body.name,
+		points: req.body.points,
+		alert: req.body.alert
+	})
+
+	newReward.save().then(doc => {
+		if (!doc || doc.length === 0) {
+			return res.status(500).send(doc)
+		}
+
+		res.status(201).send(doc)
+	}).catch(err => {
+		res.status(500).json(err)
+	})
+})
+
+// UPDATE
+router.put(`/${name}`, (req, res) => {
+	if (!req.query.id) {
+		return res.status(400).send('Missing reward id.')
+	}
+
+	// Check for valid name and points
+	if (!req.body.name || !req.body.name.length > 120 || req.body.points <= 0) {
+		return res.status(400).send('Request contains invalid data.')
+	}
+
+	RewardModel.findOneAndUpdate({
+		_id: req.query.id
+	}, {
+		name: req.body.name,
+		points: req.body.points,
+		alert: req.body.alert
+	}, {
+		new: true
+	}).then(doc => {
+		if (!doc || doc.length === 0) {
+			return res.status(500).send(doc)
+		}
+
+		res.json(doc)
+	}).catch(err => {
+		res.status(500).json(err)
+	})
+})
+
+// DELETE
+router.delete(`/${name}`, (req, res) => {
+	if (!req.query.id) {
+		return res.status(400).send('Missing reward id.')
+	}
+
+	RewardModel.findOneAndUpdate({
+		_id: req.query.id
+	}, {
+		status: 0
+	}).then(doc => {
+		if (!doc || doc.length === 0) {
+			return res.status(500).send(doc)
+		}
+
+		res.json(doc)
+	}).catch(err => {
+		res.status(500).json(err)
+	})
+})
+
+module.exports = router

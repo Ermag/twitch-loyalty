@@ -6,35 +6,46 @@ const logger = require('morgan');
 const bodyParser = require('body-parser');
 const mongooseInit = require('./config/mongoose')
 const channelRoute = require('./routes/channel')
+const rewardRoute = require('./routes/reward')
 const app = express()
 
+// Connect to MongoDB via Mongoose
 mongooseInit();
 
+// Set CORS for browsers
 app.use(cors({
 	origin: '*',
 	allowedHeaders: ['Content-Type, Authorization']
 }))
 
+// Parse JSON from requests automatically
 app.use(bodyParser.json())
 
+// Write errors in a log file via Morgan
 app.use(logger('common', {
 	skip: (req, res) => res.statusCode < 400,
     stream: fs.createWriteStream('./error.log', { flags: 'a' })
 }))
 
+// Log requests in the console
 app.use((req, res, next) => {
 	console.log(`${new Date().toString()} => ${req.originalUrl}`, req.body)
 	next()
 })
 
+// Set our REST end points
 app.use(channelRoute)
+app.use(rewardRoute)
 
+// Directly serve the static content in the public folder
 app.use(express.static('public'))
 
+// Send 500 status code with simple message to the client when unhandled errors occur
 app.use((err, req, res, next) => {
 	res.status(500).send('Iternal server error!')
 })
 
+// Start the server
 https.createServer({
 	key: fs.readFileSync('./ssl/server.key'),
 	cert: fs.readFileSync('./ssl/server.cert'),
