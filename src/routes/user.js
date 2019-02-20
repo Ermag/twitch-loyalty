@@ -1,8 +1,6 @@
 const express = require('express')
-const REWARDS = require('../config/rewards')
 const ChannelModel = require('../models/channel')
 const UserModel = require('../models/user')
-const RewardModel = require('../models/reward')
 const router = express.Router()
 const name = 'user'
 const findOrCreate = (channel, req, res) => {
@@ -25,6 +23,7 @@ const findOrCreate = (channel, req, res) => {
 
 	// Check if the channel exists
     UserModel.findOne({
+		channel: channel._id,
         userId: req.body.userId
     }).populate('channel').then(doc => {
 		// Create the user if its not there

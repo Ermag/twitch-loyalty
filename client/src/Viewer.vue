@@ -195,7 +195,9 @@
 						this.axios.defaults.headers.common['Content-Type'] = 'application/json'
 						this.axios.defaults.headers.common['Authorization'] = `Bearer ${this.Auth.getToken()}`
 
-						let user = this.axios.get(`${APP_CONFIG.TWITCH_API}users/${userId}`, twitchHeaders)
+						let user = this.axios.get(`${APP_CONFIG.TWITCH_API}users/${userId}`, {
+							headers: twitchHeaders
+						})
 
 						let follow = this.axios.get(`${APP_CONFIG.TWITCH_API}users/${userId}/follows/channels/${auth.channelId}`, {
 							headers: twitchHeaders,

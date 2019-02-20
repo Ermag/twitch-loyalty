@@ -1,9 +1,11 @@
 const express = require('express')
+const jwt = require('express-jwt')
 const https = require('https')
 const cors = require('cors')
 const fs = require('fs')
-const logger = require('morgan');
+const logger = require('morgan')
 const bodyParser = require('body-parser')
+const APP_CONFIG = require('./constants')
 const mongooseInit = require('./config/mongoose')
 const cronInit = require('./config/cron')
 const channelRoute = require('./routes/channel')
@@ -15,7 +17,7 @@ const app = express()
 // Connect to MongoDB via Mongoose
 mongooseInit().then(() => {
 	// Set cron to add every miniute points
-	// cronInit('*/30 * * * * *')
+	cronInit('* * * * *')
 
 	// Set CORS for browsers
 	app.use(cors({
@@ -38,6 +40,9 @@ mongooseInit().then(() => {
 		next()
 	})
 
+	// Check JWT
+	app.use(jwt({ secret: Buffer.from(APP_CONFIG.twitchSecret, 'base64') }))
+
 	// Set our REST end points
 	app.use(channelRoute)
 	app.use(rewardRoute)
@@ -49,6 +54,11 @@ mongooseInit().then(() => {
 
 	// Send 500 status code with simple message to the client when unhandled errors occur
 	app.use((err, req, res, next) => {
+		if (err.name === 'UnauthorizedError') {
+			res.status(401).send('Invalid JWT token.')
+			return
+		}
+
 		res.status(500).send('Iternal server error!')
 	})
 
