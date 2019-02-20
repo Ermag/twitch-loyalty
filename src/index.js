@@ -7,6 +7,8 @@ const bodyParser = require('body-parser');
 const mongooseInit = require('./config/mongoose')
 const channelRoute = require('./routes/channel')
 const rewardRoute = require('./routes/reward')
+const userRoute = require('./routes/user')
+const claimRoute = require('./routes/claim')
 const app = express()
 
 // Connect to MongoDB via Mongoose
@@ -36,6 +38,8 @@ app.use((req, res, next) => {
 // Set our REST end points
 app.use(channelRoute)
 app.use(rewardRoute)
+app.use(userRoute)
+app.use(claimRoute)
 
 // Directly serve the static content in the public folder
 app.use(express.static('public'))

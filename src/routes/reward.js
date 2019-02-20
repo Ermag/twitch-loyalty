@@ -19,6 +19,21 @@ router.get(`/${name}`, (req, res) => {
     })
 })
 
+router.get(`/${name}/ref`, (req, res) => {
+    if (!req.query.name) {
+		return res.status(400).send('Missing valid reference.')
+	}
+
+    RewardModel.findOne({
+		ref: req.query.name,
+		status: 1
+    }).then(doc => {
+		res.json(doc)
+    }).catch(err => {
+        res.status(404).json(err)
+    })
+})
+
 // POST
 router.post(`/${name}`, (req, res) => {
 	if (!req.body) {
@@ -66,7 +81,8 @@ router.put(`/${name}`, (req, res) => {
 	}, {
 		name: req.body.name,
 		points: req.body.points,
-		alert: req.body.alert
+		alert: req.body.alert,
+		updatedAt: new Date()
 	}, {
 		new: true
 	}).then(doc => {
@@ -89,7 +105,8 @@ router.delete(`/${name}`, (req, res) => {
 	RewardModel.findOneAndUpdate({
 		_id: req.query.id
 	}, {
-		status: 0
+		status: 0,
+		updatedAt: new Date()
 	}).then(doc => {
 		if (!doc || doc.length === 0) {
 			return res.status(500).send(doc)

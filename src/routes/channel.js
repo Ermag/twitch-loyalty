@@ -1,5 +1,7 @@
 const express = require('express')
+const REWARDS = require('../config/rewards')
 const ChannelModel = require('../models/channel')
+const RewardModel = require('../models/reward')
 const router = express.Router()
 const name = 'channel'
 
@@ -21,7 +23,24 @@ router.get(`/${name}`, (req, res) => {
 					return res.status(500).send(doc)
 				}
 
-				res.status(201).send(doc)
+				// Add default rewards
+				let defaultRewards = []
+				REWARDS.defaults.forEach(e => {
+					defaultRewards.push({
+						...e,
+						channel: doc._id
+					})
+				})
+
+				RewardModel.create(defaultRewards, function (err) {
+					if (err) {
+						return res.status(500).json(err)
+					}
+
+					res.status(201).send(doc)
+				}).catch(err => {
+					res.status(500).json(err)
+				})
 			}).catch(err => {
 				res.status(500).json(err)
 			})

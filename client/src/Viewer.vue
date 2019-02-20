@@ -23,6 +23,7 @@
 					</div>
 					<div v-else class="alt-content">
 						<Info :user="user" />
+						<button @click="test">Test</button>
 					</div>
 				</div>
 			</transition>
@@ -121,24 +122,40 @@
 			}
 		},
 		methods: {
-			fetchUser () {
-				// this.axios.get(`${process.env.VUE_APP_API}channel?tid=${this.Auth.getChannelId()}`).then(res => {
-				// 	this.channel = res.data
+			test () {
+				this.axios.get(`${process.env.VUE_APP_API}reward/ref?name=initial-points`).then(res => {
+					console.log(res.data)
+					this.axios.post(`${process.env.VUE_APP_API}claim`, {
+						reward: res.data._id,
+						user: this.user._id
+					}).then(res => {
+						console.log(res.data)
+					}).catch((err) => {
+						console.log(err)
+					}).then(() => {
+						this.isLoading = false
+					})
+				}).catch(() => {
+					this.hasError = true
+				})
+			},
+			fetchUser (data) {
+				this.axios.post(`${process.env.VUE_APP_API}user`, data).then(res => {
+					this.user = res.data
 
-				// 	if (this.channel.pointsName) {
-				// 		this.POINTS_NAME = this.channel.pointsName
-				// 	}
+					if (this.user.channel.pointsName) {
+						this.POINTS_NAME = this.user.channel.pointsName
+					}
 
-				// 	if (this.channel.pointsImg) {
-				// 		this.POINTS_IMG = this.channel.pointsImg
-				// 	}
-
-				// 	// TODO: Fetch user now
-				// }).catch(() => {
-				// 	this.hasError = true
-				// }).then(() => {
-				// 	this.isLoading = false
-				// })
+					if (this.user.channel.pointsImg) {
+						this.POINTS_IMG = this.user.channel.pointsImg
+					}
+				}).catch((err) => {
+					console.log(err)
+					this.hasError = true
+				}).then(() => {
+					this.isLoading = false
+				})
 			}
 		},
 		created () {
@@ -162,31 +179,52 @@
 
 					if (!this.Auth.isLoggedIn()) {
 						this.isLoggedIn = false
+						this.isLoading = false
 						return
 					}
 
-					console.log(1, userId)
+					console.log(auth)
 
 					if (userId) {
-						this.axios.get(`https://api.twitch.tv/kraken/users/${userId}`, {
-							headers: {
-								'Accept': 'application/vnd.twitchtv.v5+json',
-								'Client-ID': 'cx4rlgwlppmertltfy1dql4twr2cw6'
-							}
-						}).then(res => {
-							console.log(res.data)
-						})
-
 						this.axios.defaults.headers.common['Content-Type'] = 'application/json'
 						this.axios.defaults.headers.common['Authorization'] = `Bearer ${this.Auth.getToken()}`
 
-						this.fetchUser()
+						const KRAKEN = 'https://api.twitch.tv/kraken/'
+						let user = this.axios.get(`${KRAKEN}users/${userId}`, {
+							headers: {
+								'Accept': 'application/vnd.twitchtv.v5+json',
+								'Client-ID': auth.clientId
+							}
+						})
+
+						let follow = this.axios.get(`${KRAKEN}users/${userId}/follows/channels/${auth.channelId}`, {
+							headers: {
+								'Accept': 'application/vnd.twitchtv.v5+json',
+								'Client-ID': auth.clientId
+							},
+							validateStatus: (status) => {
+								return status < 500
+							}
+						})
+
+						this.axios.all([user, follow]).then(this.axios.spread((user, follow) => {
+							this.fetchUser({
+								tid: auth.channelId,
+								userId: userId,
+								displayName: user.data.display_name,
+								username: user.data.name,
+								avatar: user.data.logo,
+								updatedAt: user.data.updated_at,
+								isFollowing: follow.status !== 404
+							})
+						}))
 					} else {
 						this.twitch.actions.requestIdShare()
 					}
 				})
 			} else {
 				this.hasError = true
+				this.isLoading = false
 			}
 		}
 	}

@@ -4,7 +4,7 @@
 
 		<div class="info-stats">
 			<div class="username">
-				<v-tooltip attach="body" bottom>
+				<v-tooltip bottom>
 					<template #activator="data">
 						<h1 v-on="data.on">{{ username }}</h1>
 					</template>
