@@ -10,9 +10,9 @@
 					<div v-if="isLoading" class="text-xs-center alt-loading">
 						<v-progress-circular :size="100" :width="7" color="primary" indeterminate></v-progress-circular>
 					</div>
-					<div v-else-if="!isLoggedIn" class="my-2 mx-3 text-xs-center">
+					<div v-else-if="hasMessage" class="my-2 mx-3 text-xs-center">
 						<v-alert :value="true" color="#513c80">
-							<h3>Login on Twitch to see your<br />awesome profile!</h3>
+							<h3 v-html="message"></h3>
 						</v-alert>
 						<img src="./assets/mascot.png" class="mt-5" style="max-width: 100%;" />
 					</div>
@@ -53,7 +53,7 @@
 			border-radius: 2px;
 			box-sizing: border-box;
 			background: $secondary;
-			transition: all .2s;
+			transition: all .15s;
 		}
 		&:active {
 			& > div {
@@ -115,7 +115,8 @@
 				isPanelActive: true,
 				isLoading: true,
 				hasError: false,
-				isLoggedIn: true,
+				hasMessage: false,
+				message: '',
 				hasToggle: true,
 				isFullScreen: true,
 				user: null
@@ -150,8 +151,7 @@
 					if (this.user.channel.pointsImg) {
 						this.POINTS_IMG = this.user.channel.pointsImg
 					}
-				}).catch((err) => {
-					console.log(err)
+				}).catch(() => {
 					this.hasError = true
 				}).then(() => {
 					this.isLoading = false
@@ -178,7 +178,8 @@
 					let userId = this.Auth.getUserId()
 
 					if (!this.Auth.isLoggedIn()) {
-						this.isLoggedIn = false
+						this.hasMessage = true
+						this.message = 'Login on Twitch to see your<br />awesome profile!'
 						this.isLoading = false
 						return
 					}
@@ -186,22 +187,18 @@
 					console.log(auth)
 
 					if (userId) {
+						const twitchHeaders = {
+							'Accept': 'application/vnd.twitchtv.v5+json',
+							'Client-ID': auth.clientId
+						}
+
 						this.axios.defaults.headers.common['Content-Type'] = 'application/json'
 						this.axios.defaults.headers.common['Authorization'] = `Bearer ${this.Auth.getToken()}`
 
-						const KRAKEN = 'https://api.twitch.tv/kraken/'
-						let user = this.axios.get(`${KRAKEN}users/${userId}`, {
-							headers: {
-								'Accept': 'application/vnd.twitchtv.v5+json',
-								'Client-ID': auth.clientId
-							}
-						})
+						let user = this.axios.get(`${APP_CONFIG.TWITCH_API}users/${userId}`, twitchHeaders)
 
-						let follow = this.axios.get(`${KRAKEN}users/${userId}/follows/channels/${auth.channelId}`, {
-							headers: {
-								'Accept': 'application/vnd.twitchtv.v5+json',
-								'Client-ID': auth.clientId
-							},
+						let follow = this.axios.get(`${APP_CONFIG.TWITCH_API}users/${userId}/follows/channels/${auth.channelId}`, {
+							headers: twitchHeaders,
 							validateStatus: (status) => {
 								return status < 500
 							}
@@ -219,6 +216,9 @@
 							})
 						}))
 					} else {
+						this.hasMessage = true
+						this.message = 'Please, give Alter access to see<br />your awesome profile!'
+						this.isLoading = false
 						this.twitch.actions.requestIdShare()
 					}
 				})

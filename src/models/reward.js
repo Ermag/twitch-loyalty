@@ -6,7 +6,10 @@ let RewardSchema = new mongoose.Schema({
 		ref: 'Channel'
 	},
 	name: String,
-	ref: String,
+	ref: {
+		type: String,
+		unique: true
+	},
 	points: Number,
 	sound: String,
 	image: String,

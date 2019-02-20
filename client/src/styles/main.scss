@@ -11,6 +11,10 @@ html, body, .alt-wrapper {
 	font-family: 'Agency FB Bold', 'Trebuchet MS', sans-serif;
 }
 
+#app {
+	background: transparent !important;
+}
+
 .alt-wrapper.offset {
 	height: calc(100% - 80px);
 	margin-top: 40px;

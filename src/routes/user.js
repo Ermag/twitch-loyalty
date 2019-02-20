@@ -85,29 +85,8 @@ router.post(`/${name}`, (req, res) => {
     }).then(doc => {
 		// Create the channel if we can't find it with some example rewards
 		if (!doc) {
-			let newChannel = new ChannelModel({ tid: req.body.tid })
-
-			newChannel.save().then(doc => {
-				if (!doc || doc.length === 0) {
-					return res.status(500).send(doc)
-				}
-
-				// Add default rewards
-				let defaultRewards = []
-				REWARDS.defaults.forEach(e => {
-					defaultRewards.push({
-						...e,
-						channel: doc._id
-					})
-				})
-
-				RewardModel.create(defaultRewards, function (err) {
-					if (err) {
-						return res.status(500).json(err)
-					}
-
-					findOrCreate(doc, req, res)
-				})
+			ChannelModel.cAddNew(req.body.tid).then(doc => {
+				findOrCreate(doc, req, res)
 			}).catch(err => {
 				res.status(500).json(err)
 			})

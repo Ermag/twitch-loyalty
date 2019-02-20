@@ -12,7 +12,7 @@ const init = () => {
 		console.error('MongoDB connection error.')
 	})
 
-	mongoose.connect(`mongodb+srv://${user}:${password}@${host}/test?retryWrites=true`, {
+	return mongoose.connect(`mongodb+srv://${user}:${password}@${host}/test?retryWrites=true`, {
 		useNewUrlParser: true,
 		useCreateIndex: true,
 		useFindAndModify: false,
