@@ -124,11 +124,12 @@
 		},
 		methods: {
 			test () {
-				this.axios.get(`${process.env.VUE_APP_API}reward/ref?name=initial-points`).then(res => {
+				this.axios.get(`${process.env.VUE_APP_API}reward/ref?name=test`).then(res => {
 					console.log(res.data)
 					this.axios.post(`${process.env.VUE_APP_API}claim`, {
 						reward: res.data._id,
-						user: this.user._id
+						user: this.user._id,
+						channel: this.user.channel._id
 					}).then(res => {
 						console.log(res.data)
 					}).catch((err) => {

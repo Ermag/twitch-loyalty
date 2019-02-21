@@ -3,7 +3,6 @@ const REWARDS = {
 	defaults: [ // Set of rewards added for every channel on creation
 		{
 			name: 'Test', // TODO: Add fun rewards
-			ref: 'initial-points',
 			points: 10,
 			image: 'test.png'
 		}

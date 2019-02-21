@@ -43,11 +43,16 @@ const init = (timeFrame) => {
 										let points = (i === 0) ? 1 : 2
 
 										UserModel.updateMany({
-											'channel': doc._id,
-											'username': { $in: users },
+											channel: doc._id,
+											username: { $in: users },
 											isFollowing: Boolean(i)
 										}, {
-											$inc: { points: points, currentPoints: points }
+											$inc: {
+												points: points,
+												currentPoints: points,
+												watchTime: 1
+											},
+											updatedAt: new Date()
 										}, (err, docs) => {
 											 if (err) {
 												console.error(err)

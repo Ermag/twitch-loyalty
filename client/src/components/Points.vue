@@ -1,7 +1,7 @@
 <template>
 	<v-tooltip top>
 		<template #activator="data">
-			<span v-on="data.on"><img :src="baseURL + img" :alt="name" :width="size" /> {{ formatQuantity(value) }}</span>
+			<span v-on="data.on" style="color: #e5c572"><img :src="baseURL + img" :alt="name" :width="size" /> {{ formatQuantity(Math.abs(value)) }}</span>
 		</template>
 		<span>{{ this.name }}</span>
     </v-tooltip>
