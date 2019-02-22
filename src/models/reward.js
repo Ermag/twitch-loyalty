@@ -8,7 +8,9 @@ let RewardSchema = new mongoose.Schema({
 	name: String,
 	ref: {
 		type: String,
-		unique: true
+		trim: true,
+		unique: true,
+		sparse: true
 	},
 	points: Number,
 	sound: String,

@@ -38,12 +38,12 @@ router.get(`/${name}`, (req, res) => {
 		let claims = []
 
 		docs.forEach(doc => {
-			if (!doc.reward.ref.length) {
+			if (!doc.reward.ref || doc.reward.ref === 'test') {
 				claims.push(doc)
 			}
 		})
 
-		res.json(docs)
+		res.json(claims)
     }).catch(err => {
         res.status(500).json(err)
     })

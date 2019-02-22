@@ -14,10 +14,12 @@
 			</v-alert>
 
 			<div class="mb-2" v-for="claim in claims" :key="claim._id">
-				<v-alert :value="true" class="ma-0" color="success" icon="flag" transition="scale-transition" outline>
+				<v-alert :value="true" class="ma-0" color="success" transition="scale-transition" outline>
 					{{ claim.createdAt | moment('from', new Date()) }}
-					<strong>{{ claim.user.displayName }}</strong> claimed <strong>{{ claim.reward.name }}</strong> for
+					<strong>{{ claim.user ? claim.user.displayName : 'Somebody' }} <sup class="primary--text">{{ claim.user ? claim.user.level : 1 }}</sup></strong> claimed <strong>{{ claim.reward.name }}</strong> for
 					<Points :value="claim.points" :name="POINTS_NAME" :img="POINTS_IMG" />
+					<v-divider class="my-1"></v-divider>
+					{{ claim.msg || 'No Message left.' }}
 				</v-alert>
 			</div>
 		</div>

@@ -17,11 +17,11 @@
 					</v-alert>
 
 					<v-alert v-model="isPointsInfo" color="info" icon="info" dismissible>
-						Viewers start with <Points :value="STARTING_POINTS" :name="POINTS_NAME" :img="POINTS_IMG" /> and receive <strong style="font-size: 15px;">X</strong> amount every minute they watch your stream.
+						Viewers start with <Points :value="STARTING_POINTS" :name="POINTS_NAME" :img="POINTS_IMG" /> and receive <strong style="font-size: 15px;">X</strong> amount every minute they watch your stream, based on their status.
 						<table class="table pt-2">
 							<thead>
 								<tr>
-									<th>Watch Time/Rank</th>
+									<th class="text-xs-left">Time/Status</th>
 									<th>Minute</th>
 									<th>Hour</th>
 									<th>Day</th>
@@ -43,8 +43,8 @@
 									<td class="text-xs-right"><Points :value="BASE_POINTS * 1440 * FOLLOWER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
 									<td class="text-xs-right"><Points :value="BASE_POINTS * 10080 * FOLLOWER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
 								</tr>
-								<tr>
-									<th class="text-xs-left">Subscriber </th>
+								<tr style="opacity: .7;">
+									<th class="text-xs-left">Subscriber (soon)</th>
 									<td class="text-xs-right"><Points :value="BASE_POINTS * SUBSCRIBER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
 									<td class="text-xs-right"><Points :value="BASE_POINTS * 60 * SUBSCRIBER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
 									<td class="text-xs-right"><Points :value="BASE_POINTS * 1440 * SUBSCRIBER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>

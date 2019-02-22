@@ -56,7 +56,7 @@ ChannelSchema.statics.cAddNew = function(tid) {
 					})
 				})
 
-				RewardModel.create(defaultRewards, function (err) {
+				RewardModel.insertMany(defaultRewards, function (err) {
 					if (err) {
 						reject(err)
 					}

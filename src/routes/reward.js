@@ -1,4 +1,5 @@
 const express = require('express')
+const REWARDS = require('../config/rewards')
 const RewardModel = require('../models/reward')
 const router = express.Router()
 const name = 'reward'
@@ -19,6 +20,7 @@ router.get(`/${name}`, (req, res) => {
     })
 })
 
+// GET by ref
 router.get(`/${name}/ref`, (req, res) => {
     if (!req.query.name) {
 		return res.status(400).send('Missing valid reference.')
@@ -45,24 +47,33 @@ router.post(`/${name}`, (req, res) => {
 		return res.status(400).send('Request contains invalid data.')
 	}
 
-	// TODO: Check for max amount of rewards for the channel
-
-	let newReward = new RewardModel({
+	RewardModel.find({
 		channel: req.body.channel,
-		name: req.body.name,
-		points: req.body.points,
-		alert: req.body.alert
-	})
+		status: 1
+    }).then(docs => {
+		if (docs && docs.length >= REWARDS.limit) {
+			return res.status(422).send('Maximum amount of reward reached for that channel.')
+		} else {
+			let newReward = new RewardModel({
+				channel: req.body.channel,
+				name: req.body.name,
+				points: req.body.points,
+				alert: req.body.alert
+			})
 
-	newReward.save().then(doc => {
-		if (!doc || doc.length === 0) {
-			return res.status(500).send(doc)
+			newReward.save().then(doc => {
+				if (!doc || doc.length === 0) {
+					return res.status(500).send(doc)
+				}
+
+				res.status(201).send(doc)
+			}).catch(err => {
+				res.status(500).json(err)
+			})
 		}
-
-		res.status(201).send(doc)
-	}).catch(err => {
-		res.status(500).json(err)
-	})
+    }).catch(err => {
+        res.status(500).json(err)
+    })
 })
 
 // UPDATE

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const UserModel = require('./user')
+const RewardModel = require('./reward')
 
 let ClaimSchema = new mongoose.Schema({
 	reward: {
@@ -37,6 +38,15 @@ ClaimSchema.statics.addClaim = function(channelId, message, reward, user) {
 				reject(doc)
 				return
 			}
+
+			RewardModel.updateOne({
+				_id: reward._id
+			}, {
+				$inc: {
+					claimedCount: 1
+				},
+				updatedAt: new Date()
+			})
 
 			if (!user) {
 				resolve(doc)

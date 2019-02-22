@@ -2,7 +2,14 @@
 	<div>
 		<div style="display: flex; align-items: center;">
 			<h5 class="headline pa-3" style="flex-grow: 1;">Total - {{ rewards.data.length }}</h5>
-			<v-btn color="primary" @click="openRewardDialog()" right>Add New</v-btn>
+			<v-tooltip top>
+				<template #activator="data">
+					<div v-on="data.on" class="pr-2">
+						<v-btn color="primary" @click="openRewardDialog()" :disabled="rewards.data.length >= 25">Add New</v-btn>
+					</div>
+				</template>
+				<span>Limit is 25 rewards.</span>
+			</v-tooltip>
 		</div>
 		<v-divider></v-divider>
 
@@ -22,13 +29,21 @@
 			</template>
 			<template slot="items" slot-scope="props">
 				<tr>
-					<td>{{ props.item.name }}</td>
+					<td>
+						{{ props.item.name }}
+						<v-btn class="ma-0 mx-1" @click="viewImage(props.item)" flat icon small>
+							<v-icon small>insert_photo</v-icon>
+						</v-btn>
+						<v-btn class="ma-0"  @click="playSound(props.item)" flat icon small>
+							<v-icon small>volume_up</v-icon>
+						</v-btn>
+					</td>
 					<td class="text-xs-right"><Points :value="props.item.points" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
 					<td class="text-xs-center"><a @click="changeTab(1)">{{ props.item.alert ? 'Yes' : 'No' }}</a></td>
 					<td class="text-xs-right">{{ props.item.claimedCount }} times</td>
 					<td class="text-xs-center">
-						<v-btn color="info" @click="openRewardDialog(props.item)" small outline>Edit</v-btn>
-						<v-btn color="error" @click="openDeleteDialog(props.item)" small outline>Remove</v-btn>
+						<v-btn color="info" @click="openRewardDialog(props.item)" icon flat><v-icon>edit</v-icon></v-btn>
+						<v-btn color="error" @click="openDeleteDialog(props.item)" icon flat><v-icon>delete</v-icon></v-btn>
 					</td>
 				</tr>
 			</template>
@@ -115,6 +130,21 @@
 			</v-card>
 		</v-dialog>
 
+		<v-dialog v-model="isViewImage" width="400">
+			<v-card>
+				<v-card-text class="text-xs-center">
+					<img :src="imageToView" height="150" />
+				</v-card-text>
+
+				<v-divider></v-divider>
+
+				<v-card-actions>
+					<v-spacer></v-spacer>
+					<v-btn color="grey" @click="isViewImage = false" flat>Close</v-btn>
+				</v-card-actions>
+			</v-card>
+		</v-dialog>
+
 		<v-snackbar v-model="message.isVisible" :color="message.type" :timeout="message.timeout" top>
 			{{ message.text }}
 			<v-btn @click="message.isVisible = false" dark flat>Close</v-btn>
@@ -136,6 +166,8 @@
 				isRewardDialog: false,
 				isDeleteDialog: false,
 				toDelete: null,
+				isViewImage: false,
+				imageToView: null,
 				message: {
 					isVisible: false,
 					type: '',
@@ -169,6 +201,17 @@
 			}
 		},
 		methods: {
+			playSound (reward) {
+				console.log(reward)
+				let sound = new Audio(process.env.VUE_APP_API + (reward.sound || 'default.wav'))
+				sound.autoplay = true
+				sound.volume = 0.25
+			},
+			viewImage (reward) {
+				this.imageToView = process.env.VUE_APP_API + (reward.image || 'default.png')
+				this.isViewImage = true
+				console.log(reward)
+			},
 			setMessage (type, text) {
 				this.message.type = type
 				this.message.text = text

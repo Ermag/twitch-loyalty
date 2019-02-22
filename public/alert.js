@@ -16,7 +16,7 @@ $(document).ready(function() {
 	var screenTime = $.urlParam('screenTime');
 	var time = new Date();
 	var alerts = [];
-	var sound = new Audio('default.wav');
+	var sound = null;
 
 	var rewardName = $('#alert-reward-name');
 	var rewardPoints = $('#alert-reward-points');
@@ -31,40 +31,47 @@ $(document).ready(function() {
 		URL = 'https://localhost/';
 	}
 
+	screenTime = parseInt(screenTime) * 1000 || 8000;
+
 	function getAlerts() {
 		$.get(URL + 'claim?cid=' + chid + '&afterDate=' + time.getTime(), function(data) {
 			time = new Date();
-			alerts = alerts.concat(data)
+			data.forEach(function(alert) {
+				if (alert.reward.alert) {
+					alerts.push(alert);
+				}
+			});
 		})
 	}
 
 	function showAlert(alert) {
-		rewardName.text(alert.reward.name)
-		rewardPoints.text(Math.abs(alert.points))
-		rewardImage.attr('src', alert.reward.image || 'default.png')
-		rewardMessage.text(alert.msg || 'No message')
-		pointsImage.attr('src', alert.channel.pointsImg || 'coins.png')
+		rewardName.text(alert.reward.name);
+		rewardPoints.text(Math.abs(alert.points));
+		rewardImage.attr('src', alert.reward.image || 'default.png');
+		rewardMessage.text(alert.msg || 'No message');
+		pointsImage.attr('src', alert.channel.pointsImg || 'coins.png');
 
 		if (alert.user) {
-			userAvatar.attr('src', alert.user.avatar)
-			userName.text(alert.user.displayName)
-			userLevel.text(alert.user.level)
+			userAvatar.attr('src', alert.user.avatar);
+			userName.text(alert.user.displayName);
+			userLevel.text(alert.user.level);
 		} else {
-			userAvatar.attr('src', 'avatar.jpg')
-			userName.text('Somebody')
-			userLevel.text('1')
+			userAvatar.attr('src', 'avatar.jpg');
+			userName.text('Somebody');
+			userLevel.text('1');
 		}
 
 		$('#app .alert-wrapper').addClass('show');
 
 		if (hasSound === 'yes') {
-			sound.volume = 0.3;
-			sound.play();
+			sound = new Audio(alert.reward.sound || 'default.wav');
+			sound.autoplay = true;
+			sound.volume = 0.25;
 		}
 
 		setTimeout(function() {
 			$('#app .alert-wrapper').removeClass('show');
-		}, parseInt(screenTime) * 1000 || 8000);
+		}, screenTime);
 	}
 
 	setInterval(function() {
@@ -76,7 +83,7 @@ $(document).ready(function() {
 			showAlert(alerts[0]);
 			alerts.shift();
 		}
-	}, 3000);
+	}, screenTime * 2);
 
 	getAlerts();
 });
