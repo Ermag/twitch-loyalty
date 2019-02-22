@@ -3,11 +3,11 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 		<link rel="stylesheet" type="text/css" href="alert.css" />
 
 		<title>Alter Alerts</title>
-		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E=" crossorigin="anonymous"></script>
+		<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 		<script src="alert.js"></script>
 	</head>
 	<body>
@@ -16,7 +16,23 @@
 		</noscript>
 
 		<div id="app">
-			dasdasdhadashdah
+			<div class="alert-wrapper" style="opacity: 0;">
+				<div class="alert-image">
+					<div class="alert-header">
+						<div id="alert-reward-name"></div>
+						<span><img src="img/coins.png" id="alert-points-image" /> <span id="alert-reward-points"></span></span>
+					</div>
+					<img src="img/mascot.png" id="alert-reward-image" />
+				</div>
+
+				<div class="alert-content">
+					<img src="" id="alert-user-avatar" width="76" height="76" />
+					<div class="alert-msg">
+						<h1><span id="alert-user-name"></span> <sup id="alert-user-level"></sup></h1>
+						<p id="alert-reward-message"></p>
+					</div>
+				</div>
+			</div>
 		</div>
 	</body>
 </html>

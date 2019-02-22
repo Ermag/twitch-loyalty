@@ -6,10 +6,15 @@
 			<ol>
 				<li>Open your streaming software (OBS, XSplit, etc.).</li>
 				<li>Select the scene in which the alerts to appear.</li>
-				<li>Add new browser source.</li>
-				<li>Copy and paste your URL. <input :value="baseURL + 'alert.html?chid=' + channel._id" size="60" onClick="this.select(); document.execCommand('copy')" readonly autofocus /></li>
+				<li>Add new browser source with Width -> 500 and Height - 320</li>
+				<li>Copy and paste the URL -> <input :value="baseURL + 'alert.html?chid=' + channel._id + '&sound=yes&screenTime=8'" size="65" onClick="this.select(); document.execCommand('copy')" readonly autofocus /></li>
 			</ol>
-			<v-btn color="primary" :disabled="isTesting" @click="sendTestAlert">Test</v-btn>
+			<v-tooltip top>
+				<template #activator="data">
+					<v-btn v-on="data.on" color="primary" :disabled="isTesting" @click="sendTestAlert">Test</v-btn>
+				</template>
+				<span>Could take 10-20 seconds for the alert to appear.</span>
+			</v-tooltip>
 		</v-alert>
 	</div>
 </template>
@@ -30,6 +35,7 @@
 		props: ['channel'],
 		data () {
 			return {
+				testRewardId: null,
 				isTesting: false,
 				baseURL: process.env.VUE_APP_API
 			}
@@ -40,9 +46,22 @@
 
 				setTimeout(() => {
 					this.isTesting = false
-				}, 5000)
+				}, 20000)
 
-				// TODO: Send test claim
+				if (!this.testRewardId) {
+					this.axios.get(`${process.env.VUE_APP_API}reward/ref?name=test`).then(res => {
+						this.testRewardId = res.data._id
+						this.claimTestReward()
+					})
+				} else {
+					this.claimTestReward()
+				}
+			},
+			claimTestReward () {
+				this.axios.post(`${process.env.VUE_APP_API}claimTest`, {
+					reward: this.testRewardId,
+					channel: this.channel._id
+				})
 			}
 		}
 	}

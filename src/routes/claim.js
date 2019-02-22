@@ -14,11 +14,18 @@ router.get(`/${name}`, (req, res) => {
 	let params = { channel: req.query.cid }
 
 	if (req.query.uid) {
-		params[user] = req.query.uid
+		params['user'] = req.query.uid
 	}
 
 	if (req.query.rid) {
-		params[reward] = req.query.rid
+		params['reward'] = req.query.rid
+	}
+
+	// Check for time
+	if (req.query.afterDate) {
+		params['createdAt'] = {
+			'$gte': new Date(parseInt(req.query.afterDate))
+		}
 	}
 
     ClaimModel.find(params).populate('channel').populate('user').populate('reward').then(docs => {
@@ -48,9 +55,14 @@ router.post(`/${name}`, (req, res) => {
 		return res.status(400).send('Request body is missing.')
 	}
 
-	// Check for valid reward and user
+	// Check for valid params
 	if (!req.body.reward || !req.body.user || !req.body.channel) {
 		return res.status(400).send('Request contains invalid data.')
+	}
+
+	// Check for the message length
+	if (req.body.msg && req.body.msg.length > 100) {
+		return res.status(400).send('Message length exceeds the limit (100).')
 	}
 
 	// Get the reward and the user
@@ -78,7 +90,7 @@ router.post(`/${name}`, (req, res) => {
 				reward: reward._id
 			}).then(doc => {
 				if (!doc) {
-					ClaimModel.addReward(req.body.channel, req.body.msg, reward, user).then(doc => {
+					ClaimModel.addClaim(req.body.channel, req.body.msg, reward, user).then(doc => {
 						res.status(201).send(doc)
 					}).catch(err => {
 						res.status(500).json(err)
@@ -90,12 +102,60 @@ router.post(`/${name}`, (req, res) => {
 				res.status(500).json(err)
 			})
 		} else {
-			ClaimModel.addReward(req.body.channel, req.body.msg, reward, user).then(doc => {
+			ClaimModel.addClaim(req.body.channel, req.body.msg, reward, user).then(doc => {
 				res.status(201).send(doc)
 			}).catch(err => {
 				res.status(500).json(err)
 			})
 		}
+	}).catch(err => {
+        res.status(404).json(err)
+    })
+})
+
+// POST
+router.post(`/${name}Test`, (req, res) => {
+	if (!req.body) {
+		return res.status(400).send('Request body is missing.')
+	}
+
+	// Check for valid params
+	if (!req.body.reward || !req.body.channel) {
+		return res.status(400).send('Request contains invalid data.')
+	}
+
+	// Get the reward and the user
+	RewardModel.findOne({
+		_id: req.body.reward,
+		status: 1
+	}).then(reward => {
+		if (!reward) {
+			res.status(404).json('Invalid data.')
+			return
+		}
+
+		// Check for buffer of 10s between claims
+		let date = new Date()
+		date.setSeconds(date.getSeconds() - 20);
+
+		ClaimModel.findOne({
+			reward: reward._id,
+			createdAt: {
+				'$gte': date
+			}
+		}).then(doc => {
+			if (!doc) {
+				ClaimModel.addClaim(req.body.channel, 'Hello wonderful streamer :) This is a test message.', reward, {}).then(doc => {
+					res.status(201).send(doc)
+				}).catch(err => {
+					res.status(500).json(err)
+				})
+			} else {
+				res.status(401).send('Already claimed.')
+			}
+		}).catch(err => {
+			res.status(500).json(err)
+		})
 	}).catch(err => {
         res.status(404).json(err)
     })

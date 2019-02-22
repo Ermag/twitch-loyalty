@@ -25,6 +25,9 @@ mongooseInit().then(() => {
 		allowedHeaders: ['Content-Type, Authorization']
 	}))
 
+	// Directly serve the static content in the public folder
+	app.use(express.static('public'))
+
 	// Parse JSON from requests automatically
 	app.use(bodyParser.json())
 
@@ -43,8 +46,6 @@ mongooseInit().then(() => {
 	// Check JWT
 	app.use(jwt({ secret: Buffer.from(APP_CONFIG.twitchSecret, 'base64') }).unless({
 		path: [
-			/\./, // TODO: FIX THAT <<
-			{ url: '/channel', methods: ['GET']  },
 			{ url: '/claim', methods: ['GET']  }
 		]
 	 }))
@@ -54,9 +55,6 @@ mongooseInit().then(() => {
 	app.use(rewardRoute)
 	app.use(userRoute)
 	app.use(claimRoute)
-
-	// Directly serve the static content in the public folder
-	app.use(express.static('public'))
 
 	// Send 500 status code with simple message to the client when unhandled errors occur
 	app.use((err, req, res, next) => {
@@ -68,11 +66,11 @@ mongooseInit().then(() => {
 		res.status(500).send('Iternal server error!')
 	})
 
-	// // Start the server
-	// https.createServer({
-	// 	key: fs.readFileSync('./ssl/server.key'),
-	// 	cert: fs.readFileSync('./ssl/server.cert'),
-	// }, app).listen(443, () => console.log(`Server has started on 443.`))
+	// Start the server
+	https.createServer({
+		key: fs.readFileSync('./ssl/server.key'),
+		cert: fs.readFileSync('./ssl/server.cert'),
+	}, app).listen(443, () => console.log(`Server has started on 443.`))
 
-	app.listen(80)
+	// app.listen(80)
 })

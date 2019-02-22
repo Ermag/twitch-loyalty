@@ -22,7 +22,7 @@ let ClaimSchema = new mongoose.Schema({
 	}
 })
 
-ClaimSchema.statics.addReward = function(channelId, message, reward, user) {
+ClaimSchema.statics.addClaim = function(channelId, message, reward, user) {
 	return new Promise((resolve, reject) => {
 		let newClaim = new this({
 			reward: reward._id,
@@ -35,6 +35,11 @@ ClaimSchema.statics.addReward = function(channelId, message, reward, user) {
 		newClaim.save().then(doc => {
 			if (!doc || doc.length === 0) {
 				reject(doc)
+				return
+			}
+
+			if (!user) {
+				resolve(doc)
 				return
 			}
 

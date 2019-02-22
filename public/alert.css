@@ -1,7 +1,96 @@
+@font-face {
+	font-family: 'Agency FB Bold';
+	src: url('img/agency-fb-bold.ttf');
+}
+
 html, body, #app {
 	width: 100%;
 	height: 100%;
 	margin: 0;
 	padding: 0;
-	background: black;
+	font-family: 'Agency FB Bold', 'Trebuchet MS', sans-serif;
+	font-size: 22px;
+	color: #FFF;
+	overflow: hidden;
+}
+
+#app .alert-wrapper {
+	position: relative;
+	width: calc(100% - 10px);
+	max-width: 500px;
+	box-shadow: 10px 10px 0 0 rgba(0, 0, 0, .25);
+	background: #19171c;
+	transition: opacity 1.5s;
+	opacity: 0;
+}
+
+#app .alert-wrapper.show {
+	opacity: 1 !important;
+}
+
+#app .alert-image {
+	position: relative;
+		z-index: 2;
+	padding: 10px;
+	border: 4px solid #e5c572;
+}
+
+#app .alert-image > img {
+	display: block;
+	max-height: 150px;
+	margin: 0 auto;
+}
+
+#app .alert-header {
+	display: flex;
+}
+
+#app .alert-header div {
+	flex-grow: 1;
+}
+
+#app .alert-header span {
+	color: #e5c572;
+}
+
+#app .alert-header span img {
+	margin-top: -5px;
+	vertical-align: middle
+}
+
+#app .alert-content {
+	position: relative;
+		z-index: 1;
+	display: flex;
+	height: 108px;
+	margin-top: -4px;
+	padding: 14px 16px;
+	box-sizing: border-box;
+	background: url('img/alert-bg.jpg') no-repeat left center;
+}
+
+#app .alert-content img {
+	width: 76px;
+	height: 76px;
+	margin-right: 15px;
+	border: 2px solid #e5c572;
+}
+
+#app .alert-content .alert-msg h1 {
+	margin: 0;
+	font-weight: normal;
+	font-size: 22px;
+}
+
+#app .alert-content .alert-msg p {
+	margin: 0;
+	padding-top: 5px;
+	height: 45px;
+	font-size: 20px;
+	overflow: hidden;
+}
+
+#app .alert-content sup {
+	font-size: 16px;
+	color: #e5c572;
 }
