@@ -67,35 +67,24 @@
 									<v-text-field
 										v-model="reward.name"
 										:rules="[reward.rules.required, reward.rules.name]"
-										label="Name" maxlength="120" counter autofocus></v-text-field>
+										label="Name*" maxlength="120" counter autofocus></v-text-field>
 								</v-flex>
 								<v-flex xs12>
 									<v-text-field
 										v-model="reward.cost"
 										:rules="[reward.rules.cost]"
-										type="number" label="Cost"></v-text-field>
+										type="number" label="Cost*"></v-text-field>
 								</v-flex>
 								<v-flex xs12>
 									<v-switch v-model="reward.alert" label="Show Alert" color="success"></v-switch>
 								</v-flex>
 								<v-flex xs6>
-									<!-- <img :src="reward.image.url" height="100" v-if="reward.image.url" /> -->
-									<v-text-field v-model="reward.image.name" @click="pickFile('image')" label="Select Image" prepend-icon="insert_photo"></v-text-field>
-									<input
-										type="file"
-										style="display: none"
-										ref="image"
-										accept="image/*"
-										@change="onFilePicked($event, 'image')" />
+									<v-text-field v-model="reward.image.name" @click="pickFile('image')" label="Select Image (Max 2MB)" prepend-icon="insert_photo"></v-text-field>
+									<input type="file" ref="image" accept="image/*" style="display: none;" @change="onFilePicked($event, 'image')" />
 								</v-flex>
 								<v-flex xs6>
-									<v-text-field v-model="reward.sound.name" @click="pickFile('sound')" label="Select Sound" prepend-icon="volume_up"></v-text-field>
-									<input
-										type="file"
-										style="display: none"
-										ref="sound"
-										accept="audio/*"
-										@change="onFilePicked($event, 'sound')" />
+									<v-text-field v-model="reward.sound.name" @click="pickFile('sound')" label="Select Sound (Max 2MB)" prepend-icon="volume_up"></v-text-field>
+									<input type="file" ref="sound" accept="audio/*" style="display: none;" @change="onFilePicked($event, 'sound')" />
 								</v-flex>
 							</v-layout>
 						</v-container>
@@ -202,7 +191,6 @@
 		},
 		methods: {
 			playSound (reward) {
-				console.log(reward)
 				let sound = new Audio(process.env.VUE_APP_API + (reward.sound || 'default.wav'))
 				sound.autoplay = true
 				sound.volume = 0.25
@@ -210,7 +198,6 @@
 			viewImage (reward) {
 				this.imageToView = process.env.VUE_APP_API + (reward.image || 'default.png')
 				this.isViewImage = true
-				console.log(reward)
 			},
 			setMessage (type, text) {
 				this.message.type = type
@@ -223,14 +210,17 @@
 					this.reward.name = ''
 					this.reward.cost = 1
 					this.reward.alert = true
-					this.reward.image = {}
 				} else {
 					this.reward.id = reward._id
 					this.reward.name = reward.name
 					this.reward.cost = reward.points
 					this.reward.alert = reward.alert
-					this.reward.image = {}
 				}
+
+				this.$refs['image'].value = ''
+				this.reward.image = {}
+				this.$refs['sound'].value = ''
+				this.reward.sound = {}
 
 				this.isRewardDialog = true
 			},
@@ -261,38 +251,65 @@
 			},
 			saveReward () {
 				if (this.$refs.addForm.validate()) {
-					// Update or create
-					if (this.reward.id) {
-						this.axios.put(`${process.env.VUE_APP_API}reward?id=${this.reward.id}`, {
+					let data
+
+					if (this.$refs['image'].files.length || this.$refs['sound'].files.length) {
+						data = new FormData()
+						data.append('name', this.reward.name)
+						data.append('points', this.reward.cost)
+						data.append('alert', this.reward.alert)
+
+						if (!this.reward.id) {
+							data.append('channel', this.channel._id)
+						}
+
+						if (this.$refs['image'].files.length) {
+							data.append('image', this.$refs['image'].files[0])
+						}
+
+						if (this.$refs['sound'].files.length) {
+							data.append('sound', this.$refs['sound'].files[0])
+						}
+					} else {
+						data = {
 							name: this.reward.name,
 							points: this.reward.cost,
 							alert: this.reward.alert
-						}).then(res => {
-							let rewardIndex = this.rewards.data.findIndex(rew => rew._id === this.reward.id)
+						}
+
+						if (!this.reward.id) {
+							data.channel = this.channel._id
+						}
+					}
+
+					// Update or create
+					if (this.reward.id) {
+						this.axios.put(`${process.env.VUE_APP_API}reward?id=${this.reward.id}`, data).then(res => {
+							let rewardIndex = this.rewards.data.findIndex(reward => reward._id === this.reward.id)
 							this.rewards.data[rewardIndex].name = res.data.name
 							this.rewards.data[rewardIndex].points = res.data.points
 							this.rewards.data[rewardIndex].alert = res.data.alert
+							this.rewards.data[rewardIndex].image = res.data.image
+							this.rewards.data[rewardIndex].sound = res.data.sound
 
 							this.setMessage('success', 'You have successfuly edited the reward.')
-						}).catch(() => {
+						}).catch(err => {
+							console.log(err)
 							this.setMessage('error', 'Something went wrong :( Please, try again later.')
 						}).then(() => {
 							this.isRewardDialog = false
+							window.scrollTo(0, 0)
 						})
 					} else {
-						this.axios.post(`${process.env.VUE_APP_API}reward`, {
-							channel: this.channel._id,
-							name: this.reward.name,
-							points: this.reward.cost,
-							alert: this.reward.alert
-						}).then(res => {
+						this.axios.post(`${process.env.VUE_APP_API}reward`, data).then(res => {
 							this.rewards.data.unshift(res.data)
 							this.setMessage('success', 'You have successfuly added a new reward.')
-							window.scrollTo(0, 0)
-						}).catch(() => {
+						}).catch(err => {
+							console.log(err)
 							this.setMessage('error', 'Something went wrong :( Please, try again later.')
 						}).then(() => {
 							this.isRewardDialog = false
+							window.scrollTo(0, 0)
 						})
 					}
 				}

@@ -82,8 +82,6 @@ ClaimSchema.statics.addClaim = function(channelId, message, reward, user) {
 				 resolve(doc)
 			})
 		})
-
-		// level up blalba
 	})
 }
 

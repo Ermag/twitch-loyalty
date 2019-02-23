@@ -29,11 +29,7 @@
 					<v-flex xs12 md4 class="px-2">
 						<div>
 							<v-text-field placeholder="Select PNG 24x24px" @click="pickFile()" label="Image"></v-text-field>
-							<input
-								type="file"
-								style="display: none"
-								ref="image"
-								accept="image/*" />
+							<input type="file" ref="image" accept="image/*" style="display: none;" />
 						</div>
 
 					</v-flex>

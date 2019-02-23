@@ -29,11 +29,6 @@ mongooseInit().then(() => {
 	// Directly serve the static content in the public folder
 	app.use(express.static('public'))
 
-	// Set file limits
-	app.use(fileUpload({
-		limits: { fileSize: 1.5 * 1024 * 1024 }
-	}))
-
 	// Parse JSON from requests automatically
 	app.use(bodyParser.json())
 
@@ -54,7 +49,12 @@ mongooseInit().then(() => {
 		path: [
 			{ url: '/claim', methods: ['GET']  }
 		]
-	 }))
+	}))
+
+	// Set file limits
+	app.use(fileUpload({
+		limits: { fileSize: 2 * 1024 * 1024 }
+	}))
 
 	// Set our REST end points
 	app.use(channelRoute)

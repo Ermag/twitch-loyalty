@@ -9,9 +9,7 @@ $(document).ready(function() {
 		return decodeURI(results[1]) || 0;
 	}
 
-	var URL = 'https://4lter.com/';
 	var chid = $.urlParam('chid');
-	var env = $.urlParam('env');
 	var hasSound = $.urlParam('sound');
 	var screenTime = $.urlParam('screenTime');
 	var time = new Date();
@@ -27,20 +25,17 @@ $(document).ready(function() {
 	var userName = $('#alert-user-name');
 	var userLevel = $('#alert-user-level');
 
-	if (env === 'dev') {
-		URL = 'https://localhost/';
-	}
-
 	screenTime = parseInt(screenTime) * 1000 || 8000;
 
 	function getAlerts() {
-		$.get(URL + 'claim?cid=' + chid + '&afterDate=' + time.getTime(), function(data) {
+		$.get('/claim?cid=' + chid + '&afterDate=' + time.getTime(), function(data) {
 			time = new Date();
-			data.forEach(function(alert) {
-				if (alert.reward.alert) {
-					alerts.push(alert);
+
+			for (var i = data.length - 1; i >= 0; --i) {
+				if (data[i].reward.alert) {
+					alerts.push(data[i]);
 				}
-			});
+			}
 		})
 	}
 
@@ -74,16 +69,18 @@ $(document).ready(function() {
 		}, screenTime);
 	}
 
-	setInterval(function() {
+	if (chid) {
+		setInterval(function() {
+			getAlerts();
+		}, 30000);
+
+		setInterval(function() {
+			if (alerts.length > 0) {
+				showAlert(alerts[0]);
+				alerts.shift();
+			}
+		}, screenTime * 2);
+
 		getAlerts();
-	}, 30000);
-
-	setInterval(function() {
-		if (alerts.length > 0) {
-			showAlert(alerts[0]);
-			alerts.shift();
-		}
-	}, screenTime * 2);
-
-	getAlerts();
+	}
 });

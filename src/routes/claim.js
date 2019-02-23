@@ -28,7 +28,7 @@ router.get(`/${name}`, (req, res) => {
 		}
 	}
 
-    ClaimModel.find(params).populate('channel').populate('user').populate('reward').then(docs => {
+    ClaimModel.find(params).sort('-createdAt').populate('channel').populate('user').populate('reward').then(docs => {
 		// Create the channel if we can't find it with some example rewards
 		if (!docs && !docs.length) {
 			res.status(404).json('No rewards found.')

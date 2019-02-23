@@ -66,7 +66,39 @@ router.post(`/${name}`, (req, res) => {
 					return res.status(500).send(doc)
 				}
 
-				res.status(201).send(doc)
+				if (req.files) {
+					RewardModel.cUpdateFiles(doc._id, req.files).then(files => {
+						let data = {}
+
+						if (files[0]) {
+							data.image = files[0]
+						}
+
+						if (files[1]) {
+							data.sound = files[1]
+						}
+
+						RewardModel.findOneAndUpdate({
+							_id: doc._id
+						}, {
+							...data
+						}, {
+							new: true
+						}).then(doc => {
+							if (!doc || doc.length === 0) {
+								return res.status(500).send(doc)
+							}
+
+							res.status(201).send(doc)
+						}).catch(err => {
+							res.status(500).json(err)
+						})
+					}).catch(err => {
+						res.status(500).json(err)
+					})
+				} else {
+					res.status(201).send(doc)
+				}
 			}).catch(err => {
 				res.status(500).json(err)
 			})
@@ -83,28 +115,51 @@ router.put(`/${name}`, (req, res) => {
 	}
 
 	// Check for valid name and points
-	if (!req.body.name || !req.body.name.length > 120 || req.body.points <= 0) {
+	if (!req.body.name || !req.body.name.length > 120 || parseInt(req.body.points) <= 0) {
 		return res.status(400).send('Request contains invalid data.')
 	}
 
-	RewardModel.findOneAndUpdate({
-		_id: req.query.id
-	}, {
-		name: req.body.name,
-		points: req.body.points,
-		alert: req.body.alert,
-		updatedAt: new Date()
-	}, {
-		new: true
-	}).then(doc => {
-		if (!doc || doc.length === 0) {
-			return res.status(500).send(doc)
-		}
+	function update(data) {
+		RewardModel.findOneAndUpdate({
+			_id: req.query.id
+		}, {
+			...data,
+			name: req.body.name,
+			points: req.body.points,
+			alert: req.body.alert,
+			updatedAt: new Date()
+		}, {
+			new: true
+		}).then(doc => {
+			if (!doc || doc.length === 0) {
+				return res.status(500).send(doc)
+			}
 
-		res.json(doc)
-	}).catch(err => {
-		res.status(500).json(err)
-	})
+			res.json(doc)
+		}).catch(err => {
+			res.status(500).json(err)
+		})
+	}
+
+	if (req.files) {
+		RewardModel.cUpdateFiles(req.query.id, req.files).then(files => {
+			let data = {}
+
+			if (files[0]) {
+				data.image = files[0]
+			}
+
+			if (files[1]) {
+				data.sound = files[1]
+			}
+
+			update(data)
+		}).catch(err => {
+			res.status(500).json(err)
+		})
+	} else {
+		update()
+	}
 })
 
 // DELETE
