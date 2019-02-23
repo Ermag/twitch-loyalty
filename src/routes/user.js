@@ -42,8 +42,11 @@ const findOrCreate = (channel, req, res) => {
 				res.status(500).json(err)
 			})
 		} else {
-			// Update if time differs from our DB and Twitch
-			if (doc.updatedAt.getTime() !== userData.updatedAt.getTime()) {
+			// Update if time differs from our DB and Twitch or follow is changed
+			if (
+				doc.updatedAt.getTime() !== userData.updatedAt.getTime() ||
+				doc.isFollowing !== userData.isFollowing
+			) {
 				UserModel.findOneAndUpdate({
 					_id: doc._id
 				}, userData, {

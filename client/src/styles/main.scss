@@ -11,6 +11,10 @@ html, body, .alt-wrapper {
 	font-family: 'Agency FB Bold', 'Trebuchet MS', sans-serif;
 }
 
+* {
+	user-select: none;
+}
+
 #app {
 	background: transparent !important;
 }

@@ -288,6 +288,7 @@
 						}).then(res => {
 							this.rewards.data.unshift(res.data)
 							this.setMessage('success', 'You have successfuly added a new reward.')
+							window.scrollTo(0, 0)
 						}).catch(() => {
 							this.setMessage('error', 'Something went wrong :( Please, try again later.')
 						}).then(() => {

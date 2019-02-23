@@ -1,4 +1,5 @@
 const express = require('express')
+const fileUpload = require('express-fileupload')
 const jwt = require('express-jwt')
 const https = require('https')
 const cors = require('cors')
@@ -27,6 +28,11 @@ mongooseInit().then(() => {
 
 	// Directly serve the static content in the public folder
 	app.use(express.static('public'))
+
+	// Set file limits
+	app.use(fileUpload({
+		limits: { fileSize: 1.5 * 1024 * 1024 }
+	}))
 
 	// Parse JSON from requests automatically
 	app.use(bodyParser.json())

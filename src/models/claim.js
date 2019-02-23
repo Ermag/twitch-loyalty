@@ -53,13 +53,23 @@ ClaimSchema.statics.addClaim = function(channelId, message, reward, user) {
 				return
 			}
 
+			let exp = reward.points < 0 ? 0 : reward.points
+			let isLevelUp = false
+			let expNextLevel = Math.round(500 * Math.pow(user.level + 1, 1.45))
+
+			// Check for level up
+			if (user.experience + exp >= expNextLevel) {
+				isLevelUp = true
+			}
+
 			UserModel.updateOne({
 				_id: user._id
 			}, {
 				$inc: {
 					points: reward.points < 0 ? reward.points *-1 : 0,
 					currentPoints: reward.points *-1,
-					experience: reward.points < 0 ? 0 : reward.points,
+					experience: exp,
+					level: isLevelUp ? 1 : 0,
 					claimedCount: 1
 				},
 				updatedAt: new Date()

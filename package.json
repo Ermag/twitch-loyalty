@@ -5,14 +5,16 @@
 	"scripts": {
 		"start": "node src/index.js",
 		"start-dev": "nodemon src/index.js",
-		"count": "cloc --exclude-dir=node_modules ."
+		"count": "cloc --exclude-dir=node_modules --exclude-list-file=.clocignore ."
 	},
 	"dependencies": {
 		"axios": "^0.18.0",
 		"body-parser": "^1.18.3",
 		"cors": "^2.8.5",
 		"express": "^4.16.4",
+		"express-fileupload": "^1.1.1-alpha.3",
 		"express-jwt": "^5.3.1",
+		"jwt-decode": "^2.2.0",
 		"mongoose": "^5.4.14",
 		"morgan": "^1.9.1",
 		"node-cron": "^2.0.3"

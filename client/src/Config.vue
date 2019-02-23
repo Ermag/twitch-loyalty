@@ -60,7 +60,7 @@
 
 						<v-tab-item v-for="tab in tabs" :key="tab">
 							<Rewards v-if="tab === 'Rewards'" :channel="channel" :changeTab="changeTab" :POINTS_NAME="POINTS_NAME" :POINTS_IMG="POINTS_IMG" />
-							<Options v-if="tab === 'Options'" :channel="channel" />
+							<Options v-if="tab === 'Options'" :channel="channel" :POINTS_NAME="POINTS_NAME" :POINTS_IMG="POINTS_IMG" />
 						</v-tab-item>
 					</v-tabs>
 				</v-card>
@@ -81,6 +81,7 @@
 <script>
 	import { APP_CONFIG } from './utils/constants'
 	import Authentication from './utils/twitch'
+	import { EventBus } from './utils/event-bus'
 	import Points from './components/Points'
 	import Options from './components/Options'
 	import Rewards from './components/Rewards'
@@ -124,19 +125,27 @@
 					}
 				})
 			}
+
+			EventBus.$on('channelChange', channel => {
+				this.setChannel(channel)
+				this.POINTS_IMG = this.POINTS_IMG + '?time=' + Date.now()
+			})
 		},
 		methods: {
+			setChannel (data) {
+				this.channel = data
+
+				if (this.channel.pointsName) {
+					this.POINTS_NAME = this.channel.pointsName
+				}
+
+				if (this.channel.pointsImg) {
+					this.POINTS_IMG = this.channel.pointsImg
+				}
+			},
 			fetchChannel () {
 				this.axios.get(`${process.env.VUE_APP_API}channel?tid=${this.Auth.getChannelId()}`).then(res => {
-					this.channel = res.data
-
-					if (this.channel.pointsName) {
-						this.POINTS_NAME = this.channel.pointsName
-					}
-
-					if (this.channel.pointsImg) {
-						this.POINTS_IMG = this.channel.pointsImg
-					}
+					this.setChannel(res.data)
 				}).catch(() => {
 					this.hasError = true
 				}).then(() => {
