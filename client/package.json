@@ -14,6 +14,7 @@
 		"vue": "^2.6.7",
 		"vue-axios": "^2.1.4",
 		"vue-moment": "^4.0.0",
+		"vuebar": "0.0.20",
 		"vuetify": "^1.5.2"
 	},
 	"devDependencies": {

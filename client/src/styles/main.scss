@@ -30,6 +30,12 @@ html, body, .alt-wrapper {
 	margin-top: 100px;
 }
 
+.v-tooltip__content {
+	font-family: 'Agency FB Bold', 'Trebuchet MS', sans-serif;
+	font-size: 15px;
+	padding: 3px 5px;
+}
+
 h1, h2, h3, h4, h5, h6 {
 	font-weight: normal !important;
 	line-height: normal !important;
@@ -53,4 +59,42 @@ h1, h2, h3, h4, h5, h6 {
 .fade-enter,
 .fade-leave-to {
 	opacity: 0;
+}
+
+
+.vb > .vb-dragger {
+    z-index: 5;
+    width: 10px;
+    right: 0;
+}
+
+.vb > .vb-dragger > .vb-dragger-styler {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transform: rotate3d(0,0,0,0);
+    transform: rotate3d(0,0,0,0);
+    -webkit-transition:
+        background-color 100ms ease-out,
+        margin 100ms ease-out,
+        height 100ms ease-out;
+    transition:
+        background-color 100ms ease-out,
+        margin 100ms ease-out,
+        height 100ms ease-out;
+    background-color: rgba(230, 199, 118, .7);
+    margin: 5px 3px 5px 0;
+    height: 100%;
+    display: block;
+}
+
+.vb.vb-scrolling-phantom > .vb-dragger > .vb-dragger-styler {
+    background-color: rgba(230, 199, 118, .8);
+}
+
+.vb > .vb-dragger:hover > .vb-dragger-styler {
+    background-color: rgba(230, 199, 118, 1);
+}
+
+.vb.vb-dragging > .vb-dragger > .vb-dragger-styler {
+    background-color: rgba(230, 199, 118, 1);
 }

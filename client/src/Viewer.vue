@@ -26,7 +26,29 @@
 						</div>
 						<div v-else class="alt-content">
 							<Info :user="user" :POINTS_NAME="POINTS_NAME" :POINTS_IMG="POINTS_IMG" />
-							<button @click="test">Test</button>
+
+							<div class="alt-tabs-wrapper">
+								<ul class="alt-tabs">
+									<li class="pointer" v-for="ltab in tabs" :key="ltab" :class="[ltab.toLowerCase(), {  active: tab === ltab }]" @click="changeTab(ltab)" >
+										<v-tooltip top>
+											<div slot="activator"></div>
+											<span>{{ ltab }}</span>
+										</v-tooltip>
+									</li>
+									<li class="inactive"></li>
+								</ul>
+
+								<div class="alt-tab-content" v-bar>
+									<div>
+										<transition name="fade" mode="out-in">
+											<Profile v-if="tab === 'Profile'" :user="user" :POINTS_NAME="POINTS_NAME" :POINTS_IMG="POINTS_IMG" />
+											<Shop v-if="tab === 'Rewards'" :user="user" :POINTS_NAME="POINTS_NAME" :POINTS_IMG="POINTS_IMG" />
+											<Battle v-if="tab === 'Battle'" :user="user" :POINTS_NAME="POINTS_NAME" :POINTS_IMG="POINTS_IMG" />
+											<Leaderboard v-if="tab === 'Leaderboard'" :user="user" :POINTS_NAME="POINTS_NAME" :POINTS_IMG="POINTS_IMG" />
+										</transition>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</transition>
@@ -106,8 +128,75 @@
 			pointer-events: none;
 		}
 		.alt-content {
+			position: relative;
+				z-index: 9999;
 			width: 100%;
 			height: 100%;
+
+			.alt-tabs-wrapper {
+				height: calc(100% - 95px);
+				margin-top: 15px;
+				padding: 2px;
+				overflow: hidden;
+				background: url('./assets/tabs-wrapper-bg.jpg') no-repeat center center;
+			}
+
+			.alt-tab-content {
+				height: calc(100% - 40px);
+				padding-top: 10px;
+				overflow: auto;
+			}
+
+			.alt-tabs {
+				height: 40px;
+				padding: 0;
+				margin: 0;
+				list-style-type: none;
+				li {
+					width: 54px;
+					height: 100%;
+					float: left;
+					margin-right: 2px;
+					background: $secondary url('./assets/tabs-icons.png') no-repeat 0 0;
+					border-top-left-radius: 2px;
+					border-top-right-radius: 2px;
+					&.profile {
+						background-position: 0 0;
+						&.active {
+							background-position: -0 -40px;
+						}
+					}
+					&.rewards {
+						background-position: -54px 0;
+						&.active {
+							background-position: -54px -40px;
+						}
+					}
+					&.battle {
+						background-position: -108px 0;
+						&.active {
+							background-position: -108px -40px;
+						}
+					}
+					&.leaderboard {
+						background-position: -162px 0;
+						&.active {
+							background-position: -162px -40px;
+						}
+					}
+					&.active {
+						background-color: transparent;
+					}
+					&.inactive {
+						width: 58px;
+						margin-right: 0;
+						background-position: -9999px;
+					}
+					& div {
+						height: 100%;
+					}
+				}
+			}
 		}
 		.alt-loading {
 			position: absolute;
@@ -123,11 +212,19 @@
 	import { APP_CONFIG } from './utils/constants'
 	import Authentication from './utils/twitch'
 	import Info from './components/Info'
+	import Profile from './components/Profile'
+	import Shop from './components/Shop'
+	import Battle from './components/Battle'
+	import Leaderboard from './components/Leaderboard'
 
 	export default {
 		name: 'Viewer',
 		components: {
-			Info
+			Info,
+			Profile,
+			Shop,
+			Battle,
+			Leaderboard,
 		},
 		data () {
 			return {
@@ -140,9 +237,11 @@
 				hasMessage: false,
 				message: '',
 				hasToggle: true,
-				isFullScreen: false, // TODO: set false
+				isFullScreen: true, // TODO: set false
 				user: null,
-				pontsOnTick: 0
+				pontsOnTick: 0,
+				tabs: ['Profile', 'Rewards', 'Battle', 'Leaderboard'],
+				tab: 'Profile'
 			}
 		},
 		methods: {
@@ -160,6 +259,9 @@
 						// this.isVisible = false
 					}
 				}, 3000)
+			},
+			changeTab (tab) {
+				this.tab = tab
 			},
 			test () {
 				this.axios.get(`${process.env.VUE_APP_API}reward/ref?name=test`).then(res => {

@@ -55,7 +55,7 @@ ClaimSchema.statics.addClaim = function(channelId, message, reward, user) {
 
 			let exp = reward.points < 0 ? 0 : reward.points
 			let isLevelUp = false
-			let expNextLevel = Math.round(500 * Math.pow(user.level + 1, 1.45))
+			let expNextLevel = Math.round(175 * Math.pow(user.level + 1, 1.5))
 
 			// Check for level up
 			if (user.experience + exp >= expNextLevel) {
