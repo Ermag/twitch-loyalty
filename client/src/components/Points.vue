@@ -1,22 +1,32 @@
 <template>
-	<v-tooltip top>
-		<template #activator="data">
-			<span v-on="data.on" style="color: #e5c572"><img :src="baseURL + img" :alt="name" :width="size" /> {{ value >= 0 ? formatQuantity(Math.abs(value)) : '' }}</span>
-		</template>
+	<v-tooltip :top="pos === 'top'" :bottom="pos === 'bottom'" style="font-size: 0; vertical-align: middle;">
+		<span slot="activator" class="point-wrap">
+			<img :src="baseURL + img" :alt="name" :width="size" /> <span class="point-num">{{ value >= 0 ? formatQuantity(Math.abs(value)) : '' }}</span>
+		</span>
 		<span>{{ this.name }}</span>
     </v-tooltip>
 </template>
 
 <style lang="scss" scoped>
-	span {
+	@import '../styles/_vars';
+
+	.point-wrap {
+		color: $primary;
+		font-size: 0;
+		line-height: normal;
+	}
+	.point-num {
 		position: relative;
 		font-weight: bold;
 		font-size: 15px;
+		vertical-align: middle;
 	}
 	img {
 		position: relative;
-			top: -1px;
-			left: 1px;
+		vertical-align: middle;
+		margin-right: 3px;
+	}
+	span {
 		vertical-align: middle;
 	}
 </style>
@@ -34,6 +44,10 @@
 			size: {
 				type: Number,
 				default: 16
+			},
+			pos: {
+				type: String,
+				default: 'top'
 			},
 			name: String,
 			img: String

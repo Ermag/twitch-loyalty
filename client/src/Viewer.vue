@@ -1,32 +1,36 @@
 <template>
 	<v-app dark>
-		<div class="alt-wrapper" :class="{ offset: hasToggle, fullscreen: isFullScreen }">
-			<div class="alt-toggle pointer" v-if="hasToggle" @click="isPanelActive = !isPanelActive">
-				<div></div>
-			</div>
-
-			<transition name="fade" mode="out-in">
-				<div class="alt-panel" v-if="isPanelActive">
-					<div v-if="isLoading" class="text-xs-center alt-loading">
-						<v-progress-circular :size="100" :width="7" color="primary" indeterminate></v-progress-circular>
-					</div>
-					<div v-else-if="hasMessage" class="my-2 mx-3 text-xs-center">
-						<v-alert :value="true" color="#513c80">
-							<h3 v-html="message"></h3>
-						</v-alert>
-						<img src="./assets/mascot.png" class="mt-5" style="max-width: 100%;" />
-					</div>
-					<div v-else-if="hasError" class="my-2 mx-3 text-xs-center">
-						<v-alert :value="true" color="error">
-							<h3>Something went wrong :(<br>Please, try again later!</h3>
-						</v-alert>
-					</div>
-					<div v-else class="alt-content">
-						<Info :user="user" />
-						<button @click="test">Test</button>
+		<div class="app-visible" :class="{ hide: !isVisible }" @mouseleave="mouseLeave" @mousemove="mouseMove">
+			<div class="alt-wrapper" :class="{ offset: hasToggle, fullscreen: isFullScreen }">
+				<div class="alt-toggle pointer" v-if="hasToggle" @click="isPanelActive = !isPanelActive">
+					<div>
+						<img src="./assets/icon.png" />
 					</div>
 				</div>
-			</transition>
+
+				<transition name="fade" mode="out-in">
+					<div class="alt-panel" v-if="isPanelActive">
+						<div v-if="isLoading" class="text-xs-center alt-loading">
+							<v-progress-circular :size="100" :width="7" color="primary" indeterminate></v-progress-circular>
+						</div>
+						<div v-else-if="hasMessage" class="my-2 mx-3 text-xs-center">
+							<v-alert :value="true" color="#513c80">
+								<h3 v-html="message"></h3>
+							</v-alert>
+							<img src="./assets/mascot.png" class="mt-5" style="max-width: 100%;" />
+						</div>
+						<div v-else-if="hasError" class="my-2 mx-3 text-xs-center">
+							<v-alert :value="true" color="error">
+								<h3>Something went wrong :(<br>Please, try again later!</h3>
+							</v-alert>
+						</div>
+						<div v-else class="alt-content">
+							<Info :user="user" :POINTS_NAME="POINTS_NAME" :POINTS_IMG="POINTS_IMG" />
+							<button @click="test">Test</button>
+						</div>
+					</div>
+				</transition>
+			</div>
 		</div>
 	</v-app>
 </template>
@@ -35,14 +39,30 @@
 	@import './styles/_vars';
 	@import './styles/main';
 
+	.app-visible {
+		width: 100%;
+		height: 100%;
+		opacity: 1;
+		transition: .5s opacity;
+
+		&.hide {
+			opacity: 0;
+		}
+	}
+
 	.alt-toggle {
 		position: relative;
 		float: left;
-		width: 35px;
-		height: 35px;
-		margin-right: 16px;
+		width: 42px;
+		height: 42px;
+		margin: 0 16px 16px 0;
 		border-radius: 2px;
 		box-shadow: 3px 3px 0 0 rgba(0, 0, 0, .45);
+		text-align: center;
+		img {
+			margin-top: 4px;
+			pointer-events: none;
+		}
 		> div {
 			position: absolute;
 				top: 0;
@@ -112,17 +132,35 @@
 		data () {
 			return {
 				...APP_CONFIG,
+				isVisible: true,
+				visibleTimeout: null,
 				isPanelActive: true,
 				isLoading: true,
 				hasError: false,
 				hasMessage: false,
 				message: '',
 				hasToggle: true,
-				isFullScreen: true,
-				user: null
+				isFullScreen: false, // TODO: set false
+				user: null,
+				pontsOnTick: 0
 			}
 		},
 		methods: {
+			mouseMove (event) {
+				clearTimeout(this.visibleTimeout)
+
+				if (!this.isVisible) {
+					this.isVisible = true
+				}
+			},
+			mouseLeave () {
+				clearTimeout(this.visibleTimeout)
+				this.visibleTimeout = setTimeout(() => {
+					if (this.isVisible) {
+						// this.isVisible = false
+					}
+				}, 3000)
+			},
 			test () {
 				this.axios.get(`${process.env.VUE_APP_API}reward/ref?name=test`).then(res => {
 					console.log(res.data)
@@ -152,11 +190,24 @@
 					if (this.user.channel.pointsImg) {
 						this.POINTS_IMG = this.user.channel.pointsImg
 					}
+
+					this.startCounter()
 				}).catch(() => {
 					this.hasError = true
 				}).then(() => {
 					this.isLoading = false
 				})
+			},
+			startCounter () {
+				this.pontsOnTick = this.user.isFollowing ? APP_CONFIG.BASE_POINTS * APP_CONFIG.FOLLOWER_MULTIPLIER : APP_CONFIG.BASE_POINTS
+
+				setInterval(() => {
+					if (this.user) {
+						this.user.watchTime += 1
+						this.user.currentPoints += this.pontsOnTick
+						this.user.points += this.pontsOnTick
+					}
+				}, 60000)
 			}
 		},
 		created () {
