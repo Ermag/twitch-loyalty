@@ -69,7 +69,70 @@ const findOrCreate = (channel, req, res) => {
     })
 }
 
-// GET TODO: Return all users with limit, offest and sorting
+// GET all
+router.get(`/${name}s`, (req, res) => {
+	if (!req.query.cid) {
+		return res.status(400).send('Missing user cid.')
+	}
+
+	let sort = '-points'
+
+	if (req.query.sort == 1) {
+		sort = '-experience'
+	} else if (req.query.sort == 2) {
+		sort = '-claimedCount'
+	}
+
+    UserModel.find({
+        channel: req.query.cid
+    }).sort(sort).limit(1000).then(docs => {
+		if (!docs && docs.length) {
+			return res.status(404).send('No users found.')
+		} else {
+			let pos = 0;
+			let users = []
+
+			for (let i = 0; i < docs.length; i++) {
+				if (i > 99) {
+					break;
+				}
+
+				if (docs[i]._id == req.query.uid) {
+					pos = i + 1;
+				}
+
+				users.push(docs[i])
+			}
+
+			res.json({
+				pos,
+				users
+			})
+		}
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+})
+
+// GET
+router.get(`/${name}`, (req, res) => {
+	if (!req.query.id) {
+		return res.status(400).send('Missing user id.')
+	}
+
+    UserModel.findOne({
+        _id: req.query.id
+    }).populate('channel').then(doc => {
+		if (!doc) {
+			return res.status(404).send('User not found.')
+		} else {
+			res.json(doc)
+		}
+    }).catch(err => {
+        res.status(500).json(err)
+    })
+})
+
 
 // POST
 router.post(`/${name}`, (req, res) => {

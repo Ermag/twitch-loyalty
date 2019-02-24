@@ -13,6 +13,10 @@ let ChannelSchema = new mongoose.Schema({
 	name: String,
 	pointsName: String,
 	pointsImg: String,
+	isLive: {
+		type: Boolean,
+		default: false
+	},
 	createdAt: {
 		type: Date,
 		default: Date.now

@@ -103,7 +103,7 @@
 					span {
 						display: inline-block;
 						height: 100%;
-						padding: 0 5px;
+						padding: 0 6px;
 						font-weight: bold;
 						font-family: 'Trebuchet MS', sans-serif;
 						background: rgba(23, 21, 26, .5);

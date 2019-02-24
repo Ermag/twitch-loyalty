@@ -142,6 +142,7 @@
 			}
 
 			.alt-tab-content {
+				position: relative;
 				height: calc(100% - 40px);
 				padding-top: 10px;
 				overflow: auto;
@@ -224,7 +225,7 @@
 			Profile,
 			Shop,
 			Battle,
-			Leaderboard,
+			Leaderboard
 		},
 		data () {
 			return {
@@ -239,7 +240,7 @@
 				hasToggle: true,
 				isFullScreen: true, // TODO: set false
 				user: null,
-				pontsOnTick: 0,
+				counterInterval: null,
 				tabs: ['Profile', 'Rewards', 'Battle', 'Leaderboard'],
 				tab: 'Profile'
 			}
@@ -263,24 +264,6 @@
 			changeTab (tab) {
 				this.tab = tab
 			},
-			test () {
-				this.axios.get(`${process.env.VUE_APP_API}reward/ref?name=test`).then(res => {
-					console.log(res.data)
-					this.axios.post(`${process.env.VUE_APP_API}claim`, {
-						reward: res.data._id,
-						user: this.user._id,
-						channel: this.user.channel._id
-					}).then(res => {
-						console.log(res.data)
-					}).catch((err) => {
-						console.log(err)
-					}).then(() => {
-						this.isLoading = false
-					})
-				}).catch(() => {
-					this.hasError = true
-				})
-			},
 			fetchUser (data) {
 				this.axios.post(`${process.env.VUE_APP_API}user`, data).then(res => {
 					this.user = res.data
@@ -301,14 +284,18 @@
 				})
 			},
 			startCounter () {
-				this.pontsOnTick = this.user.isFollowing ? APP_CONFIG.BASE_POINTS * APP_CONFIG.FOLLOWER_MULTIPLIER : APP_CONFIG.BASE_POINTS
+				this.counterInterval = setInterval(() => {
+					this.axios.get(`${process.env.VUE_APP_API}user?id=${this.user._id}`).then(res => {
+						this.user = res.data
 
-				setInterval(() => {
-					if (this.user) {
-						this.user.watchTime += 1
-						this.user.currentPoints += this.pontsOnTick
-						this.user.points += this.pontsOnTick
-					}
+						if (this.user.channel.pointsName) {
+							this.POINTS_NAME = this.user.channel.pointsName
+						}
+
+						if (this.user.channel.pointsImg) {
+							this.POINTS_IMG = this.user.channel.pointsImg
+						}
+					})
 				}, 60000)
 			}
 		},
@@ -382,6 +369,9 @@
 				this.hasError = true
 				this.isLoading = false
 			}
+		},
+		beforeDestroy () {
+			clearInterval(this.counterInterval)
 		}
 	}
 </script>

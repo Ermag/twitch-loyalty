@@ -141,6 +141,8 @@
 										this.setMessage('success', 'You have successfuly changed your currency.')
 									}).catch(() => {
 										this.setMessage('error', 'Something went wrong :( Please, try again later.')
+									}).then(() => {
+										window.scrollTo(0, 0)
 									})
 								}
 							}
@@ -156,6 +158,8 @@
 							this.setMessage('success', 'You have successfuly changed your currency.')
 						}).catch(() => {
 							this.setMessage('error', 'Something went wrong :( Please, try again later.')
+						}).then(() => {
+							window.scrollTo(0, 0)
 						})
 					}
 				}
