@@ -49,6 +49,11 @@
 					<v-btn color="primary" @click="findOpponent" outline>Play Again</v-btn>
 				</div>
 			</transition>
+
+			<v-snackbar v-model="maximumBattles" color="info" :timeout="4000" top absolute>
+				You can play 10 battles per day.
+				<v-btn @click="maximumBattles = false" dark flat>Close</v-btn>
+			</v-snackbar>
 		</div>
 	</transition>
 </template>
@@ -130,7 +135,8 @@
 				moves: [1, 2, 3],
 				amount: null,
 				move: null,
-				result: null
+				result: null,
+				maximumBattles: false
 			}
 		},
 		methods: {
@@ -143,7 +149,7 @@
 				this.you.avatar = this.user.avatar
 
 				this.axios.get(`${process.env.VUE_APP_API}userRand?cid=${this.user.channel._id}`).then(res => {
-					// If you found yourself choose drogon
+					// If you found yourself choose the Overseer
 					if (res.data._id === this.user._id) {
 						this.opponent.name = 'Overseer'
 						this.opponent.avatar = require('../assets/overseer.jpg')
@@ -159,7 +165,6 @@
 				})
 			},
 			battle (move) {
-				console.log(this.amount, move)
 				this.axios.post(`${process.env.VUE_APP_API}battle`, {
 					user: this.user._id,
 					opponent: this.opponent.id,
@@ -181,8 +186,15 @@
 						points: points,
 						experience: this.result === 0 ? points : 0
 					})
-				}).catch(() => {
-					this.hasError = true
+				}).catch(err => {
+					if (err.response.status === 422) {
+						this.maximumBattles = true
+						this.amount = null
+						this.move = null
+						this.result = null
+					} else {
+						this.hasError = true
+					}
 				}).then(() => {
 					this.isLoading = false
 				})

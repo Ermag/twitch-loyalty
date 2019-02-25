@@ -43,60 +43,78 @@ router.post(`/${name}`, (req, res) => {
 				result = 1; // Win
 			}
 
-			// Don't do anything on draw
-			if (result === 2) {
-				return res.json({ result, opponentMove });
-			}
+			// Count battles
+			let now = new Date();
+			let startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-			let newBattle = new BattleModel({
-				channel: doc.channel,
-				user: doc._id,
-				opponent: req.body.opponent,
-				points: points,
-				userMove: userMove,
-				opponentMove: opponentMove,
-				result: result,
-			});
-
-			// Save the battle
-			newBattle.save().then(battle => {
-				if (!battle || battle.length === 0) {
-					return res.status(500).json(err);
+			BattleModel.find({
+				createdAt: { $gte: startOfToday }
+			}).exec(function (err, count) {
+				if (err) {
+					return res.status(404).send(err)
 				}
 
-				let exp = result === 0 ? points : 0
-				let isLevelUp = false
-				let expNextLevel = Math.round(175 * Math.pow(doc.level + 1, 1.5))
-
-				// Check for level up
-				if (doc.experience + exp >= expNextLevel) {
-					isLevelUp = true
+				if (count.length > 10) {
+					return res.status(422).send('Maximum allowed battles per day is 10.')
 				}
 
-				// Update the user
-				UserModel.updateOne({
-					_id: doc._id
-				}, {
-					$inc: {
-						points: result === 1 ? points * 2 : 0,
-						currentPoints: result === 1 ? points * 2 : points * -1,
-						experience: exp,
-						level: isLevelUp ? 1 : 0,
-						battlesWon: result === 1 ? 1 : 0
-					},
-					updatedAt: new Date()
-				}, (err) => {
-					 if (err) {
+				// Don't do anything on draw
+				if (result === 2) {
+					return res.json({ result, opponentMove });
+				}
+
+				let newBattle = new BattleModel({
+					channel: doc.channel,
+					user: doc._id,
+					opponent: req.body.opponent,
+					points: points,
+					userMove: userMove,
+					opponentMove: opponentMove,
+					result: result,
+				});
+
+				// Save the battle
+				newBattle.save().then(battle => {
+					if (!battle || battle.length === 0) {
 						return res.status(500).json(err);
-					 }
+					}
 
-					 res.json(battle);
-				})
+					let exp = result === 0 ? points : 0
+					let isLevelUp = false
+					let expNextLevel = Math.round(175 * Math.pow(doc.level + 1, 1.5))
+
+					// Check for level up
+					if (doc.experience + exp >= expNextLevel) {
+						isLevelUp = true
+					}
+
+					// Update the user
+					UserModel.updateOne({
+						_id: doc._id
+					}, {
+						$inc: {
+							points: result === 1 ? points * 2 : 0,
+							currentPoints: result === 1 ? points * 2 : points * -1,
+							experience: exp,
+							level: isLevelUp ? 1 : 0,
+							battlesWon: result === 1 ? 1 : 0
+						},
+						updatedAt: new Date()
+					}, (err) => {
+						 if (err) {
+							return res.status(500).json(err);
+						 }
+
+						 res.json(battle);
+					})
+				}).catch(err => {
+					res.status(500).json(err)
+				});
 			});
 		}
     }).catch(err => {
         res.status(500).json(err)
-    })
+    });
 })
 
 module.exports = router

@@ -293,8 +293,7 @@
 							this.rewards.data[rewardIndex].sound = res.data.sound
 
 							this.setMessage('success', 'You have successfuly edited the reward.')
-						}).catch(err => {
-							console.log(err)
+						}).catch(() => {
 							this.setMessage('error', 'Something went wrong :( Please, try again later.')
 						}).then(() => {
 							this.isRewardDialog = false
@@ -304,8 +303,7 @@
 						this.axios.post(`${process.env.VUE_APP_API}reward`, data).then(res => {
 							this.rewards.data.unshift(res.data)
 							this.setMessage('success', 'You have successfuly added a new reward.')
-						}).catch(err => {
-							console.log(err)
+						}).catch(() => {
 							this.setMessage('error', 'Something went wrong :( Please, try again later.')
 						}).then(() => {
 							this.isRewardDialog = false

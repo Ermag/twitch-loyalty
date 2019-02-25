@@ -242,7 +242,7 @@
 				hasMessage: false,
 				message: '',
 				hasToggle: true,
-				isFullScreen: false, // TODO: set false
+				isFullScreen: true, // TODO: set false
 				user: null,
 				counterInterval: null,
 				tabs: ['Profile', 'Rewards', 'Battle', 'Leaderboard'],
@@ -272,8 +272,6 @@
 			fetchUser (data) {
 				this.axios.post(`${process.env.VUE_APP_API}user`, data).then(res => {
 					this.user = res.data
-
-					console.log(res.data)
 
 					if (this.user.channel.pointsName) {
 						this.POINTS_NAME = this.user.channel.pointsName
@@ -349,8 +347,6 @@
 						this.isLoading = false
 						return
 					}
-
-					console.log(auth)
 
 					if (userId) {
 						const twitchHeaders = {

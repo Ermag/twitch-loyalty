@@ -81,6 +81,8 @@ router.get(`/${name}s`, (req, res) => {
 		sort = '-experience'
 	} else if (req.query.sort == 2) {
 		sort = '-claimedCount'
+	}  else if (req.query.sort == 3) {
+		sort = '-battlesWon'
 	}
 
     UserModel.find({
