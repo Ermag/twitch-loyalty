@@ -16,7 +16,7 @@
 					<Points :value="-1" :name="POINTS_NAME" :img="POINTS_IMG" :size="20" />
 					<span class="primary--text ml-1 title" style="vertical-align: middle;">{{ initialPoints }}</span>
 				</div>
-				<v-btn class="title" color="primary" @click="claimInitial" small>Claim</v-btn>
+				<v-btn class="title" color="primary" @click="claimInitial" small outline>Claim</v-btn>
 			</div>
 		</div>
 		<div v-else>
@@ -76,7 +76,8 @@
 		},
 		created () {
 			// Check is the initial reward claimed
-			this.axios.get(`${process.env.VUE_APP_API}claim?cid=${this.user.channel._id}&uid=${this.user._id}&rid=${this.initialRewardId}`).then(res => {
+			console.log(this.$props.user)
+			this.axios.get(`${process.env.VUE_APP_API}claim?cid=${this.$props.user.channel._id}&uid=${this.$props.user._id}&rid=${this.initialRewardId}`).then(res => {
 				if (!res.data.length) {
 					this.hasInitialReward = true
 				} else {

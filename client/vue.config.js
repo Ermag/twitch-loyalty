@@ -1,6 +1,7 @@
 module.exports = {
-	runtimeCompiler: true,
-	pages: {
+    runtimeCompiler: true,
+
+    pages: {
 		viewer: {
 			entry: 'src/viewer.js',
 			template: 'public/index.html', // the source template
@@ -19,5 +20,12 @@ module.exports = {
 			filename: 'live.html',
 			title: 'Live'
 		}
-	}
+	},
+
+    publicPath: '',
+    outputDir: undefined,
+    assetsDir: undefined,
+    productionSourceMap: undefined,
+    parallel: undefined,
+    css: undefined
 }

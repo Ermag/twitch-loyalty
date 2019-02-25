@@ -75,10 +75,10 @@ mongooseInit().then(() => {
 	})
 
 	// Start the server
-	https.createServer({
-		key: fs.readFileSync('./ssl/server.key'),
-		cert: fs.readFileSync('./ssl/server.cert'),
-	}, app).listen(443, () => console.log(`Server has started on 443.`))
+	// https.createServer({
+	// 	key: fs.readFileSync('./ssl/server.key'),
+	// 	cert: fs.readFileSync('./ssl/server.cert'),
+	// }, app).listen(443, () => console.log(`Server has started on 443.`))
 
-	// app.listen(80)
+	app.listen(3000)
 })

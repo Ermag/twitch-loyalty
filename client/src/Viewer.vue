@@ -236,13 +236,13 @@
 				...APP_CONFIG,
 				isVisible: true,
 				visibleTimeout: null,
-				isPanelActive: true,
+				isPanelActive: false,
 				isLoading: true,
 				hasError: false,
 				hasMessage: false,
 				message: '',
 				hasToggle: true,
-				isFullScreen: true, // TODO: set false
+				isFullScreen: false,
 				user: null,
 				counterInterval: null,
 				tabs: ['Profile', 'Rewards', 'Battle', 'Leaderboard'],
@@ -252,6 +252,10 @@
 		},
 		methods: {
 			mouseMove (event) {
+				if (!this.hasToggle) {
+					return
+				}
+
 				clearTimeout(this.visibleTimeout)
 
 				if (!this.isVisible) {
@@ -259,10 +263,14 @@
 				}
 			},
 			mouseLeave () {
+				if (!this.hasToggle) {
+					return
+				}
+
 				clearTimeout(this.visibleTimeout)
 				this.visibleTimeout = setTimeout(() => {
 					if (this.isVisible) {
-						// this.isVisible = false
+						this.isVisible = false
 					}
 				}, 3000)
 			},
@@ -327,6 +335,9 @@
 			let params = new URLSearchParams(uri)
 
 			this.hasToggle = params.get('anchor') !== 'panel'
+			if (!this.hasToggle) {
+				this.isPanelActive = true
+			}
 
 			this.twitch = window.Twitch ? window.Twitch.ext : null
 
