@@ -1,7 +1,7 @@
 <template>
 	<v-tooltip :top="pos === 'top'" :bottom="pos === 'bottom'" style="font-size: 0; vertical-align: middle;">
 		<span slot="activator" class="point-wrap">
-			<img :src="baseURL + img" :alt="name" :width="size" /> <span class="point-num" :class="[css]">{{ value >= 0 ? formatQuantity(Math.abs(value)) : '' }}</span>
+			<img :src="baseURL + img" :alt="name" :width="size" /> <span class="point-num" :class="[css]">{{ value >= 0 ? formatQuantity(Math.abs(displayNumber)) : '' }}</span>
 		</span>
 		<span>{{ this.name }}</span>
     </v-tooltip>
@@ -58,11 +58,37 @@
 		},
 		data () {
 			return {
+				displayNumber: 0,
+				interval: false,
 				baseURL: process.env.VUE_APP_API
 			}
 		},
 		methods: {
 			formatQuantity: helpers.formatQuantity
+		},
+		mounted () {
+			console.log(this.displayNumber)
+			this.displayNumber = this.value ? this.value : 0
+		},
+		watch: {
+			value () {
+				clearInterval(this.interval)
+				console.log(this.value, this.displayNumber)
+
+				if (this.value === this.displayNumber) {
+					return
+				}
+
+				this.interval = setInterval(() => {
+					if (this.displayNumber !== this.value) {
+						let change = (this.value - this.displayNumber) / 10
+
+						change = change >= 0 ? Math.ceil(change) : Math.floor(change)
+
+						this.displayNumber = this.displayNumber + change
+					}
+				}, 20)
+			}
 		}
-	}
+}
 </script>

@@ -76,7 +76,6 @@
 		},
 		created () {
 			// Check is the initial reward claimed
-			console.log(this.$props.user)
 			this.axios.get(`${process.env.VUE_APP_API}claim?cid=${this.$props.user.channel._id}&uid=${this.$props.user._id}&rid=${this.initialRewardId}`).then(res => {
 				if (!res.data.length) {
 					this.hasInitialReward = true

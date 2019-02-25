@@ -24,6 +24,12 @@ html, body, .alt-wrapper {
 	font-weight: normal !important;
 }
 
+.point-num.large-points {
+	font-style: normal;
+	margin-left: 5px;
+	font-size: 24px;
+}
+
 .alt-wrapper.offset {
 	height: calc(100% - 80px);
 	margin-top: 40px;

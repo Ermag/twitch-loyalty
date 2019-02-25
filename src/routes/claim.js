@@ -87,7 +87,9 @@ router.post(`/${name}`, (req, res) => {
 
 		if (reward.claimOnce) {
 			ClaimModel.findOne({
-				reward: reward._id
+				reward: reward._id,
+				channel: req.body.channel,
+				user: req.body.user
 			}).then(doc => {
 				if (!doc) {
 					ClaimModel.addClaim(req.body.channel, req.body.msg, reward, user).then(doc => {

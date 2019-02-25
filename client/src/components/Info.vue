@@ -12,7 +12,7 @@
 
 			<div class="metrics" slot="activator">
 				<div class="points">
-					<Points :value="-1" :name="POINTS_NAME" :img="POINTS_IMG" :size="24" pos="bottom" /> <i class="primary--text">{{ formatQuantity(user.currentPoints) }}</i>
+					<Points :value="user.currentPoints" :name="POINTS_NAME" :img="POINTS_IMG" :size="24" pos="bottom" :css="'large-points'" />
 				</div>
 				<v-tooltip bottom>
 					<div class="watch-time" slot="activator">{{ Math.floor(user.watchTime / 60) + '.' + user.watchTime % 60 }}h</div>
@@ -75,6 +75,7 @@
 					background: linear-gradient(130deg, #eed773, #ef9b72, #efd973);
 					background-size: 600% 600%;
 					animation: Exp 30s ease-in-out infinite;
+					transition: width .5s ease-in-out;
 				}
 				.lvl-divider {
 					position: absolute;
@@ -141,12 +142,6 @@
 				display: flex;
 				flex-grow: 1;
 				line-height: 30px;
-
-				i {
-					font-style: normal;
-					margin-left: 5px;
-					font-size: 24px;
-				}
 			}
 
 			.watch-time {

@@ -243,7 +243,7 @@
 				message: '',
 				hasToggle: true,
 				isFullScreen: false,
-				user: null,
+				user: {},
 				counterInterval: null,
 				tabs: ['Profile', 'Rewards', 'Battle', 'Leaderboard'],
 				tab: 'Profile',
@@ -279,7 +279,7 @@
 			},
 			fetchUser (data) {
 				this.axios.post(`${process.env.VUE_APP_API}user`, data).then(res => {
-					this.user = res.data
+					this.user = Object.assign(this.user, res.data)
 
 					if (this.user.channel.pointsName) {
 						this.POINTS_NAME = this.user.channel.pointsName
@@ -299,11 +299,12 @@
 			startCounter () {
 				this.counterInterval = setInterval(() => {
 					this.axios.get(`${process.env.VUE_APP_API}user?id=${this.user._id}`).then(res => {
-						if (!res.data) {
-							return
-						}
-
-						this.user = res.data
+						this.$set(this.user, 'displayName', res.data.displayName)
+						this.$set(this.user, 'avatar', res.data.avatar)
+						this.$set(this.user, 'currentPoints', res.data.currentPoints)
+						this.$set(this.user, 'level	', res.data.level)
+						this.$set(this.user, 'experience', res.data.experience)
+						this.$set(this.user, 'watchTime	', res.data.watchTime)
 
 						if (this.user.channel.pointsName) {
 							this.POINTS_NAME = this.user.channel.pointsName
