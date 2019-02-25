@@ -38,7 +38,7 @@ router.get(`/${name}`, (req, res) => {
 		let claims = []
 
 		docs.forEach(doc => {
-			if (!doc.reward.ref || doc.reward.ref === 'test') {
+			if (!doc.reward.ref || doc.reward.ref === 'test' || req.query.rid) {
 				claims.push(doc)
 			}
 		})

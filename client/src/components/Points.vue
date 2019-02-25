@@ -1,7 +1,7 @@
 <template>
 	<v-tooltip :top="pos === 'top'" :bottom="pos === 'bottom'" style="font-size: 0; vertical-align: middle;">
 		<span slot="activator" class="point-wrap">
-			<img :src="baseURL + img" :alt="name" :width="size" /> <span class="point-num">{{ value >= 0 ? formatQuantity(Math.abs(value)) : '' }}</span>
+			<img :src="baseURL + img" :alt="name" :width="size" /> <span class="point-num" :class="[css]">{{ value >= 0 ? formatQuantity(Math.abs(value)) : '' }}</span>
 		</span>
 		<span>{{ this.name }}</span>
     </v-tooltip>
@@ -48,6 +48,10 @@
 			pos: {
 				type: String,
 				default: 'top'
+			},
+			css: {
+				type: String,
+				default: ''
 			},
 			name: String,
 			img: String

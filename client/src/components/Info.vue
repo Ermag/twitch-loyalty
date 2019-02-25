@@ -20,16 +20,16 @@
 				</v-tooltip>
 			</div>
 
-			<div class="level">
-				<v-tooltip bottom>
-					<div class="progress" slot="activator" :style="{ width: expProgress.toFixed(2) + '%' }"></div>
-					<span>Experience: {{ user.experience }}/{{ expNextLevel }}</span>
-				</v-tooltip>
-				<div class="lvl-divider first"></div>
-				<div class="lvl-divider second"></div>
-				<div class="lvl-divider third"></div>
-				<div class="value"><span>{{ user.level }}</span></div>
-			</div>
+			<v-tooltip bottom>
+				<div class="level" slot="activator">
+					<div class="progress"  :style="{ width: expProgress.toFixed(2) + '%' }"></div>
+					<div class="lvl-divider first"></div>
+					<div class="lvl-divider second"></div>
+					<div class="lvl-divider third"></div>
+					<div class="value"><span>{{ user.level }}</span></div>
+				</div>
+				<span>Experience: {{ user.experience }}/{{ expNextLevel }}</span>
+			</v-tooltip>
 		</div>
 	</div>
 </template>
@@ -107,6 +107,8 @@
 						font-weight: bold;
 						font-family: 'Trebuchet MS', sans-serif;
 						background: rgba(23, 21, 26, .5);
+						border-bottom-left-radius: 2px;
+						border-bottom-right-radius: 2px;
 					}
 				}
 			}
@@ -173,11 +175,22 @@
 			}
 		},
 		methods: {
-			formatQuantity: helpers.formatQuantity
+			formatQuantity: helpers.formatQuantity,
+			calcExp () {
+				this.expNextLevel = Math.round(175 * Math.pow(this.user.level + 1, 1.5))
+				this.expProgress = (this.user.experience / this.expNextLevel) * 100
+			}
+		},
+		updated () {
+			this.calcExp()
+
+			if (this.expProgress > 100) {
+				this.user.level += 1
+				this.calcExp()
+			}
 		},
 		created () {
-			this.expNextLevel = Math.round(175 * Math.pow(this.user.level + 1, 1.5))
-			this.expProgress = (300 / this.expNextLevel) * 100
+			this.calcExp()
 		}
 	}
 </script>

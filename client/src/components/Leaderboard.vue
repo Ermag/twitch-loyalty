@@ -161,8 +161,6 @@
 				this.axios.get(`${process.env.VUE_APP_API}users?cid=${this.user.channel._id}&uid=${this.user._id}&sort=${this.sortIndex}`).then(res => {
 					this.users = res.data.users
 					this.position = res.data.pos
-
-					console.log(res.data)
 				}).catch(() => {
 					this.hasError = true
 				}).then(() => {

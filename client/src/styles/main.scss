@@ -20,6 +20,10 @@ html, body, .alt-wrapper {
 	background: transparent !important;
 }
 
+.point-num {
+	font-weight: normal !important;
+}
+
 .alt-wrapper.offset {
 	height: calc(100% - 80px);
 	margin-top: 40px;
@@ -30,8 +34,9 @@ html, body, .alt-wrapper {
 	margin-top: 100px;
 }
 .v-tooltip__content,
-.v-list__tile__title {
-	font-family: 'Agency FB Bold', 'Trebuchet MS', sans-serif;
+.v-list__tile__title,
+.title {
+	font-family: 'Agency FB Bold', 'Trebuchet MS', sans-serif !important;
 }
 
 .v-tooltip__content {

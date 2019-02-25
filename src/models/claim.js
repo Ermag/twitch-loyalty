@@ -46,7 +46,7 @@ ClaimSchema.statics.addClaim = function(channelId, message, reward, user) {
 					claimedCount: 1
 				},
 				updatedAt: new Date()
-			})
+			}, () => { })
 
 			if (!user) {
 				resolve(doc)

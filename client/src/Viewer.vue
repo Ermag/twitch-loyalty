@@ -4,7 +4,10 @@
 			<div class="alt-wrapper" :class="{ offset: hasToggle, fullscreen: isFullScreen }">
 				<div class="alt-toggle pointer" v-if="hasToggle" @click="isPanelActive = !isPanelActive">
 					<div>
-						<img src="./assets/icon.png" />
+						<transition name="fade" mode="out-in">
+							<img v-if="!hasNotification" src="./assets/icon.png" key="icon" />
+							<img v-else src="./assets/alert.png" key="alert" />
+						</transition>
 					</div>
 				</div>
 
@@ -212,6 +215,7 @@
 <script>
 	import { APP_CONFIG } from './utils/constants'
 	import Authentication from './utils/twitch'
+	import { EventBus } from './utils/event-bus'
 	import Info from './components/Info'
 	import Profile from './components/Profile'
 	import Shop from './components/Shop'
@@ -242,7 +246,8 @@
 				user: null,
 				counterInterval: null,
 				tabs: ['Profile', 'Rewards', 'Battle', 'Leaderboard'],
-				tab: 'Profile'
+				tab: 'Profile',
+				hasNotification: false
 			}
 		},
 		methods: {
@@ -268,6 +273,8 @@
 				this.axios.post(`${process.env.VUE_APP_API}user`, data).then(res => {
 					this.user = res.data
 
+					console.log(res.data)
+
 					if (this.user.channel.pointsName) {
 						this.POINTS_NAME = this.user.channel.pointsName
 					}
@@ -286,6 +293,10 @@
 			startCounter () {
 				this.counterInterval = setInterval(() => {
 					this.axios.get(`${process.env.VUE_APP_API}user?id=${this.user._id}`).then(res => {
+						if (!res.data) {
+							return
+						}
+
 						this.user = res.data
 
 						if (this.user.channel.pointsName) {
@@ -300,6 +311,20 @@
 			}
 		},
 		created () {
+			EventBus.$on('claimedReward', reward => {
+				this.user.currentPoints -= reward.points
+				this.user.experience += reward.experience
+			})
+
+			EventBus.$on('stopNotification', () => {
+				clearInterval(this.notificationInterval)
+				this.hasNotification = false
+			})
+
+			this.notificationInterval = setInterval(() => {
+				this.hasNotification = !this.hasNotification
+			}, 4000)
+
 			let uri = window.location.search.substring(1)
 			let params = new URLSearchParams(uri)
 
