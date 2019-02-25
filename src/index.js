@@ -13,6 +13,7 @@ const channelRoute = require('./routes/channel')
 const rewardRoute = require('./routes/reward')
 const userRoute = require('./routes/user')
 const claimRoute = require('./routes/claim')
+const battleRoute = require('./routes/battle')
 const app = express()
 
 // Connect to MongoDB via Mongoose
@@ -61,6 +62,7 @@ mongooseInit().then(() => {
 	app.use(rewardRoute)
 	app.use(userRoute)
 	app.use(claimRoute)
+	app.use(battleRoute)
 
 	// Send 500 status code with simple message to the client when unhandled errors occur
 	app.use((err, req, res, next) => {

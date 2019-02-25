@@ -133,6 +133,35 @@ router.get(`/${name}`, (req, res) => {
     })
 })
 
+// GET Random
+router.get(`/${name}Rand`, (req, res) => {
+	if (!req.query.cid) {
+		return res.status(400).send('Missing channel id.')
+	}
+
+	UserModel.count({
+		channel: req.query.cid
+	}).exec(function (err, count) {
+		if (err) {
+			return res.status(404).send('No user found.')
+		}
+
+		// Get a random entry
+		let random = Math.floor(Math.random() * count)
+
+		// Again query all users but only fetch one offset by our random #
+		UserModel.findOne({
+			channel: req.query.cid
+		}).skip(random).exec(function (err, result) {
+			if (err) {
+				return res.status(404).send('User not found.')
+			} else {
+				res.json(result)
+			}
+		})
+	})
+})
+
 
 // POST
 router.post(`/${name}`, (req, res) => {

@@ -242,7 +242,7 @@
 				hasMessage: false,
 				message: '',
 				hasToggle: true,
-				isFullScreen: true, // TODO: set false
+				isFullScreen: false, // TODO: set false
 				user: null,
 				counterInterval: null,
 				tabs: ['Profile', 'Rewards', 'Battle', 'Leaderboard'],

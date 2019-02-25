@@ -48,6 +48,10 @@
 <style lang="scss" scoped>
 	@import '../styles/_vars';
 
+	.alt-loading {
+		margin-left: -32px;
+	}
+
 	.reward {
 		border-bottom: 2px solid $primary;
 		font-size: 15px;

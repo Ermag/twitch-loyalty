@@ -37,6 +37,10 @@ let UserSchema = new mongoose.Schema({
 		type: Number,
 		default: 0
 	},
+	battlesWon: {
+		type: Number,
+		default: 0
+	},
 	watchTime: {
 		type: Number,
 		default: 0

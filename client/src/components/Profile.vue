@@ -26,7 +26,9 @@
 </template>
 
 <style lang="scss" scoped>
-
+	.alt-loading {
+		margin-left: -32px;
+	}
 </style>
 
 <script>

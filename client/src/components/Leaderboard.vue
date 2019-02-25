@@ -47,6 +47,10 @@
 <style lang="scss" scoped>
 	@import '../styles/_vars';
 
+	.alt-loading {
+		margin-left: -32px;
+	}
+
 	.leaderboard {
 		height: 100%;
 	}
