@@ -173,14 +173,21 @@
 		methods: {
 			formatQuantity: helpers.formatQuantity,
 			calcExp () {
+				let prev = 0
+
 				this.expNextLevel = Math.round(175 * Math.pow(this.user.level + 1, 1.5))
-				this.expProgress = Math.min(100, (this.user.experience / this.expNextLevel) * 100)
+
+				if (this.user.level > 1) {
+					prev = Math.round(175 * Math.pow(this.user.level - 1 + 1, 1.5))
+				}
+
+				this.expProgress = Math.min(100, ((this.user.experience - prev) / (this.expNextLevel - prev)) * 100)
 			}
 		},
 		updated () {
 			this.calcExp()
 
-			if (this.expProgress > this.expNextLevel) {
+			if (this.user.experience >= this.expNextLevel) {
 				EventBus.$emit('levelUp', 1)
 				this.calcExp()
 			}
