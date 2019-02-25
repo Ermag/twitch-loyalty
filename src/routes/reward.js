@@ -10,10 +10,16 @@ router.get(`/${name}`, (req, res) => {
 		return res.status(400).send('Missing valid channel ID.')
 	}
 
+	let sort = '-createdAt'
+
+	if (req.query.orderBy === 'points') {
+		sort = 'points'
+	}
+
     RewardModel.find({
 		channel: req.query.cid,
 		status: 1
-    }).sort('-createdAt').then(doc => {
+    }).sort(sort).then(doc => {
 		res.json(doc)
     }).catch(err => {
         res.status(500).json(err)

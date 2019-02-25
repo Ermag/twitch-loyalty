@@ -44,7 +44,7 @@
 								<div class="alt-tab-content" v-bar>
 									<div>
 										<transition name="fade" mode="out-in">
-											<Profile v-if="tab === 'Profile'" :user="user" :POINTS_NAME="POINTS_NAME" :POINTS_IMG="POINTS_IMG" />
+											<Profile v-if="tab === 'Profile'" :user="user" :changeTab="changeTab" :POINTS_NAME="POINTS_NAME" :POINTS_IMG="POINTS_IMG" />
 											<Shop v-if="tab === 'Rewards'" :user="user" :POINTS_NAME="POINTS_NAME" :POINTS_IMG="POINTS_IMG" />
 											<Battle v-if="tab === 'Battle'" :user="user" :POINTS_NAME="POINTS_NAME" :POINTS_IMG="POINTS_IMG" />
 											<Leaderboard v-if="tab === 'Leaderboard'" :user="user" :POINTS_NAME="POINTS_NAME" :POINTS_IMG="POINTS_IMG" />
@@ -147,7 +147,6 @@
 			.alt-tab-content {
 				position: relative;
 				height: calc(100% - 40px);
-				padding-top: 10px;
 				overflow: auto;
 			}
 
@@ -243,7 +242,15 @@
 				message: '',
 				hasToggle: true,
 				isFullScreen: false,
-				user: {},
+				user: {
+					displayName: '',
+					avatar: '',
+					currentPoints: 0,
+					level: 0,
+					experience: 0,
+					watchTime: 0,
+					channel: {}
+				},
 				counterInterval: null,
 				tabs: ['Profile', 'Rewards', 'Battle', 'Leaderboard'],
 				tab: 'Profile',
@@ -288,12 +295,17 @@
 					if (this.user.channel.pointsImg) {
 						this.POINTS_IMG = this.user.channel.pointsImg
 					}
-
-					this.startCounter()
 				}).catch(() => {
 					this.hasError = true
 				}).then(() => {
-					this.isLoading = false
+					if (this.user.channel._id) {
+						this.isLoading = false
+						this.startCounter()
+					} else {
+						setTimeout(() => {
+							this.fetchUser(data)
+						}, 500)
+					}
 				})
 			},
 			startCounter () {
@@ -319,8 +331,12 @@
 		},
 		created () {
 			EventBus.$on('claimedReward', reward => {
-				this.user.currentPoints -= reward.points
-				this.user.experience += reward.experience
+				this.$set(this.user, 'currentPoints', this.user.currentPoints - reward.points)
+				this.$set(this.user, 'experience', this.user.experience + reward.experience)
+			})
+
+			EventBus.$on('levelUp', reward => {
+				this.$set(this.user, 'level', this.user.level + 1)
 			})
 
 			EventBus.$on('stopNotification', () => {

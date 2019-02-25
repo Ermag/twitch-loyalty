@@ -3,24 +3,30 @@
 		<div v-if="isLoading" class="text-xs-center alt-loading">
 			<v-progress-circular :size="64" :width="7" color="primary" indeterminate></v-progress-circular>
 		</div>
-		<div v-else-if="hasError" class="my-2 mx-3 text-xs-center">
+		<div v-else-if="hasError" class="my-3 mx-3 text-xs-center">
 			<v-alert :value="true" color="error">
 				<h3>Something went wrong :(<br>Please, try again later!</h3>
 			</v-alert>
 		</div>
-		<div v-else-if="hasInitialReward">
-			<h1 class="text-xs-center mb-3">Welcome!</h1>
+		<div class="welcome" v-else-if="hasInitialReward">
+			<img src="../assets/welcome.png" alt="Hello there!" />
+			<h2 class="text-xs-center mb-1 px-2">Welcome to your Alter profile!</h2>
+			<p class="text-xs-center mb-3 subheading px-2" style="line-height: normal;">
+				By watching this channel you obtain <Points :value="-1" :name="POINTS_NAME" :img="POINTS_IMG" :size="16" />{{ POINTS_NAME }} which you can spend on cool <a @click="changeTab('Rewards')">rewards</a> or <a @click="changeTab('Battle')">battle</a> other viewers.
+				Claim your welcome gift below!
+			</p>
 
 			<div class="text-xs-center">
-				<div class="mb-2">
+				<div class="mb-1">
 					<Points :value="-1" :name="POINTS_NAME" :img="POINTS_IMG" :size="20" />
 					<span class="primary--text ml-1 title" style="vertical-align: middle;">{{ initialPoints }}</span>
 				</div>
 				<v-btn class="title" color="primary" @click="claimInitial" small outline>Claim</v-btn>
 			</div>
 		</div>
-		<div v-else>
-			Quests/Achievemnts
+		<div class="quests" v-else>
+			<div class="quests-bg"></div>
+			<div class="quests-tba text-xs-center headline">Coming Soon</div>
 		</div>
 	</transition>
 </template>
@@ -28,6 +34,37 @@
 <style lang="scss" scoped>
 	.alt-loading {
 		margin-left: -32px;
+	}
+
+	.welcome {
+		padding-top: 142px;
+		box-sizing: border-box;
+		img {
+			position: absolute;
+				top: 0;
+				left: 0;
+		}
+	}
+
+	.welcome,
+	.quests,
+	.quests-bg {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+	}
+	.quests-bg {
+		background: url('../assets/profile-bg.png') no-repeat center center;
+		opacity: .4;
+	}
+	.quests-tba {
+		position: absolute;
+			top: 50%;
+			left: 0;
+		width: 100%;
+		margin-top: -16px;
+		text-shadow: 1px 1px 2px #000;
 	}
 </style>
 
@@ -38,7 +75,7 @@
 
 	export default {
 		name: 'Profile',
-		props: ['user', 'POINTS_NAME', 'POINTS_IMG'],
+		props: ['user', 'changeTab', 'POINTS_NAME', 'POINTS_IMG'],
 		components: {
 			Points
 		},
@@ -46,7 +83,7 @@
 			return {
 				isLoading: true,
 				hasError: false,
-				initialRewardId: '5c6cc5f677ef5c47b4d87bb0',
+				initialRewardId: '5c746698afb13727505a3eab',
 				hasInitialReward: false,
 				baseURL: process.env.VUE_APP_API,
 				initialPoints: APP_CONFIG.STARTING_POINTS

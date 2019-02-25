@@ -2,7 +2,7 @@
 	<div v-if="isLoading" class="text-xs-center alt-loading">
 		<v-progress-circular :size="64" :width="7" color="primary" indeterminate></v-progress-circular>
 	</div>
-	<div v-else-if="hasError" class="my-2 mx-3 text-xs-center">
+	<div v-else-if="hasError" class="my-3 mx-3 text-xs-center">
 		<v-alert :value="true" color="error">
 			<h3>Something went wrong :(<br>Please, try again later!</h3>
 		</v-alert>
@@ -54,6 +54,8 @@
 
 	.leaderboard {
 		height: 100%;
+		padding-top: 10px;
+		box-sizing: border-box;
 	}
 	.position {
 		position: absolute;

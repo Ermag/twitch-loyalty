@@ -1,59 +1,61 @@
 <template>
 	<transition name="fade" mode="out-in">
-		<div v-if="isLoading" class="text-xs-center alt-loading">
-			<v-progress-circular :size="64" :width="7" color="primary" indeterminate></v-progress-circular>
-		</div>
-		<div v-else-if="hasError" class="my-2 mx-3 text-xs-center">
-			<v-alert :value="true" color="error">
-				<h3>Something went wrong :(<br>Please, try again later!</h3>
-			</v-alert>
-		</div>
-		<div v-else class="px-1">
-			<div class="preview mt-4 text-xs-center">
-				<div style="margin-right: 30px;">
-					<img :src="you.avatar" :alt="user.displayName" />
-					<span>{{ user.displayName }}</span>
-				</div>
-				<img src="../assets/vs.png" alt="Vs" />
-				<div style="margin-left: 30px;">
-					<img :src="opponent.avatar" :alt="opponent.name" />
-					<span>{{ opponent.name }}</span>
-				</div>
+		<div style="height: 100%; overflow: hidden; padding-top: 10px; box-sizing: border-box;">
+			<div v-if="isLoading" class="text-xs-center alt-loading" key="loader">
+				<v-progress-circular :size="64" :width="7" color="primary" indeterminate></v-progress-circular>
 			</div>
-			<div class="clearfix"></div>
-
-			<transition name="fade" mode="out-in">
-				<div v-if="!amount" class="text-xs-center mt-5" key="amount">
-					<div class="headline mb-3">Choose Amount</div>
-					<div v-for="(am, i) in amounts" :key="i" class="amount pointer" :class="{ disabled: am > user.currentPoints }" @click="amount = am">
-						<Points :value="am" :name="POINTS_NAME" :img="POINTS_IMG" :size="24" :css="am > user.currentPoints ? 'headline ml-1 red--text' : 'headline ml-1'" />
+			<div v-else-if="hasError" class="my-3 mx-3 text-xs-center" key="error">
+				<v-alert :value="true" color="error">
+					<h3>Something went wrong :(<br>Please, try again later!</h3>
+				</v-alert>
+			</div>
+			<div v-else class="px-1" key="preview">
+				<div class="preview mt-4 text-xs-center">
+					<div style="margin-right: 30px;">
+						<img :src="you.avatar" :alt="user.displayName" width="76" height="76" />
+						<span>{{ user.displayName }}</span>
+					</div>
+					<img src="../assets/vs.png" alt="Vs" />
+					<div style="margin-left: 30px;">
+						<img :src="opponent.avatar" :alt="opponent.name" width="76" height="76" />
+						<span>{{ opponent.name }}</span>
 					</div>
 				</div>
-				<div v-else-if="result === null" class="text-xs-center mt-5" key="move">
-					<div class="headline mb-2">Choose Your Move</div>
-					<div v-for="(mv, i) in moves" :key="i" class="move pointer" @click="battle(mv)">
-						<img :src="require('../assets/move-' + mv + '.jpg')" />
-					</div>
-				</div>
-				<div v-else class="text-xs-center mt-5" key="result">
-					<div v-if="result == 0" class="mb-2">
-						<div class="headline error--text mb-1">You Lost, but gained EXP!</div>
-						<Points :value="amount" :name="POINTS_NAME" :img="POINTS_IMG" :size="24" :css="'headline ml-1'" />
-					</div>
-					<div v-else-if="result == 1" class="mb-2">
-						<div class="headline success--text mb-1">You Won!</div>
-						<Points :value="amount * 2" :name="POINTS_NAME" :img="POINTS_IMG" :size="24" :css="'headline ml-1'" />
-					</div>
-					<div v-else class="headline mb-3 grey--text">Draw</div>
+				<div class="clearfix"></div>
 
-					<v-btn color="primary" @click="findOpponent" outline>Play Again</v-btn>
-				</div>
-			</transition>
+				<transition name="fade" mode="out-in">
+					<div v-if="!amount" class="text-xs-center mt-5" key="amount">
+						<div class="headline mb-3">Choose Amount</div>
+						<div v-for="(am, i) in amounts" :key="i" class="amount pointer" :class="{ disabled: am > user.currentPoints }" @click="amount = am">
+							<Points :value="am" :name="POINTS_NAME" :img="POINTS_IMG" :size="24" :css="am > user.currentPoints ? 'headline ml-1 red--text' : 'headline ml-1'" />
+						</div>
+					</div>
+					<div v-else-if="result === null" class="text-xs-center mt-4" key="move">
+						<div class="headline mb-2">Choose Your Move</div>
+						<div v-for="(mv, i) in moves" :key="i" class="move pointer" @click="battle(mv)">
+							<img :src="require('../assets/move-' + mv + '.jpg')" />
+						</div>
+					</div>
+					<div v-else class="text-xs-center mt-4" key="result">
+						<div v-if="result == 0" class="mb-2">
+							<div class="headline error--text mb-1">You Lost, but gained EXP!</div>
+							<Points :value="amount" :name="POINTS_NAME" :img="POINTS_IMG" :size="24" :css="'headline ml-1'" />
+						</div>
+						<div v-else-if="result == 1" class="mb-2">
+							<div class="headline success--text mb-1">You Won!</div>
+							<Points :value="amount * 2" :name="POINTS_NAME" :img="POINTS_IMG" :size="24" :css="'headline ml-1'" />
+						</div>
+						<div v-else class="headline mb-3 grey--text">Draw</div>
 
-			<v-snackbar v-model="maximumBattles" color="info" :timeout="4000" top absolute>
-				You can play 10 battles per day.
-				<v-btn @click="maximumBattles = false" dark flat>Close</v-btn>
-			</v-snackbar>
+						<v-btn color="primary" @click="findOpponent" outline>Play Again</v-btn>
+					</div>
+				</transition>
+
+				<v-snackbar v-model="maximumBattles" color="info" :timeout="4000" top absolute>
+					You can play 10 battles per day.
+					<v-btn @click="maximumBattles = false" dark flat>Close</v-btn>
+				</v-snackbar>
+			</div>
 		</div>
 	</transition>
 </template>

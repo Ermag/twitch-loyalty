@@ -67,13 +67,11 @@
 			formatQuantity: helpers.formatQuantity
 		},
 		mounted () {
-			console.log(this.displayNumber)
 			this.displayNumber = this.value ? this.value : 0
 		},
 		watch: {
 			value () {
 				clearInterval(this.interval)
-				console.log(this.value, this.displayNumber)
 
 				if (this.value === this.displayNumber) {
 					return

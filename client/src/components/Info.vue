@@ -154,8 +154,9 @@
 </style>
 
 <script>
-	import Points from './Points'
+	import { EventBus } from '../utils/event-bus'
 	import { helpers } from '../utils/helpers'
+	import Points from './Points'
 
 	export default {
 		name: 'Info',
@@ -173,14 +174,14 @@
 			formatQuantity: helpers.formatQuantity,
 			calcExp () {
 				this.expNextLevel = Math.round(175 * Math.pow(this.user.level + 1, 1.5))
-				this.expProgress = (this.user.experience / this.expNextLevel) * 100
+				this.expProgress = Math.min(100, (this.user.experience / this.expNextLevel) * 100)
 			}
 		},
 		updated () {
 			this.calcExp()
 
-			if (this.expProgress > 100) {
-				this.user.level += 1
+			if (this.expProgress > this.expNextLevel) {
+				EventBus.$emit('levelUp', 1)
 				this.calcExp()
 			}
 		},

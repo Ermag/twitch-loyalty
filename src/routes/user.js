@@ -122,9 +122,7 @@ router.get(`/${name}`, (req, res) => {
 		return res.status(400).send('Missing user id.')
 	}
 
-    UserModel.findOne({
-        _id: req.query.id
-    }).populate('channel').then(doc => {
+    UserModel.findById(req.query.id).populate('channel').then(doc => {
 		if (!doc) {
 			return res.status(404).send('User not found.')
 		} else {

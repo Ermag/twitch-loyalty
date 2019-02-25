@@ -3,12 +3,12 @@
 		<div v-if="isLoading" class="text-xs-center alt-loading">
 			<v-progress-circular :size="64" :width="7" color="primary" indeterminate></v-progress-circular>
 		</div>
-		<div v-else-if="hasError" class="my-2 mx-3 text-xs-center">
+		<div v-else-if="hasError" class="my-3 mx-3 text-xs-center">
 			<v-alert :value="true" color="error">
 				<h3>Something went wrong :(<br>Please, try again later!</h3>
 			</v-alert>
 		</div>
-		<div v-else class="px-1">
+		<div v-else class="px-1" style="padding-top: 10px;">
 			<div class="reward my-2" v-for="(reward, index) in rewards" :key="reward._id">
 				<v-tooltip right>
 					<img slot="activator" class="mr-2" :src="baseURL + reward.image" :alt="reward.name" />
