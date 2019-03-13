@@ -13,7 +13,7 @@
 		</v-alert>
 
 		<div class="controls">
-			<v-select class="my-0 mx-2 pa-0" height="30" v-model="sort" :items="sorts" @change="sortChange" hide-details></v-select>
+			<v-select class="my-0 mx-2 pa-0" height="30" v-model="sort" :items="sorts" @change="sortChange" attach="#app .app-visible .leaderboard .controls" hide-details></v-select>
 		</div>
 
 		<div class="results" v-bar>
@@ -56,6 +56,10 @@
 		height: 100%;
 		padding-top: 10px;
 		box-sizing: border-box;
+
+		& .controls {
+			position: relative;
+		}
 	}
 	.position {
 		position: absolute;

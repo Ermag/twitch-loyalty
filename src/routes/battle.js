@@ -48,6 +48,8 @@ router.post(`/${name}`, (req, res) => {
 			let startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
 			BattleModel.find({
+				channel: doc.channel,
+				user: doc._id,
 				createdAt: { $gte: startOfToday }
 			}).exec(function (err, count) {
 				if (err) {

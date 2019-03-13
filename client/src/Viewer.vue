@@ -110,8 +110,7 @@
 	.alt-panel {
 		position: relative;
 		float: left;
-		width: 100%;
-		max-width: 318px;
+		width: 318px;
 		height: 100%;
 		max-height: 496px;
 		padding: 12px;
@@ -201,12 +200,17 @@
 				}
 			}
 		}
+
 		.alt-loading {
 			position: absolute;
 				top: 50%;
 				left: 50%;
 				z-index: 99;
 			margin: -50px 0 0 -50px;
+		}
+
+		.leaderboard .controls .v-menu__content {
+			left: 8px !important;
 		}
 	}
 </style>
@@ -257,6 +261,17 @@
 				hasNotification: false
 			}
 		},
+		watch: {
+			hasError: (val) => {
+				if (val === true) {
+					setTimeout(() => {
+						if (this.isVisible) {
+							EventBus.$emit('app-error')
+						}
+					}, 3000)
+				}
+			}
+		},
 		methods: {
 			mouseMove (event) {
 				if (!this.hasToggle) {
@@ -302,9 +317,7 @@
 						this.isLoading = false
 						this.startCounter()
 					} else {
-						setTimeout(() => {
-							this.fetchUser(data)
-						}, 500)
+						this.hasError = true
 					}
 				})
 			},
@@ -330,6 +343,8 @@
 			}
 		},
 		created () {
+			EventBus.$off(['claimedReward', 'levelUp', 'stopNotification'])
+
 			EventBus.$on('claimedReward', reward => {
 				this.$set(this.user, 'currentPoints', this.user.currentPoints - reward.points)
 				this.$set(this.user, 'experience', this.user.experience + reward.experience)
@@ -415,8 +430,8 @@
 					}
 				})
 			} else {
-				this.hasError = true
 				this.isLoading = false
+				window.location.reload()
 			}
 		},
 		beforeDestroy () {
