@@ -23,7 +23,7 @@ let ClaimSchema = new mongoose.Schema({
 	}
 })
 
-ClaimSchema.statics.addClaim = function(channelId, message, reward, user) {
+ClaimSchema.statics.addClaim = function (channelId, message, reward, user) {
 	return new Promise((resolve, reject) => {
 		let newClaim = new this({
 			reward: reward._id,
@@ -66,20 +66,20 @@ ClaimSchema.statics.addClaim = function(channelId, message, reward, user) {
 				_id: user._id
 			}, {
 				$inc: {
-					points: reward.points < 0 ? reward.points *-1 : 0,
-					currentPoints: reward.points *-1,
+					points: reward.points < 0 ? reward.points * -1 : 0,
+					currentPoints: reward.points * -1,
 					experience: exp,
 					level: isLevelUp ? 1 : 0,
 					claimedCount: 1
 				},
 				updatedAt: new Date()
 			}, (err) => {
-				 if (err) {
+				if (err) {
 					reject(err)
 					return
-				 }
+				}
 
-				 resolve(doc)
+				resolve(doc)
 			})
 		})
 	})

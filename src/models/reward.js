@@ -41,7 +41,7 @@ let RewardSchema = new mongoose.Schema({
 	}
 })
 
-RewardSchema.statics.cUpdateFiles = function(id, files) {
+RewardSchema.statics.cUpdateFiles = function (id, files) {
 	return new Promise((resolve, reject) => {
 		let promises = []
 
@@ -49,8 +49,8 @@ RewardSchema.statics.cUpdateFiles = function(id, files) {
 			let imageFile = files.image
 			let imageExt = imageFile.name.split('.').pop()
 			let imageName = `ri-${id}.${imageExt}`
-			let promiseImg = new Promise(function(resolve, reject) {
-				imageFile.mv(`./public/${imageName}`, function(err)  {
+			let promiseImg = new Promise(function (resolve, reject) {
+				imageFile.mv(`./public/${imageName}`, function (err) {
 					if (err) {
 						return reject(err)
 					} else {
@@ -66,11 +66,10 @@ RewardSchema.statics.cUpdateFiles = function(id, files) {
 			let soundFile = files.sound
 			let soundExt = soundFile.name.split('.').pop()
 			let soundName = `rs-${id}.${soundExt}`
-			let promiseSound = new Promise(function(resolve, reject) {
-				soundFile.mv(`./public/${soundName}`, function(err) {
+			let promiseSound = new Promise(function (resolve, reject) {
+				soundFile.mv(`./public/${soundName}`, function (err) {
 					if (err) {
 						reject(err)
-						return
 					} else {
 						resolve(soundName)
 					}
@@ -80,9 +79,9 @@ RewardSchema.statics.cUpdateFiles = function(id, files) {
 			promises.push(promiseSound)
 		}
 
-		Promise.all(promises).catch(function(err) {
+		Promise.all(promises).catch(function (err) {
 			reject(err)
-		}).then(function(values) {
+		}).then(function (values) {
 			resolve(values)
 		})
 	})

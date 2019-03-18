@@ -22,10 +22,10 @@ const findOrCreate = (channel, req, res) => {
 	}
 
 	// Check if the channel exists
-    UserModel.findOne({
+	UserModel.findOne({
 		channel: channel._id,
-        userId: req.body.userId
-    }).populate('channel').then(doc => {
+		userId: req.body.userId
+	}).populate('channel').then(doc => {
 		// Create the user if its not there
 		if (!doc) {
 			let newUser = new UserModel(userData)
@@ -64,9 +64,9 @@ const findOrCreate = (channel, req, res) => {
 				res.json(doc)
 			}
 		}
-    }).catch(err => {
-        res.status(500).json(err)
-    })
+	}).catch(err => {
+		res.status(500).json(err)
+	})
 }
 
 // GET all
@@ -77,30 +77,32 @@ router.get(`/${name}s`, (req, res) => {
 
 	let sort = '-points'
 
+	/* eslint-disable */
 	if (req.query.sort == 1) {
 		sort = '-experience'
 	} else if (req.query.sort == 2) {
 		sort = '-claimedCount'
-	}  else if (req.query.sort == 3) {
+	} else if (req.query.sort == 3) {
 		sort = '-battlesWon'
 	}
+	/* eslint-enable */
 
-    UserModel.find({
-        channel: req.query.cid
-    }).sort(sort).limit(1000).then(docs => {
+	UserModel.find({
+		channel: req.query.cid
+	}).sort(sort).limit(1000).then(docs => {
 		if (!docs && docs.length) {
 			return res.status(404).send('No users found.')
 		} else {
-			let pos = 0;
+			let pos = '100 >'
 			let users = []
 
 			for (let i = 0; i < docs.length; i++) {
 				if (i > 99) {
-					break;
+					break
 				}
 
-				if (docs[i]._id == req.query.uid) {
-					pos = i + 1;
+				if (String(docs[i]._id) === req.query.uid) {
+					pos = i + 1
 				}
 
 				users.push(docs[i])
@@ -111,9 +113,9 @@ router.get(`/${name}s`, (req, res) => {
 				users
 			})
 		}
-    }).catch(err => {
-        res.status(500).json(err)
-    })
+	}).catch(err => {
+		res.status(500).json(err)
+	})
 })
 
 // GET
@@ -122,15 +124,15 @@ router.get(`/${name}`, (req, res) => {
 		return res.status(400).send('Missing user id.')
 	}
 
-    UserModel.findById(req.query.id).populate('channel').then(doc => {
+	UserModel.findById(req.query.id).populate('channel').then(doc => {
 		if (!doc) {
 			return res.status(404).send('User not found.')
 		} else {
 			res.json(doc)
 		}
-    }).catch(err => {
-        res.status(500).json(err)
-    })
+	}).catch(err => {
+		res.status(500).json(err)
+	})
 })
 
 // GET Random
@@ -162,21 +164,20 @@ router.get(`/${name}Rand`, (req, res) => {
 	})
 })
 
-
 // POST
 router.post(`/${name}`, (req, res) => {
 	if (!req.body) {
 		return res.status(400).send('Request body is missing.')
 	}
 
-    if (!req.body.tid || req.body.tid.length < 6) {
+	if (!req.body.tid || req.body.tid.length < 6) {
 		return res.status(400).send('Missing valid tid.')
 	}
 
 	// Check if the channel exists
-    ChannelModel.findOne({
-        tid: req.body.tid
-    }).then(doc => {
+	ChannelModel.findOne({
+		tid: req.body.tid
+	}).then(doc => {
 		// Create the channel if we can't find it with some example rewards
 		if (!doc) {
 			ChannelModel.cAddNew(req.body.tid).then(doc => {
@@ -187,9 +188,9 @@ router.post(`/${name}`, (req, res) => {
 		} else {
 			findOrCreate(doc, req, res)
 		}
-    }).catch(err => {
-        res.status(500).json(err)
-    })
+	}).catch(err => {
+		res.status(500).json(err)
+	})
 })
 
 module.exports = router

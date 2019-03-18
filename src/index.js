@@ -48,7 +48,7 @@ mongooseInit().then(() => {
 	// Check JWT
 	app.use(jwt({ secret: Buffer.from(APP_CONFIG.twitchSecret, 'base64') }).unless({
 		path: [
-			{ url: '/claim', methods: ['GET']  }
+			{ url: '/claim', methods: ['GET'] }
 		]
 	}))
 
@@ -71,13 +71,15 @@ mongooseInit().then(() => {
 			return
 		}
 
+		console.log(err)
+
 		res.status(500).send('Iternal server error!')
 	})
 
 	// Start the server
 	https.createServer({
 		key: fs.readFileSync('./ssl/server.key'),
-		cert: fs.readFileSync('./ssl/server.cert'),
+		cert: fs.readFileSync('./ssl/server.cert')
 	}, app).listen(443, () => console.log(`Server has started on 443.`))
 
 	// app.listen(3000)

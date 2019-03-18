@@ -1,5 +1,5 @@
 <template>
-	<div v-if="isLoading" class="text-xs-center alt-loading">
+	<div v-if="isLoading" class="text-xs-center alt-loading" style="margin: -32px 0 0 -32px;">
 		<v-progress-circular :size="64" :width="7" color="primary" indeterminate></v-progress-circular>
 	</div>
 	<div v-else-if="hasError" class="my-3 mx-3 text-xs-center">
@@ -13,19 +13,25 @@
 		</v-alert>
 
 		<div class="controls">
-			<v-select class="my-0 mx-2 pa-0" height="30" v-model="sort" :items="sorts" @change="sortChange" attach="#app .app-visible .leaderboard .controls" hide-details></v-select>
+			<v-select class="my-0 mx-2 pa-0" height="30"
+			v-model="sort"
+			:items="sorts"
+			@change="sortChange"
+			style="font-size: 18px;"
+			attach="#app .app-visible .leaderboard .controls"
+			hide-details></v-select>
 		</div>
 
 		<div class="results" v-bar>
 			<div class="pa-2">
 				<table>
 					<tbody>
-						<tr v-for="(value, index) in users" :key="index" :class="{ top: index < 3}">
+						<tr v-for="(value, index) in users" :key="index" :class="{ top: index < 3, you: index + 1 === position }">
 							<td class="text-xs-right" width="28">{{ index + 1 }}.</td>
 							<td>
 								<div>
 									<span></span>
-									<img :src="value.avatar" />
+									<img width="26" height="26" :src="value.avatar" />
 									<span class="name">{{ value.displayName }}</span>
 								</div>
 							</td>
@@ -48,12 +54,9 @@
 <style lang="scss" scoped>
 	@import '../styles/_vars';
 
-	.alt-loading {
-		margin-left: -32px;
-	}
-
 	.leaderboard {
 		height: 100%;
+		min-height: 100%;
 		padding-top: 10px;
 		box-sizing: border-box;
 
@@ -82,9 +85,14 @@
 			border-collapse: collapse;
 		}
 
+		tr.you {
+			background: rgba(255, 255, 255, .12);
+		}
+
 		tr.top {
 			td {
-				font-size: 24px;
+				line-height: 37px;
+				font-size: 22px;
 			}
 			div {
 				padding-left: 30px;
@@ -112,7 +120,7 @@
 		td {
 			padding: 0px 5px;
 			border-bottom: 1px solid #b9b9b9;
-			font-size: 20px;
+			font-size: 18px;
 
 			div {
 				position: relative;
@@ -156,7 +164,7 @@
 			return {
 				isLoading: true,
 				hasError: false,
-				sort: this.$props.POINTS_NAME,
+				sort: localStorage.getItem('loyal-sort') || this.$props.POINTS_NAME,
 				sorts: [this.$props.POINTS_NAME, 'Experience', 'Claimed Rewards', 'Battles Won'],
 				sortIndex: 0,
 				users: [],
@@ -181,9 +189,13 @@
 			sortChange () {
 				this.sortIndex = this.sorts.indexOf(this.sort)
 				this.getUsers()
+
+				localStorage.setItem('loyal-sort', this.sort)
 			}
 		},
 		created () {
+			this.sortIndex = this.sorts.indexOf(this.sort)
+
 			this.getUsers()
 		}
 	}

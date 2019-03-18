@@ -1,6 +1,6 @@
 <template>
-	<v-app dark>
-		<div class="app-visible" :class="{ hide: !isVisible }" @mouseleave="mouseLeave" @mousemove="mouseMove">
+	<v-app :class="{ hide: !isVisible }" dark>
+		<div class="app-visible" @mousemove="mouseMove">
 			<div class="alt-wrapper" :class="{ offset: hasToggle, fullscreen: isFullScreen }">
 				<div class="alt-toggle pointer" v-if="hasToggle" @click="isPanelActive = !isPanelActive">
 					<div>
@@ -64,15 +64,18 @@
 	@import './styles/_vars';
 	@import './styles/main';
 
-	.app-visible {
-		width: 100%;
-		height: 100%;
+	#app {
 		opacity: 1;
 		transition: .5s opacity;
 
 		&.hide {
 			opacity: 0;
 		}
+	}
+
+	.app-visible {
+		width: 100%;
+		height: 100%;
 	}
 
 	.alt-toggle {
@@ -162,6 +165,7 @@
 					background: $secondary url('./assets/tabs-icons.png') no-repeat 0 0;
 					border-top-left-radius: 2px;
 					border-top-right-radius: 2px;
+					transition: all .5s ease-in-out;
 					&.profile {
 						background-position: 0 0;
 						&.active {
@@ -262,7 +266,7 @@
 			}
 		},
 		watch: {
-			hasError: (val) => {
+			hasError (val) {
 				if (val === true) {
 					setTimeout(() => {
 						if (this.isVisible) {
@@ -278,23 +282,14 @@
 					return
 				}
 
-				clearTimeout(this.visibleTimeout)
-
-				if (!this.isVisible) {
-					this.isVisible = true
-				}
-			},
-			mouseLeave () {
-				if (!this.hasToggle) {
-					return
-				}
+				this.isVisible = true
 
 				clearTimeout(this.visibleTimeout)
 				this.visibleTimeout = setTimeout(() => {
 					if (this.isVisible) {
 						this.isVisible = false
 					}
-				}, 3000)
+				}, 10000)
 			},
 			changeTab (tab) {
 				this.tab = tab

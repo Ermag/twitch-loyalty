@@ -27,7 +27,7 @@ let ChannelSchema = new mongoose.Schema({
 	}
 })
 
-ChannelSchema.statics.cAddNew = function(tid) {
+ChannelSchema.statics.cAddNew = function (tid) {
 	return new Promise((resolve, reject) => {
 		axios.get(`https://api.twitch.tv/kraken/channels/${tid}`, {
 			headers: {
@@ -36,7 +36,7 @@ ChannelSchema.statics.cAddNew = function(tid) {
 			}
 		}).then(res => {
 			if (!res.data) {
-				reject('Can\'t get channel data.')
+				reject(new Error('Error Can\'t get channel data.'))
 				return
 			}
 

@@ -6,7 +6,7 @@ const name = 'reward'
 
 // GET
 router.get(`/${name}`, (req, res) => {
-    if (!req.query.cid) {
+	if (!req.query.cid) {
 		return res.status(400).send('Missing valid channel ID.')
 	}
 
@@ -16,30 +16,30 @@ router.get(`/${name}`, (req, res) => {
 		sort = 'points'
 	}
 
-    RewardModel.find({
+	RewardModel.find({
 		channel: req.query.cid,
 		status: 1
-    }).sort(sort).then(doc => {
+	}).sort(sort).then(doc => {
 		res.json(doc)
-    }).catch(err => {
-        res.status(500).json(err)
-    })
+	}).catch(err => {
+		res.status(500).json(err)
+	})
 })
 
 // GET by ref
 router.get(`/${name}/ref`, (req, res) => {
-    if (!req.query.name) {
+	if (!req.query.name) {
 		return res.status(400).send('Missing valid reference.')
 	}
 
-    RewardModel.findOne({
+	RewardModel.findOne({
 		ref: req.query.name,
 		status: 1
-    }).then(doc => {
+	}).then(doc => {
 		res.json(doc)
-    }).catch(err => {
-        res.status(404).json(err)
-    })
+	}).catch(err => {
+		res.status(404).json(err)
+	})
 })
 
 // POST
@@ -56,7 +56,7 @@ router.post(`/${name}`, (req, res) => {
 	RewardModel.find({
 		channel: req.body.channel,
 		status: 1
-    }).then(docs => {
+	}).then(docs => {
 		if (docs && docs.length >= REWARDS.limit) {
 			return res.status(422).send('Maximum amount of reward reached for that channel.')
 		} else {
@@ -109,9 +109,9 @@ router.post(`/${name}`, (req, res) => {
 				res.status(500).json(err)
 			})
 		}
-    }).catch(err => {
-        res.status(500).json(err)
-    })
+	}).catch(err => {
+		res.status(500).json(err)
+	})
 })
 
 // UPDATE
@@ -125,7 +125,7 @@ router.put(`/${name}`, (req, res) => {
 		return res.status(400).send('Request contains invalid data.')
 	}
 
-	function update(data) {
+	function update (data) {
 		RewardModel.findOneAndUpdate({
 			_id: req.query.id
 		}, {

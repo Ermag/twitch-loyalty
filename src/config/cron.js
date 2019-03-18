@@ -4,7 +4,7 @@ const APP_CONFIG = require('../constants')
 const ChannelModel = require('../models/channel')
 const UserModel = require('../models/user')
 const setPoints = () => {
-	console.log('Cron Points - ' + new Date().toString());
+	console.log('Cron Points - ' + new Date().toString())
 
 	// Get all the channels that are live
 	return ChannelModel.find({
@@ -24,7 +24,7 @@ const setPoints = () => {
 
 						users = [...new Set(users)]
 
-						// TODO: Update subscribers aswell!!!
+						// TODO: Update subscribers aswel
 						for (let i = 0; i < 2; i++) {
 							let points = (i === 0) ? 1 : 2
 
@@ -48,7 +48,7 @@ const setPoints = () => {
 	})
 }
 const setLiveChannels = () => {
-	console.log('Cron Live Channels - ' + new Date().toString());
+	console.log('Cron Live Channels - ' + new Date().toString())
 
 	return axios.get(`https://api.twitch.tv/extensions/${APP_CONFIG.clientId}/live_activated_channels`, {
 		headers: {

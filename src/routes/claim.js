@@ -7,7 +7,7 @@ const name = 'claim'
 
 // GET
 router.get(`/${name}`, (req, res) => {
-    if (!req.query.cid && !req.query.uid && !req.query.rid) {
+	if (!req.query.cid && !req.query.uid && !req.query.rid) {
 		return res.status(400).send('Missing valid id.')
 	}
 
@@ -28,7 +28,7 @@ router.get(`/${name}`, (req, res) => {
 		}
 	}
 
-    ClaimModel.find(params).sort('-createdAt').populate('channel').populate('user').populate('reward').then(docs => {
+	ClaimModel.find(params).sort('-createdAt').populate('channel').populate('user').populate('reward').then(docs => {
 		// Create the channel if we can't find it with some example rewards
 		if (!docs && !docs.length) {
 			res.status(404).json('No rewards found.')
@@ -44,9 +44,9 @@ router.get(`/${name}`, (req, res) => {
 		})
 
 		res.json(claims)
-    }).catch(err => {
-        res.status(500).json(err)
-    })
+	}).catch(err => {
+		res.status(500).json(err)
+	})
 })
 
 // POST
@@ -111,8 +111,8 @@ router.post(`/${name}`, (req, res) => {
 			})
 		}
 	}).catch(err => {
-        res.status(404).json(err)
-    })
+		res.status(404).json(err)
+	})
 })
 
 // POST
@@ -138,7 +138,7 @@ router.post(`/${name}Test`, (req, res) => {
 
 		// Check for buffer of 10s between claims
 		let date = new Date()
-		date.setSeconds(date.getSeconds() - 20);
+		date.setSeconds(date.getSeconds() - 20)
 
 		ClaimModel.findOne({
 			reward: reward._id,
@@ -159,8 +159,8 @@ router.post(`/${name}Test`, (req, res) => {
 			res.status(500).json(err)
 		})
 	}).catch(err => {
-        res.status(404).json(err)
-    })
+		res.status(404).json(err)
+	})
 })
 
 module.exports = router

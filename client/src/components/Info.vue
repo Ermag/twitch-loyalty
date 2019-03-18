@@ -1,6 +1,6 @@
 <template>
 	<div class="info-wrapper">
-		<img :src="user.avatar" :alt="user.displayName" />
+		<img :src="user.avatar" :alt="user.displayName" width="76" height="76" />
 
 		<div class="info-stats">
 			<div class="username">
@@ -22,7 +22,7 @@
 
 			<v-tooltip bottom>
 				<div class="level" slot="activator">
-					<div class="progress"  :style="{ width: expProgress.toFixed(2) + '%' }"></div>
+					<div class="progress" :style="{ width: expProgress.toFixed(2) + '%' }"></div>
 					<div class="lvl-divider first"></div>
 					<div class="lvl-divider second"></div>
 					<div class="lvl-divider third"></div>
@@ -72,10 +72,10 @@
 					position: relative;
 						z-index: 2;
 					height: 100%;
-					background: linear-gradient(130deg, #eed773, #ef9b72, #efd973);
+					background: linear-gradient(130deg, #EED773, #EF9B72, #EFD973);
 					background-size: 600% 600%;
 					animation: Exp 30s ease-in-out infinite;
-					transition: width .5s ease-in-out;
+					transition: width 1.25s ease-in-out;
 				}
 				.lvl-divider {
 					position: absolute;

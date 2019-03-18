@@ -9,12 +9,14 @@ const REWARDS = {
 		{
 			name: 'LUL',
 			points: 250,
-			image: 'lul.png'
+			image: 'lul.png',
+			sound: 'lul.wav'
 		},
 		{
-			name: 'Kappa',
+			name: 'Woohoo',
 			points: 250,
-			image: 'kappa.png'
+			image: 'woohoo.png',
+			sound: 'woohoo.wav'
 		},
 		{
 			name: 'Challenge: Do the floss',

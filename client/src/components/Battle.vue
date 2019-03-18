@@ -1,7 +1,7 @@
 <template>
 	<transition name="fade" mode="out-in">
 		<div style="height: 100%; overflow: hidden; padding-top: 10px; box-sizing: border-box;">
-			<div v-if="isLoading" class="text-xs-center alt-loading" key="loader">
+			<div v-if="isLoading" class="text-xs-center alt-loading" key="loader" style="margin: -32px 0 0 -32px;">
 				<v-progress-circular :size="64" :width="7" color="primary" indeterminate></v-progress-circular>
 			</div>
 			<div v-else-if="hasError" class="my-3 mx-3 text-xs-center" key="error">
@@ -15,7 +15,7 @@
 						<img :src="you.avatar" :alt="user.displayName" width="76" height="76" />
 						<span>{{ user.displayName }}</span>
 					</div>
-					<img src="../assets/vs.png" alt="Vs" />
+					<img src="../assets/vs.png" height="62" alt="Vs" />
 					<div style="margin-left: 30px;">
 						<img :src="opponent.avatar" :alt="opponent.name" width="76" height="76" />
 						<span>{{ opponent.name }}</span>

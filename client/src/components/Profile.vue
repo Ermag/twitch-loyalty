@@ -1,6 +1,6 @@
 <template>
 	<transition name="fade" mode="out-in">
-		<div v-if="isLoading" class="text-xs-center alt-loading">
+		<div v-if="isLoading" class="text-xs-center alt-loading" style="margin: -32px 0 0 -32px;">
 			<v-progress-circular :size="64" :width="7" color="primary" indeterminate></v-progress-circular>
 		</div>
 		<div v-else-if="hasError" class="my-3 mx-3 text-xs-center">
@@ -9,7 +9,7 @@
 			</v-alert>
 		</div>
 		<div class="welcome" v-else-if="hasInitialReward">
-			<img src="../assets/welcome.png" alt="Hello there!" />
+			<img src="../assets/welcome.png" width="286" height="141" alt="Hello there!" />
 			<h2 class="text-xs-center mb-1 px-2">Welcome to your Alter profile!</h2>
 			<p class="text-xs-center mb-3 subheading px-2" style="line-height: normal;">
 				By watching this channel you obtain <Points :value="-1" :name="POINTS_NAME" :img="POINTS_IMG" :size="16" />{{ POINTS_NAME }} which you can spend on cool <a @click="changeTab('Rewards')">rewards</a> or <a @click="changeTab('Battle')">battle</a> other viewers.
@@ -37,7 +37,7 @@
 	}
 
 	.welcome {
-		padding-top: 142px;
+		padding-top: 141px;
 		box-sizing: border-box;
 		img {
 			position: absolute;
@@ -83,7 +83,7 @@
 			return {
 				isLoading: true,
 				hasError: false,
-				initialRewardId: '5c746698afb13727505a3eab',
+				initialRewardId: '5c6cc5f677ef5c47b4d87bb0',
 				hasInitialReward: false,
 				baseURL: process.env.VUE_APP_API,
 				initialPoints: APP_CONFIG.STARTING_POINTS
