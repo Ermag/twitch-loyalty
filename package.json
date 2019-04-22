@@ -4,7 +4,7 @@
 	"private": true,
 	"scripts": {
 		"start": "node src/index.js",
-		"start-dev": "nodemon src/index.js",
+		"start-dev": "cross-env NODE_ENV=development nodemon src/index.js",
 		"count": "cloc --exclude-dir=node_modules --exclude-list-file=.clocignore ."
 	},
 	"dependencies": {
@@ -27,6 +27,7 @@
 		"eslint-plugin-node": "^8.0.1",
 		"eslint-plugin-promise": "^4.0.1",
 		"eslint-plugin-standard": "^4.0.0",
-		"nodemon": "^1.18.10"
+		"nodemon": "^1.18.10",
+		"cross-env": "^5.2.0"
 	}
 }

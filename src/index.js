@@ -9,26 +9,29 @@ const bodyParser = require('body-parser')
 const APP_CONFIG = require('./constants')
 const mongooseInit = require('./config/mongoose')
 const cronInit = require('./config/cron')
-const channelRoute = require('./routes/channel')
-const rewardRoute = require('./routes/reward')
-const userRoute = require('./routes/user')
-const claimRoute = require('./routes/claim')
-const battleRoute = require('./routes/battle')
+const staticRoutes = require('./routes/static')
+const channelRoutes = require('./routes/channel')
+const rewardRoutes = require('./routes/reward')
+const userRoutes = require('./routes/user')
+const claimRoutes = require('./routes/claim')
+const battleRoutes = require('./routes/battle')
 const app = express()
 
 // Connect to MongoDB via Mongoose
 mongooseInit().then(() => {
 	// Set cron to add every miniute points
-	cronInit('* * * * *')
+	cronInit()
 
 	// Set CORS for browsers
 	app.use(cors({
-		origin: '*',
+		origin: process.env.NODE_ENV === 'development' ? '*' : `https://${APP_CONFIG.clientId}.ext-twitch.tv`,
 		allowedHeaders: ['Content-Type, Authorization']
 	}))
 
 	// Directly serve the static content in the public folder
 	app.use(express.static('public'))
+
+	app.use(staticRoutes)
 
 	// Parse JSON from requests automatically
 	app.use(bodyParser.json())
@@ -58,11 +61,11 @@ mongooseInit().then(() => {
 	}))
 
 	// Set our REST end points
-	app.use(channelRoute)
-	app.use(rewardRoute)
-	app.use(userRoute)
-	app.use(claimRoute)
-	app.use(battleRoute)
+	app.use(channelRoutes)
+	app.use(rewardRoutes)
+	app.use(userRoutes)
+	app.use(claimRoutes)
+	app.use(battleRoutes)
 
 	// Send 500 status code with simple message to the client when unhandled errors occur
 	app.use((err, req, res, next) => {
@@ -77,10 +80,12 @@ mongooseInit().then(() => {
 	})
 
 	// Start the server
-	https.createServer({
-		key: fs.readFileSync('./ssl/server.key'),
-		cert: fs.readFileSync('./ssl/server.cert')
-	}, app).listen(443, () => console.log(`Server has started on 443.`))
-
-	// app.listen(3000)
+	if (process.env.NODE_ENV === 'development') {
+		https.createServer({
+			key: fs.readFileSync('./ssl/server.key'),
+			cert: fs.readFileSync('./ssl/server.cert')
+		}, app).listen(443, () => console.log(`Server has started on 443.`))
+	} else {
+		app.listen(3000, () => console.log(`Server has started on 3000.`))
+	}
 })

@@ -4,7 +4,7 @@ const APP_CONFIG = require('../constants')
 const ChannelModel = require('../models/channel')
 const UserModel = require('../models/user')
 const setPoints = () => {
-	console.log('Cron Points - ' + new Date().toString())
+	// console.log('Cron Points - ' + new Date().toString())
 
 	// Get all the channels that are live
 	return ChannelModel.find({
@@ -39,7 +39,7 @@ const setPoints = () => {
 									watchTime: 1
 								},
 								updatedAt: new Date()
-							})
+							}).then(() => {})
 						}
 					}
 				})
@@ -48,7 +48,7 @@ const setPoints = () => {
 	})
 }
 const setLiveChannels = () => {
-	console.log('Cron Live Channels - ' + new Date().toString())
+	// console.log('Cron Live Channels - ' + new Date().toString())
 
 	return axios.get(`https://api.twitch.tv/extensions/${APP_CONFIG.clientId}/live_activated_channels`, {
 		headers: {
@@ -60,7 +60,7 @@ const setLiveChannels = () => {
 			let channels2Update = []
 
 			channels.forEach(channel => {
-				channels2Update.push(channel.username.toLowerCase())
+				channels2Update.push(channel.id)
 			})
 
 			// Get all the channels that are live
@@ -70,24 +70,24 @@ const setLiveChannels = () => {
 			}).then(docs => {
 				if (docs) {
 					ChannelModel.updateMany({
-						name: { $in: channels2Update }
+						tid: { $in: channels2Update }
 					}, {
 						isLive: true,
 						updatedAt: new Date()
-					})
+					}).then(() => {})
 				}
 			})
 		}
 	})
 }
-const init = (timeFrame) => {
-	cron.schedule(timeFrame, () => {
+const init = () => {
+	cron.schedule('* * * * *', () => {
 		setPoints().catch(err => {
 			console.log(err)
 		})
 	})
 
-	cron.schedule(timeFrame, () => {
+	cron.schedule('30 * * * * *', () => {
 		setLiveChannels().catch(err => {
 			console.log(err)
 		})
