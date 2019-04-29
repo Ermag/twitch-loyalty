@@ -1,7 +1,16 @@
-module.exports = {
-    runtimeCompiler: true,
+const fs = require('fs')
 
-    pages: {
+module.exports = {
+	runtimeCompiler: true,
+	devServer: {
+		host: 'localhost.rig.twitch.tv',
+		https: {
+			key: fs.readFileSync('../ssl/local.key'),
+			cert: fs.readFileSync('../ssl/local.pem')
+		}
+	},
+
+	pages: {
 		viewer: {
 			entry: 'src/viewer.js',
 			template: 'public/index.html', // the source template
@@ -22,10 +31,10 @@ module.exports = {
 		}
 	},
 
-    publicPath: '',
-    outputDir: undefined,
-    assetsDir: undefined,
-    productionSourceMap: undefined,
-    parallel: undefined,
-    css: undefined
+	publicPath: '',
+	outputDir: undefined,
+	assetsDir: undefined,
+	productionSourceMap: undefined,
+	parallel: undefined,
+	css: undefined
 }

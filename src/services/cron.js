@@ -3,6 +3,7 @@ const axios = require('axios')
 const APP_CONFIG = require('../constants')
 const ChannelModel = require('../models/channel')
 const UserModel = require('../models/user')
+
 const setPoints = () => {
 	// console.log('Cron Points - ' + new Date().toString())
 
@@ -47,6 +48,7 @@ const setPoints = () => {
 		}
 	})
 }
+
 const setLiveChannels = () => {
 	// console.log('Cron Live Channels - ' + new Date().toString())
 
@@ -80,18 +82,19 @@ const setLiveChannels = () => {
 		}
 	})
 }
-const init = () => {
+
+module.exports = () => {
+	// Every minute
 	cron.schedule('* * * * *', () => {
 		setPoints().catch(err => {
 			console.log(err)
 		})
 	})
 
+	// Every minute 30s
 	cron.schedule('30 * * * * *', () => {
 		setLiveChannels().catch(err => {
 			console.log(err)
 		})
 	})
 }
-
-module.exports = init

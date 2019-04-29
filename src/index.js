@@ -7,8 +7,8 @@ const fs = require('fs')
 const logger = require('morgan')
 const bodyParser = require('body-parser')
 const APP_CONFIG = require('./constants')
-const mongooseInit = require('./config/mongoose')
-const cronInit = require('./config/cron')
+const mongooseConnect = require('./services/mongoose')
+const cronInit = require('./services/cron')
 const staticRoutes = require('./routes/static')
 const channelRoutes = require('./routes/channel')
 const rewardRoutes = require('./routes/reward')
@@ -16,15 +16,19 @@ const userRoutes = require('./routes/user')
 const claimRoutes = require('./routes/claim')
 const battleRoutes = require('./routes/battle')
 const app = express()
+const isDevEnv = process.env.NODE_ENV === 'development'
+
+console.log(Array.from(Array(20), () => '-').join(''))
+console.log(`Running in ${isDevEnv ? 'DEVELOPMENT' : 'PRODUCTION'} mode.`)
 
 // Connect to MongoDB via Mongoose
-mongooseInit().then(() => {
-	// Set cron to add every miniute points
+mongooseConnect().then(() => {
+	// Set crons for points and live channels
 	cronInit()
 
 	// Set CORS for browsers
 	app.use(cors({
-		origin: process.env.NODE_ENV === 'development' ? '*' : `https://${APP_CONFIG.clientId}.ext-twitch.tv`,
+		origin: isDevEnv ? '*' : `https://${APP_CONFIG.clientId}.ext-twitch.tv`,
 		allowedHeaders: ['Content-Type, Authorization']
 	}))
 
@@ -80,11 +84,11 @@ mongooseInit().then(() => {
 	})
 
 	// Start the server
-	if (process.env.NODE_ENV === 'development') {
+	if (isDevEnv) {
 		https.createServer({
-			key: fs.readFileSync('./ssl/server.key'),
-			cert: fs.readFileSync('./ssl/server.cert')
-		}, app).listen(443, () => console.log(`Server has started on 443.`))
+			key: fs.readFileSync('./ssl/local.key'),
+			cert: fs.readFileSync('./ssl/local.pem')
+		}, app).listen(443, 'localhost.rig.twitch.tv', () => console.log(`Server running at https://localhost.rig.twitch.tv`))
 	} else {
 		app.listen(3000, () => console.log(`Server has started on 3000.`))
 	}

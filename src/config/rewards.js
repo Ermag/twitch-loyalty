@@ -1,4 +1,4 @@
-const REWARDS = {
+module.exports = {
 	limit: 25, // Maximum amount of rewards for a channel
 	defaults: [ // Set of rewards added for every channel on creation
 		{
@@ -25,5 +25,3 @@ const REWARDS = {
 		}
 	]
 }
-
-module.exports = REWARDS
