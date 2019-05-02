@@ -4,10 +4,9 @@ const APP_CONFIG = require('../constants')
 const REWARDS = require('../config/rewards')
 const RewardModel = require('../models/reward')
 
-let ChannelSchema = new mongoose.Schema({
+const ChannelSchema = new mongoose.Schema({
 	tid: { // Twitch Channel ID
 		type: String,
-		required: true,
 		unique: true
 	},
 	name: String,
@@ -16,6 +15,10 @@ let ChannelSchema = new mongoose.Schema({
 	isLive: {
 		type: Boolean,
 		default: false
+	},
+	alertsVolume: {
+		type: Number,
+		default: 0.33
 	},
 	createdAt: {
 		type: Date,

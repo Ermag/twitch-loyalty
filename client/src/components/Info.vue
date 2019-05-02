@@ -1,18 +1,18 @@
 <template>
 	<div class="info-wrapper">
-		<img :src="user.avatar" :alt="user.displayName" width="76" height="76" />
+		<img :src="user.profile.avatar" :alt="user.profile.displayName" width="76" height="76" />
 
 		<div class="info-stats">
 			<div class="username">
 				<v-tooltip bottom>
-					<h1 slot="activator">{{ user.displayName }}</h1>
-					<span style="white-space: nowrap;">{{ user.displayName }}</span>
+					<h1 slot="activator">{{ user.profile.displayName }}</h1>
+					<span style="white-space: nowrap;">{{ user.profile.displayName }}</span>
 				</v-tooltip>
 			</div>
 
 			<div class="metrics" slot="activator">
 				<div class="points">
-					<Points :value="user.currentPoints" :name="POINTS_NAME" :img="POINTS_IMG" :size="24" pos="bottom" :css="'large-points'" />
+					<Points @click.native="isPointsInfo = true" :value="user.currentPoints" :name="POINTS_NAME" :img="POINTS_IMG" :size="24" pos="bottom" :css="'pointer large-points'" />
 				</div>
 				<v-tooltip bottom>
 					<div class="watch-time" slot="activator">{{ Math.floor(user.watchTime / 60) + '.' + user.watchTime % 60 }}h</div>
@@ -26,11 +26,34 @@
 					<div class="lvl-divider first"></div>
 					<div class="lvl-divider second"></div>
 					<div class="lvl-divider third"></div>
-					<div class="value"><span>{{ user.level }}</span></div>
+					<div class="value"><span>{{ user.profile.level }}</span></div>
 				</div>
-				<span>Experience: {{ user.experience }}/{{ expNextLevel }}</span>
+				<div class="text-xs-center">
+					Level: {{ user.profile.level }}<br />
+					Experience: {{ user.profile.experience }}/{{ expNextLevel }}
+				</div>
 			</v-tooltip>
 		</div>
+
+		<v-dialog v-model="isPointsInfo" content-class="ma-3" attach="#app .alt-panel" full-width>
+			<v-card>
+				<v-card-title class="title pb-0 pr-0">
+					{{ POINTS_NAME }} Info
+				</v-card-title>
+
+				<v-card-text class="subheading">
+					By watching the channel you obtain <Points :value="-1" :name="POINTS_NAME" :img="POINTS_IMG" :size="16" /><span class="primary--text">{{ POINTS_NAME }}</span>
+					which you can spend on rewards or battle other viewers. You gain <Points :value="1" :name="POINTS_NAME" :img="POINTS_IMG" :size="16" css="mr-1" /> for every minute you watch.
+					Followers and subscribers receive a multiplier bonus x2/x4 respectively.
+				</v-card-text>
+
+				<v-card-actions >
+					<v-spacer></v-spacer>
+
+					<v-btn @click="isPointsInfo = false" small outline>Ok</v-btn>
+				</v-card-actions>
+			</v-card>
+		</v-dialog>
 	</div>
 </template>
 
@@ -95,7 +118,7 @@
 				}
 				.value {
 					position: absolute;
-						z-index: 1;
+						z-index: 4;
 						bottom: -7px;
 					width: 100%;
 					height: 8px;
@@ -167,7 +190,8 @@
 		data () {
 			return {
 				expProgress: 0,
-				expNextLevel: 0
+				expNextLevel: 0,
+				isPointsInfo: false
 			}
 		},
 		methods: {
@@ -175,19 +199,19 @@
 			calcExp () {
 				let prev = 0
 
-				this.expNextLevel = Math.round(175 * Math.pow(this.user.level + 1, 1.5))
+				this.expNextLevel = Math.round(175 * Math.pow(this.user.profile.level + 1, 1.5))
 
-				if (this.user.level > 1) {
-					prev = Math.round(175 * Math.pow(this.user.level - 1 + 1, 1.5))
+				if (this.user.profile.level > 1) {
+					prev = Math.round(175 * Math.pow(this.user.profile.level - 1 + 1, 1.5))
 				}
 
-				this.expProgress = Math.min(100, ((this.user.experience - prev) / (this.expNextLevel - prev)) * 100)
+				this.expProgress = Math.min(100, ((this.user.profile.experience - prev) / (this.expNextLevel - prev)) * 100)
 			}
 		},
 		updated () {
 			this.calcExp()
 
-			if (this.user.experience >= this.expNextLevel) {
+			if (this.user.profile.experience >= this.expNextLevel) {
 				EventBus.$emit('levelUp', 1)
 				this.calcExp()
 			}

@@ -11,7 +11,7 @@
 		<div v-else class="px-1" style="padding-top: 10px;">
 			<div class="reward my-2" v-for="(reward, index) in rewards" :key="reward._id">
 				<v-tooltip right>
-					<div class="image mr-2" slot="activator" @click="showReward(index)" :style="{ 'background-image': 'url(' + baseURL + reward.image + ')' }"></div>
+					<div class="image mr-2" slot="activator" @click="showReward(index)" :style="{ 'background-image': 'url(' + baseURL + (reward.image || 'default.png') + ')' }"></div>
 					<span>{{ reward.name }}</span>
 				</v-tooltip>
 
@@ -25,8 +25,8 @@
 								:rules="[rules.name]"
 								placeholder="Message (optional)" maxlength="100" counter autofocus hide-details></v-text-field>
 						</div>
-						<v-btn class="ma-0 mr-2" color="success" @click="claim(index, reward)" small outline>Confirm</v-btn>
-						<v-btn class="ma-0 mr-2"  color="error" @click="confirm(index, false)" small outline>Cancel</v-btn>
+						<v-btn class="ma-0 mr-2" color="success" @click="claim(index)" small outline>Confirm</v-btn>
+						<v-btn class="ma-0 mr-2" color="error" @click="confirm(index, false)" small outline>Cancel</v-btn>
 					</div>
 					<div v-else key="details">
 						<div class="reward-header">
@@ -46,20 +46,29 @@
 				<v-card>
 					<v-card-title class="title pb-0 pr-0" style="position: relative;">
 						<span style="padding-right: 40px;">{{ rewards[previewReward].name }}</span>
-						<v-btn @click="playSound(rewards[previewReward].sound)" style="position: absolute; right: 0;" flat icon>
+						<v-btn @click="toggleSound(rewards[previewReward].sound)" style="position: absolute; right: 0;" flat icon>
 							<v-icon>volume_up</v-icon>
 						</v-btn>
 					</v-card-title>
 
 					<v-card-text>
-						<div class="text-xs-center"><img :src="baseURL + (rewards[previewReward].image || 'default.png')" height="100" /></div>
+						<div class="preview-image text-xs-center" :style="{ 'background-image': 'url(' + baseURL + (rewards[previewReward].image || 'default.png') + ')' }"></div>
+						<v-textarea
+							class="ma-0 mt-1 pa-0"
+							ref="modalMessage"
+							v-model="rewards[previewReward].message"
+							:rules="[rules.name]"
+							placeholder="Message (optional)"
+							maxlength="100"
+							rows="3"
+							no-resize counter hide-details></v-textarea>
 					</v-card-text>
 
 					<v-card-actions>
 						<v-spacer></v-spacer>
 
 						<Points :value="rewards[previewReward].points" :name="POINTS_NAME" :img="POINTS_IMG" :size="18" :css="rewards[previewReward].points > user.currentPoints ? 'subheading red--text' : 'subheading'" />
-						<v-btn color="primary" class="ml-2" @click="confirm(previewReward, true); isPreview = false" :disabled="rewards[previewReward].points > user.currentPoints" small outline>Claim</v-btn>
+						<v-btn color="primary" class="ml-2" @click="claim(previewReward); isPreview = false" :disabled="rewards[previewReward].points > user.currentPoints" small outline>Claim</v-btn>
 						<v-btn @click="isPreview = false" small outline>Cancel</v-btn>
 					</v-card-actions>
 				</v-card>
@@ -75,8 +84,10 @@
 		margin-left: -32px;
 	}
 
-	.v-dialog__content {
-		position: absolute;
+	.preview-image {
+		height: 80px;
+		background: url('../assets/mascot.png') no-repeat center;
+		background-size: contain;
 	}
 
 	.reward {
@@ -90,7 +101,7 @@
 			border: 2px solid $primary;
 			border-bottom: 0;
 			vertical-align: top;
-			background: url('../assets/no-image.jpg') no-repeat center;
+			background: url('../assets/mascot.png') no-repeat center;
 			background-size: contain;
 			cursor: pointer;
 		}
@@ -128,6 +139,7 @@
 				isPreview: false,
 				previewReward: 0,
 				rewards: [],
+				previewSound: new Audio(''),
 				baseURL: process.env.VUE_APP_API,
 				rules: {
 					name: value => (value && value.length <= 100) || 'Max 100 characters'
@@ -135,16 +147,30 @@
 			}
 		},
 		methods: {
-			playSound (sound) {
-				let audio = new Audio(this.baseURL + (sound || 'default.wav'))
-				audio.autoplay = true
-				audio.volume = 0.25
+			toggleSound (sound) {
+				sound = sound || 'default.wav'
+				this.previewSound.currentTime = 0
+
+				if (sound === this.previewSound.alterSrc) {
+					this.previewSound.paused ? this.previewSound.play() : this.previewSound.pause()
+				} else {
+					this.previewSound.src = this.baseURL + sound
+					this.previewSound.alterSrc = sound
+
+					this.previewSound.play()
+				}
 			},
 			showReward (index) {
 				this.isPreview = true
 				this.previewReward = index
+
+				setTimeout(() => {
+					this.$refs.modalMessage.$el.querySelector('textarea').focus()
+				}, 0)
 			},
-			claim (index, reward) {
+			claim (index) {
+				let reward = this.rewards[index]
+
 				this.axios.post(`${process.env.VUE_APP_API}claim`, {
 					reward: reward._id,
 					user: this.user._id,
@@ -169,6 +195,8 @@
 			}
 		},
 		created () {
+			this.previewSound.volume = 0.25
+
 			this.axios.get(`${process.env.VUE_APP_API}reward?cid=${this.user.channel._id}&orderBy=points`).then(res => {
 				this.rewards = res.data
 				this.rewards.forEach(reward => {

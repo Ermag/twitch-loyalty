@@ -20,6 +20,7 @@ module.exports = () => {
 	return mongoose.connect(connectURL, {
 		useNewUrlParser: true,
 		useCreateIndex: true,
-		useFindAndModify: false
+		useFindAndModify: false,
+		autoIndex: true
 	})
 }

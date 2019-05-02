@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-let BattleSchema = new mongoose.Schema({
+const BattleSchema = new mongoose.Schema({
 	channel: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Channel'

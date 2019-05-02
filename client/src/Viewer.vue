@@ -73,6 +73,11 @@
 		}
 	}
 
+	.v-dialog__content {
+		position: absolute;
+			z-index: 10001 !important;
+	}
+
 	.app-visible {
 		width: 100%;
 		height: 100%;
@@ -251,15 +256,13 @@
 				hasToggle: true,
 				isFullScreen: false,
 				user: {
-					displayName: '',
-					avatar: '',
 					currentPoints: 0,
-					level: 0,
-					experience: 0,
 					watchTime: 0,
-					channel: {}
+					channel: {},
+					profile: {}
 				},
 				counterInterval: null,
+				accessInterval: null,
 				tabs: ['Profile', 'Rewards', 'Battle', 'Leaderboard'],
 				tab: 'Profile',
 				hasNotification: false
@@ -272,7 +275,12 @@
 						if (this.isVisible) {
 							EventBus.$emit('app-error')
 						}
-					}, 3000)
+					}, 5000)
+				}
+			},
+			isPanelActive (val) {
+				if (val && this.Auth && !this.Auth.getUserId()) {
+					this.twitch.actions.requestIdShare()
 				}
 			}
 		},
@@ -319,11 +327,11 @@
 			startCounter () {
 				this.counterInterval = setInterval(() => {
 					this.axios.get(`${process.env.VUE_APP_API}user?id=${this.user._id}`).then(res => {
-						this.$set(this.user, 'displayName', res.data.displayName)
-						this.$set(this.user, 'avatar', res.data.avatar)
+						this.$set(this.user.profile, 'displayName', res.data.profile.displayName)
+						this.$set(this.user.profile, 'avatar', res.data.profile.avatar)
+						this.$set(this.user.profile, 'level	', res.data.profile.level)
+						this.$set(this.user.profile, 'experience', res.data.profile.experience)
 						this.$set(this.user, 'currentPoints', res.data.currentPoints)
-						this.$set(this.user, 'level	', res.data.level)
-						this.$set(this.user, 'experience', res.data.experience)
 						this.$set(this.user, 'watchTime	', res.data.watchTime)
 
 						if (this.user.channel.pointsName) {
@@ -342,11 +350,11 @@
 
 			EventBus.$on('claimedReward', reward => {
 				this.$set(this.user, 'currentPoints', this.user.currentPoints - reward.points)
-				this.$set(this.user, 'experience', this.user.experience + reward.experience)
+				this.$set(this.user.profile, 'experience', this.user.profile.experience + reward.experience)
 			})
 
 			EventBus.$on('levelUp', reward => {
-				this.$set(this.user, 'level', this.user.level + 1)
+				this.$set(this.user.profile, 'level', this.user.profile.level + 1)
 			})
 
 			EventBus.$on('stopNotification', () => {
@@ -369,6 +377,12 @@
 			this.twitch = window.Twitch ? window.Twitch.ext : null
 
 			if (this.twitch) {
+				this.accessInterval = setInterval(() => {
+					if (!this.hasToggle && this.Auth && !this.Auth.getUserId()) {
+						this.twitch.actions.requestIdShare()
+					}
+				}, 3000)
+
 				this.twitch.onContext((context, fields) => {
 					if (fields.indexOf('isTheatreMode') !== -1 || fields.indexOf('isFullScreen') !== -1) {
 						this.isFullScreen = context.isFullScreen || context.isTheatreMode
@@ -381,12 +395,16 @@
 
 					if (!this.Auth.isLoggedIn()) {
 						this.hasMessage = true
-						this.message = 'Login on Twitch to see your<br />awesome profile!'
+						this.message = 'Sign in to see your awesome<br />profile and claim rewards!'
 						this.isLoading = false
 						return
 					}
 
 					if (userId) {
+						clearInterval(this.accessInterval)
+						this.isLoading = true
+						this.hasMessage = false
+
 						const twitchHeaders = {
 							'Accept': 'application/vnd.twitchtv.v5+json',
 							'Client-ID': auth.clientId
@@ -414,7 +432,8 @@
 								username: user.data.name,
 								avatar: user.data.logo,
 								updatedAt: user.data.updated_at,
-								isFollowing: follow.status !== 404
+								isFollowing: follow.status !== 404,
+								isSubscriber: !!this.twitch.viewer.subscriptionStatus
 							})
 						}))
 					} else {
@@ -430,6 +449,7 @@
 			}
 		},
 		beforeDestroy () {
+			clearInterval(this.accessInterval)
 			clearInterval(this.counterInterval)
 		}
 	}

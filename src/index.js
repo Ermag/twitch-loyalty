@@ -55,7 +55,8 @@ mongooseConnect().then(() => {
 	// Check JWT
 	app.use(jwt({ secret: Buffer.from(APP_CONFIG.twitchSecret, 'base64') }).unless({
 		path: [
-			{ url: '/claim', methods: ['GET'] }
+			{ url: '/claim', methods: ['GET'] },
+			{ url: '/channelById', methods: ['GET'] }
 		]
 	}))
 

@@ -15,6 +15,7 @@ $(document).ready(function() {
 	var time = new Date();
 	var alerts = [];
 	var sound = null;
+	var volume = 0.33;
 
 	var rewardName = $('#alert-reward-name');
 	var rewardPoints = $('#alert-reward-points');
@@ -27,6 +28,12 @@ $(document).ready(function() {
 
 	screenTime = parseInt(screenTime) * 1000 || 8000;
 
+	$.get('/channelById?cid=' + chid, function(data) {
+		if (data && !isNaN(data.alertsVolume)) {
+			volume = data.alertsVolume;
+		}
+	});
+
 	function getAlerts() {
 		$.get('/claim?cid=' + chid + '&afterDate=' + time.getTime(), function(data) {
 			time = new Date();
@@ -36,7 +43,7 @@ $(document).ready(function() {
 					alerts.push(data[i]);
 				}
 			}
-		})
+		});
 	}
 
 	function showAlert(alert) {
@@ -47,9 +54,9 @@ $(document).ready(function() {
 		pointsImage.attr('src', alert.channel.pointsImg || 'coins.png');
 
 		if (alert.user) {
-			userAvatar.attr('src', alert.user.avatar);
-			userName.text(alert.user.displayName);
-			userLevel.text(alert.user.level);
+			userAvatar.attr('src', alert.user.profile.avatar);
+			userName.text(alert.user.profile.displayName);
+			userLevel.text(alert.user.profile.level);
 		} else {
 			userAvatar.attr('src', 'avatar.jpg');
 			userName.text('Somebody');
@@ -61,7 +68,7 @@ $(document).ready(function() {
 		if (hasSound === 'yes') {
 			sound = new Audio(alert.reward.sound || 'default.wav');
 			sound.autoplay = true;
-			sound.volume = 0.25;
+			sound.volume = volume;
 		}
 
 		setTimeout(function() {

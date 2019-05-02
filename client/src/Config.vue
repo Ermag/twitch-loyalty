@@ -12,8 +12,8 @@
 			<v-flex sm12 md8 offset-md2>
 				<v-card>
 					<v-alert v-model="isNewInstall" color="success" icon="check_circle" dismissible>
-						Thank you for installing {{ NAME }}!<br />
-						Below you can set rewards for your viewers, we ve hooked you up with our basic template to get you started.
+						Thank you for installing {{ NAME }}! Below you can set rewards for your viewers, we ve hooked you up with our basic template to get you started.
+						To set alerts or change your currency name/image go to the <a href="#" @click="changeTab(1)">Options</a> tab.
 					</v-alert>
 
 					<v-alert v-model="isPointsInfo" color="info" icon="info" dismissible>
@@ -43,8 +43,8 @@
 									<td class="text-xs-right"><Points :value="BASE_POINTS * 1440 * FOLLOWER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
 									<td class="text-xs-right"><Points :value="BASE_POINTS * 10080 * FOLLOWER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
 								</tr>
-								<tr style="opacity: .7;">
-									<th class="text-xs-left">Subscriber (soon)</th>
+								<tr>
+									<th class="text-xs-left">Subscriber</th>
 									<td class="text-xs-right"><Points :value="BASE_POINTS * SUBSCRIBER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
 									<td class="text-xs-right"><Points :value="BASE_POINTS * 60 * SUBSCRIBER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
 									<td class="text-xs-right"><Points :value="BASE_POINTS * 1440 * SUBSCRIBER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>

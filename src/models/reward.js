@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-let RewardSchema = new mongoose.Schema({
+const RewardSchema = new mongoose.Schema({
 	channel: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Channel'

@@ -1,14 +1,14 @@
 const mongoose = require('mongoose')
 
-let UserSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
 	channel: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Channel'
 	},
-	userId: String,
-	displayName: String,
-	username: String,
-	avatar: String,
+	profile: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Profile'
+	},
 	isFollowing: {
 		type: Boolean,
 		default: false
@@ -22,14 +22,6 @@ let UserSchema = new mongoose.Schema({
 		default: 0
 	},
 	currentPoints: {
-		type: Number,
-		default: 0
-	},
-	level: {
-		type: Number,
-		default: 1
-	},
-	experience: {
 		type: Number,
 		default: 0
 	},
@@ -54,5 +46,7 @@ let UserSchema = new mongoose.Schema({
 		default: Date.now
 	}
 })
+
+UserSchema.index({ channel: 1, profile: 1 }, { unique: true })
 
 module.exports = mongoose.model('User', UserSchema)

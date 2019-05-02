@@ -1,13 +1,13 @@
 <template>
 	<div>
-		<v-alert :value="true" class="ma-3" color="info" outline>
+		<div class="ma-3 mb-4 pa-3" style="border: 1px solid #E5C572;">
 			You can see claimed rewards from viewers directly on your <a href="https://www.twitch.tv/dashboard/live" target="_blank">Twitch Dashboard</a>.<br /><br />
 			To setup alerts for claimed rewards on your stream, please follow the instructions:
-			<ol>
+			<ol class="mb-2">
 				<li>Open your streaming software (OBS, XSplit, etc.).</li>
 				<li>Select the scene in which the alerts to appear.</li>
 				<li>Add new browser source with Width -> 500 and Height - 320</li>
-				<li>Copy and paste the URL -> <input :value="baseURL + 'alert.html?chid=' + channel._id + '&sound=yes&screenTime=8'" size="65" onClick="this.select(); document.execCommand('copy')" readonly autofocus /></li>
+				<li>Copy and paste the URL -> <input :value="baseURL + 'alert.html?chid=' + channel._id + '&sound=yes&screenTime=8'" size="60" onClick="this.select(); document.execCommand('copy')" readonly autofocus /></li>
 			</ol>
 			<v-tooltip top>
 				<template #activator="data">
@@ -15,29 +15,41 @@
 				</template>
 				<span>Could take 10-20 seconds for the alert to appear.</span>
 			</v-tooltip>
-		</v-alert>
+		</div>
 
-		<div class="ma-3 pb-3">
+		<div class="ma-3 pb-4">
 			<h5 class="headline">
 				Currency <Points :value="-1" :name="POINTS_NAME" :img="POINTS_IMG" :size="24" />
 			</h5>
 			<v-form ref="addForm">
 				<v-layout>
-					<v-flex xs12 md4 class="px-2">
+					<v-flex xs12 md6 class="px-2">
 						<v-text-field label="Name" v-model="currencyName" :rules="[rules.required, rules.name]" maxlength="20" counter></v-text-field>
 					</v-flex>
-					<v-flex xs12 md4 class="px-2">
+					<v-flex xs12 md6 class="px-2">
 						<div>
 							<v-text-field placeholder="Select PNG 24x24px" @click="pickFile()" label="Image"></v-text-field>
 							<input type="file" ref="image" accept="image/*" style="display: none;" />
 						</div>
 
 					</v-flex>
-					<v-flex xs12 md4 class="px-2">
-						<v-btn color="success" @click="save" block outline>Save</v-btn>
-					</v-flex>
 				</v-layout>
 			</v-form>
+
+			<h5 class="headline">Alerts Volume</h5>
+			<v-flex xs12 class="mb-2">
+				<v-slider
+					v-model="alertsVolume"
+					@change="previewAlertsVolume"
+					max="1"
+					step="0.01"
+					append-icon="volume_up"
+					prepend-icon="volume_down"></v-slider>
+			</v-flex >
+
+			<v-flex xs12 class="px-2">
+				<v-btn color="success" @click="save" block outline>Save</v-btn>
+			</v-flex>
 		</div>
 
 		<v-snackbar v-model="message.isVisible" :color="message.type" :timeout="message.timeout" top>
@@ -68,11 +80,14 @@
 			Points
 		},
 		data () {
+			console.log()
 			return {
 				testRewardId: null,
 				isTesting: false,
 				baseURL: process.env.VUE_APP_API,
 				currencyName: this.$props.POINTS_NAME,
+				alertsVolume: this.$props.channel.alertsVolume || 0.33,
+				previewSound: new Audio(process.env.VUE_APP_API + 'default.wav'),
 				rules: {
 					required: value => !!value || 'Required',
 					name: value => (value && value.length <= 20) || 'Max 20 characters'
@@ -86,6 +101,11 @@
 			}
 		},
 		methods: {
+			previewAlertsVolume (vol) {
+				this.previewSound.currentTime = 0
+				this.previewSound.volume = vol
+				this.previewSound.play()
+			},
 			pickFile (type) {
 				this.$refs['image'].click()
 			},
@@ -118,7 +138,10 @@
 			},
 			save () {
 				if (this.$refs.addForm.validate()) {
-					let data = { name: this.currencyName }
+					let data = {
+						name: this.currencyName,
+						volume: this.alertsVolume
+					}
 
 					if (this.$refs['image'].files.length) {
 						let reader = new FileReader()
@@ -138,7 +161,7 @@
 									this.axios.put(`${process.env.VUE_APP_API}channel?cid=${this.channel._id}`, data).then(res => {
 										EventBus.$emit('channelChange', res.data)
 
-										this.setMessage('success', 'You have successfuly changed your currency.')
+										this.setMessage('success', 'You have successfuly updated your options.')
 									}).catch(() => {
 										this.setMessage('error', 'Something went wrong :( Please, try again later.')
 									}).then(() => {

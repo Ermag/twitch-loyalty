@@ -12,8 +12,8 @@
 			<div v-else class="px-1" key="preview">
 				<div class="preview mt-4 text-xs-center">
 					<div style="margin-right: 30px;">
-						<img :src="you.avatar" :alt="user.displayName" width="76" height="76" />
-						<span>{{ user.displayName }}</span>
+						<img :src="you.avatar" :alt="user.profile.displayName" width="76" height="76" />
+						<span>{{ user.profile.displayName }}</span>
 					</div>
 					<img src="../assets/vs.png" height="62" alt="Vs" />
 					<div style="margin-left: 30px;">
@@ -24,7 +24,10 @@
 				<div class="clearfix"></div>
 
 				<transition name="fade" mode="out-in">
-					<div v-if="!amount" class="text-xs-center mt-5" key="amount">
+					<div v-if="isInBattle" class="text-xs-center mt-5" key="inBattle">
+						<v-progress-circular :size="64" :width="7" color="primary" indeterminate></v-progress-circular>
+					</div>
+					<div v-else-if="!amount" class="text-xs-center mt-5" key="amount">
 						<div class="headline mb-3">Choose Amount</div>
 						<div v-for="(am, i) in amounts" :key="i" class="amount pointer" :class="{ disabled: am > user.currentPoints }" @click="amount = am">
 							<Points :value="am" :name="POINTS_NAME" :img="POINTS_IMG" :size="24" :css="am > user.currentPoints ? 'headline ml-1 red--text' : 'headline ml-1'" />
@@ -38,11 +41,11 @@
 					</div>
 					<div v-else class="text-xs-center mt-4" key="result">
 						<div v-if="result == 0" class="mb-2">
-							<div class="headline error--text mb-1">You Lost, but gained EXP!</div>
+							<div class="headline error--text mb-1">You lost, but gained exp</div>
 							<Points :value="amount" :name="POINTS_NAME" :img="POINTS_IMG" :size="24" :css="'headline ml-1'" />
 						</div>
 						<div v-else-if="result == 1" class="mb-2">
-							<div class="headline success--text mb-1">You Won!</div>
+							<div class="headline success--text mb-1">You won</div>
 							<Points :value="amount * 2" :name="POINTS_NAME" :img="POINTS_IMG" :size="24" :css="'headline ml-1'" />
 						</div>
 						<div v-else class="headline mb-3 grey--text">Draw</div>
@@ -125,6 +128,7 @@
 				isLoading: true,
 				hasError: false,
 				baseURL: process.env.VUE_APP_API,
+				isInBattle: false,
 				opponent: {
 					id: null,
 					name: null,
@@ -148,7 +152,7 @@
 				this.move = null
 				this.result = null
 
-				this.you.avatar = this.user.avatar
+				this.you.avatar = this.user.profile.avatar
 
 				this.axios.get(`${process.env.VUE_APP_API}userRand?cid=${this.user.channel._id}`).then(res => {
 					// If you found yourself choose the Overseer
@@ -157,8 +161,8 @@
 						this.opponent.avatar = require('../assets/overseer.jpg')
 					} else {
 						this.opponent.id = res.data._id
-						this.opponent.name = res.data.displayName
-						this.opponent.avatar = res.data.avatar
+						this.opponent.name = res.data.profile.displayName
+						this.opponent.avatar = res.data.profile.avatar
 					}
 				}).catch(() => {
 					this.hasError = true
@@ -167,39 +171,43 @@
 				})
 			},
 			battle (move) {
-				this.axios.post(`${process.env.VUE_APP_API}battle`, {
-					user: this.user._id,
-					opponent: this.opponent.id,
-					points: this.amount,
-					userMove: move
-				}).then(res => {
-					this.result = res.data.result
-					this.you.avatar = require(`../assets/move-${move}.jpg`)
-					this.opponent.avatar = require(`../assets/move-${res.data.opponentMove}.jpg`)
-					let points = 0
+				this.isInBattle = true
 
-					if (this.result === 0) {
-						points = this.amount // Lost
-					} else if (this.result === 1) {
-						points = this.amount * -2 // Won
-					}
+				setTimeout(() => {
+					this.axios.post(`${process.env.VUE_APP_API}battle`, {
+						user: this.user._id,
+						opponent: this.opponent.id,
+						points: this.amount,
+						userMove: move
+					}).then(res => {
+						this.result = res.data.result
+						this.you.avatar = require(`../assets/move-${move}.jpg`)
+						this.opponent.avatar = require(`../assets/move-${res.data.opponentMove}.jpg`)
+						let points = 0
 
-					EventBus.$emit('claimedReward', {
-						points: points,
-						experience: this.result === 0 ? points : 0
+						if (this.result === 0) {
+							points = this.amount // Lost
+						} else if (this.result === 1) {
+							points = this.amount * -2 // Won
+						}
+
+						EventBus.$emit('claimedReward', {
+							points: points,
+							experience: this.result === 0 ? points : 0
+						})
+					}).catch(err => {
+						if (err.response.status === 422) {
+							this.maximumBattles = true
+							this.amount = null
+							this.move = null
+							this.result = null
+						} else {
+							this.hasError = true
+						}
+					}).then(() => {
+						this.isInBattle = false
 					})
-				}).catch(err => {
-					if (err.response.status === 422) {
-						this.maximumBattles = true
-						this.amount = null
-						this.move = null
-						this.result = null
-					} else {
-						this.hasError = true
-					}
-				}).then(() => {
-					this.isLoading = false
-				})
+				}, 2000)
 			}
 		},
 		created () {

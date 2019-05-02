@@ -6,8 +6,8 @@ const name = 'channel'
 
 // GET
 router.get(`/${name}`, (req, res) => {
-	if (!req.query.tid || req.query.tid.length < 6) {
-		return res.status(400).send('Missing valid tid.')
+	if (!req.query.tid) {
+		return res.status(400).send('Missing twitch id.')
 	}
 
 	ChannelModel.findOne({
@@ -28,7 +28,47 @@ router.get(`/${name}`, (req, res) => {
 	})
 })
 
+// GET
+router.get(`/${name}ById`, (req, res) => {
+	if (!req.query.cid) {
+		return res.status(400).send('Missing channel id.')
+	}
+
+	ChannelModel.findOne({
+		_id: req.query.cid
+	}).then(doc => {
+		if (!doc) {
+			res.status(500).json('No channel with such id.')
+		} else {
+			res.json(doc)
+		}
+	}).catch(err => {
+		res.status(500).json(err)
+	})
+})
+
 // UPDATE
+function updateChannel (req, res, query = {}) {
+	ChannelModel.findOneAndUpdate({
+		_id: req.query.cid
+	}, {
+		...query,
+		pointsName: req.body.name,
+		alertsVolume: req.body.volume,
+		updatedAt: new Date()
+	}, {
+		new: true
+	}).then(doc => {
+		if (!doc || doc.length === 0) {
+			return res.status(500).send(doc)
+		}
+
+		res.json(doc)
+	}).catch(err => {
+		res.status(500).json(err)
+	})
+}
+
 router.put(`/${name}`, (req, res) => {
 	if (!req.query.cid) {
 		return res.status(400).send('Missing channel id.')
@@ -61,42 +101,11 @@ router.put(`/${name}`, (req, res) => {
 				if (err) {
 					return res.status(500).send(err)
 				} else {
-					ChannelModel.findOneAndUpdate({
-						_id: req.query.cid
-					}, {
-						pointsName: req.body.name,
-						pointsImg: imageName,
-						updatedAt: new Date()
-					}, {
-						new: true
-					}).then(doc => {
-						if (!doc || doc.length === 0) {
-							return res.status(500).send(doc)
-						}
-
-						res.json(doc)
-					}).catch(err => {
-						res.status(500).json(err)
-					})
+					updateChannel(req, res, { pointsImg: imageName })
 				}
 			})
 		} else {
-			ChannelModel.findOneAndUpdate({
-				_id: req.query.cid
-			}, {
-				pointsName: req.body.name,
-				updatedAt: new Date()
-			}, {
-				new: true
-			}).then(doc => {
-				if (!doc || doc.length === 0) {
-					return res.status(500).send(doc)
-				}
-
-				res.json(doc)
-			}).catch(err => {
-				res.status(500).json(err)
-			})
+			updateChannel(req, res)
 		}
 	})
 })

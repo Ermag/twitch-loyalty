@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const UserModel = require('./user')
 const RewardModel = require('./reward')
 
-let ClaimSchema = new mongoose.Schema({
+const ClaimSchema = new mongoose.Schema({
 	reward: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Reward'

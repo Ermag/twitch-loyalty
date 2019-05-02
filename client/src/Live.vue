@@ -1,5 +1,9 @@
 <template>
 	<v-app :dark="isDarkTheme">
+		<v-alert v-model="hasNewVersion" color="info" icon="info" dismissible>
+			A new version of <strong>Alter</strong> has been rolled out, click  <a href="#" @click="isChangelogModal = true">HERE</a> to see the changelog.
+		</v-alert>
+
 		<div v-if="isLoading" class="ma-3 text-xs-center">
 			<v-progress-circular :size="70" :width="7" color="primary" indeterminate></v-progress-circular>
 		</div>
@@ -16,13 +20,36 @@
 			<div class="mb-2" v-for="claim in claims" :key="claim._id">
 				<v-alert :value="true" class="ma-0" color="success" transition="scale-transition" outline>
 					{{ claim.createdAt | moment('from', new Date()) }}
-					<strong>{{ claim.user ? claim.user.displayName : 'Somebody' }} <sup class="primary--text">{{ claim.user ? claim.user.level : 1 }}</sup></strong> claimed <strong>{{ claim.reward.name }}</strong> for
+					<strong>{{ claim.user ? claim.user.profile.displayName : 'Somebody' }} <sup class="primary--text">{{ claim.user ? claim.user.profile.level : 1 }}</sup></strong> claimed <strong>{{ claim.reward.name }}</strong> for
 					<Points :value="claim.points" :name="POINTS_NAME" :img="POINTS_IMG" />
 					<v-divider class="my-1"></v-divider>
 					{{ claim.msg || 'No Message left.' }}
 				</v-alert>
 			</div>
 		</div>
+
+		<v-dialog v-model="isChangelogModal" fullscreen>
+			<v-card>
+				<v-toolbar>
+					<v-toolbar-title>Version 0.4.0</v-toolbar-title>
+
+					<v-spacer></v-spacer>
+
+					<v-toolbar-items>
+						<v-btn icon dark @click="isChangelogModal = false">
+							<v-icon>close</v-icon>
+						</v-btn>
+					</v-toolbar-items>
+				</v-toolbar>
+
+				<ul class="pa-4">
+					<li class="pb-2">Subscribers now receive their bonus currency for watching.</li>
+					<li class="pb-2">Added option to change the volume of alerts.</li>
+					<li class="pb-2">Fixed an issue showing duplicated users in the leaderboard.</li>
+					<li class="pb-2">Added various UI/UX improvements and bug fixes.</li>
+				</ul>
+			</v-card>
+		</v-dialog>
 	</v-app>
 </template>
 
@@ -45,7 +72,16 @@
 				channel: null,
 				claims: [],
 				fetchInterval: null,
+				hasNewVersion: !localStorage.getItem('loyal-live-version040'),
+				isChangelogModal: false,
 				reFetchInterval: 30 // seconds
+			}
+		},
+		watch: {
+			hasNewVersion (val) {
+				if (!val) {
+					localStorage.setItem('loyal-live-version040', true)
+				}
 			}
 		},
 		methods: {
@@ -70,6 +106,7 @@
 			},
 			fetchData () {
 				this.axios.get(`${process.env.VUE_APP_API}claim?cid=${this.channel._id}`).then(res => {
+					console.log(res.data)
 					this.claims = res.data
 					this.isLoading = false
 					this.hasError = false

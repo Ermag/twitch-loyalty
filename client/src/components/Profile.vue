@@ -12,15 +12,13 @@
 			<img src="../assets/welcome.png" width="286" height="141" alt="Hello there!" />
 			<h2 class="text-xs-center mb-1 px-2">Welcome to your Alter profile!</h2>
 			<p class="text-xs-center mb-3 subheading px-2" style="line-height: normal;">
-				By watching this channel you obtain <Points :value="-1" :name="POINTS_NAME" :img="POINTS_IMG" :size="16" />{{ POINTS_NAME }} which you can spend on cool <a @click="changeTab('Rewards')">rewards</a> or <a @click="changeTab('Battle')">battle</a> other viewers.
+				By watching this channel you obtain <Points :value="-1" :name="POINTS_NAME" :img="POINTS_IMG" :size="16" /><span class="primary--text">{{ POINTS_NAME }}</span>
+				which you can spend on cool <a @click="changeTab('Rewards')">rewards</a> or <a @click="changeTab('Battle')">battle</a> other viewers.
 				Claim your welcome gift below!
 			</p>
 
 			<div class="text-xs-center">
-				<div class="mb-1">
-					<Points :value="-1" :name="POINTS_NAME" :img="POINTS_IMG" :size="20" />
-					<span class="primary--text ml-1 title" style="vertical-align: middle;">{{ initialPoints }}</span>
-				</div>
+				<Points :value="initialPoints" :name="POINTS_NAME" :img="POINTS_IMG" :size="24" css="mx-1 title" />
 				<v-btn class="title" color="primary" @click="claimInitial" small outline>Claim</v-btn>
 			</div>
 		</div>
@@ -104,6 +102,7 @@
 					})
 					this.hasInitialReward = false
 					EventBus.$emit('stopNotification')
+					this.changeTab('Rewards')
 				}).catch(() => {
 					this.hasError = true
 				}).then(() => {

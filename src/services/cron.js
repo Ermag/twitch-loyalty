@@ -2,6 +2,7 @@ const cron = require('node-cron')
 const axios = require('axios')
 const APP_CONFIG = require('../constants')
 const ChannelModel = require('../models/channel')
+const ProfileModel = require('../models/profile')
 const UserModel = require('../models/user')
 
 const setPoints = () => {
@@ -25,23 +26,47 @@ const setPoints = () => {
 
 						users = [...new Set(users)]
 
-						// TODO: Update subscribers aswel
-						for (let i = 0; i < 2; i++) {
-							let points = (i === 0) ? 1 : 2
+						ProfileModel.find({
+							username: { $in: users }
+						}).then(docs => {
+							if (docs && docs.length) {
+								users = []
 
-							UserModel.updateMany({
-								channel: doc._id,
-								username: { $in: users },
-								isFollowing: Boolean(i)
-							}, {
-								$inc: {
-									points: points,
-									currentPoints: points,
-									watchTime: 1
-								},
-								updatedAt: new Date()
-							}).then(() => {})
-						}
+								docs.forEach(doc => {
+									users.push(doc._id)
+								})
+
+								for (let i = 0; i < 3; i++) {
+									let updateQuery = {
+										channel: doc._id,
+										profile: { $in: users }
+									}
+									let incQuery = {
+										points: 1,
+										currentPoints: 1
+									}
+
+									if (i === 0) { // Normal
+										incQuery.watchTime = 1
+									}
+
+									if (i === 1) { // Follower
+										updateQuery.isFollowing = true
+									}
+
+									if (i === 2) { // Subscriber
+										updateQuery.isSubscriber = true
+										incQuery.points = 2
+										incQuery.currentPoints = 2
+									}
+
+									UserModel.updateMany(updateQuery, {
+										$inc: incQuery,
+										updatedAt: new Date()
+									}).then(() => {})
+								}
+							}
+						})
 					}
 				})
 			})

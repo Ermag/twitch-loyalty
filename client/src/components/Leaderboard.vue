@@ -14,12 +14,12 @@
 
 		<div class="controls">
 			<v-select class="my-0 mx-2 pa-0" height="30"
-			v-model="sort"
-			:items="sorts"
-			@change="sortChange"
-			style="font-size: 18px;"
-			attach="#app .app-visible .leaderboard .controls"
-			hide-details></v-select>
+				v-model="sort"
+				:items="sorts"
+				@change="sortChange"
+				style="font-size: 18px;"
+				attach="#app .app-visible .leaderboard .controls"
+				hide-details></v-select>
 		</div>
 
 		<div class="results" v-bar>
@@ -31,13 +31,13 @@
 							<td>
 								<div>
 									<span></span>
-									<img width="26" height="26" :src="value.avatar" />
-									<span class="name">{{ value.displayName }}</span>
+									<img width="26" height="26" :src="value.profile.avatar" />
+									<span class="name">{{ value.profile.displayName }}</span>
 								</div>
 							</td>
 							<td class="pr-3 text-xs-right primary--text" width="70">
 								<span v-if="sortIndex == 0">{{ formatQuantity(value.points) }}</span>
-								<span v-else-if="sortIndex == 1">{{ formatQuantity(value.experience) }}</span>
+								<span v-else-if="sortIndex == 1">{{ formatQuantity(value.profile.experience) }}</span>
 								<span v-else-if="sortIndex == 2">{{ formatQuantity(value.claimedCount) }}</span>
 								<span v-else>{{ formatQuantity(value.battlesWon) }}</span>
 							</td>
@@ -85,6 +85,7 @@
 			border-collapse: collapse;
 		}
 
+		tr:hover,
 		tr.you {
 			background: rgba(255, 255, 255, .12);
 		}
@@ -164,7 +165,7 @@
 			return {
 				isLoading: true,
 				hasError: false,
-				sort: localStorage.getItem('loyal-sort') || this.$props.POINTS_NAME,
+				sort: this.$props.POINTS_NAME,
 				sorts: [this.$props.POINTS_NAME, 'Experience', 'Claimed Rewards', 'Battles Won'],
 				sortIndex: 0,
 				users: [],
@@ -189,8 +190,6 @@
 			sortChange () {
 				this.sortIndex = this.sorts.indexOf(this.sort)
 				this.getUsers()
-
-				localStorage.setItem('loyal-sort', this.sort)
 			}
 		},
 		created () {

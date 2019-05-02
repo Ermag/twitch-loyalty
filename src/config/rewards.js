@@ -2,6 +2,12 @@ module.exports = {
 	limit: 25, // Maximum amount of rewards for a channel
 	defaults: [ // Set of rewards added for every channel on creation
 		{
+			name: 'Hi',
+			points: 250,
+			image: 'hello.png',
+			sound: 'hello.wav'
+		},
+		{
 			name: '<3',
 			points: 250,
 			image: 'heart.png'
@@ -17,11 +23,6 @@ module.exports = {
 			points: 250,
 			image: 'woohoo.png',
 			sound: 'woohoo.wav'
-		},
-		{
-			name: 'Challenge: Do the floss',
-			points: 500,
-			image: 'floss.gif'
 		}
 	]
 }

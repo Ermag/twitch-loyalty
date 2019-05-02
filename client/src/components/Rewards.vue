@@ -5,7 +5,7 @@
 			<v-tooltip top>
 				<template #activator="data">
 					<div v-on="data.on" class="pr-2">
-						<v-btn color="primary" @click="openRewardDialog()" :disabled="rewards.data.length >= 25">Add New</v-btn>
+						<v-btn color="primary" @click="openRewardDialog()" :disabled="rewards.data.length >= 25" outline>Add New</v-btn>
 					</div>
 				</template>
 				<span>Limit is 25 rewards.</span>
