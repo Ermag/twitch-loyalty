@@ -1,6 +1,7 @@
 const express = require('express')
 const fileUpload = require('express-fileupload')
 const jwt = require('express-jwt')
+const compression = require('compression')
 const https = require('https')
 const cors = require('cors')
 const fs = require('fs')
@@ -25,6 +26,9 @@ console.log(`Running in ${isDevEnv ? 'DEVELOPMENT' : 'PRODUCTION'} mode.`)
 mongooseConnect().then(() => {
 	// Set crons for points and live channels
 	cronInit()
+
+	// Use compression
+	app.use(compression())
 
 	// Set CORS for browsers
 	app.use(cors({

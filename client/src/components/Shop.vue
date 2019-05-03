@@ -176,7 +176,7 @@
 					user: this.user._id,
 					channel: this.user.channel._id,
 					msg: reward.message
-				}).then(res => {
+				}).then(() => {
 					EventBus.$emit('claimedReward', {
 						points: reward.points,
 						experience: reward.points

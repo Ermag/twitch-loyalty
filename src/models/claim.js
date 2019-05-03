@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const ProfileModel = require('./profile')
 const UserModel = require('./user')
 const RewardModel = require('./reward')
 
@@ -55,31 +56,39 @@ ClaimSchema.statics.addClaim = function (channelId, message, reward, user) {
 
 			let exp = reward.points < 0 ? 0 : reward.points
 			let isLevelUp = false
-			let expNextLevel = Math.round(175 * Math.pow(user.level + 1, 1.5))
+			let expNextLevel = Math.round(175 * Math.pow(user.profile.level + 1, 1.5))
 
 			// Check for level up
-			if (user.experience + exp >= expNextLevel) {
+			if (user.profile.experience + exp >= expNextLevel) {
 				isLevelUp = true
 			}
 
-			UserModel.updateOne({
-				_id: user._id
-			}, {
-				$inc: {
-					points: reward.points < 0 ? reward.points * -1 : 0,
-					currentPoints: reward.points * -1,
-					experience: exp,
-					level: isLevelUp ? 1 : 0,
-					claimedCount: 1
-				},
-				updatedAt: new Date()
-			}, (err) => {
-				if (err) {
-					reject(err)
-					return
-				}
+			console.log(user.profile._id)
 
-				resolve(doc)
+			Promise.all([
+				ProfileModel.updateOne({
+					_id: user.profile._id
+				}, {
+					$inc: {
+						experience: exp,
+						level: isLevelUp ? 1 : 0
+					},
+					updatedAt: new Date()
+				}),
+				UserModel.updateOne({
+					_id: user._id
+				}, {
+					$inc: {
+						points: reward.points < 0 ? reward.points * -1 : 0,
+						currentPoints: reward.points * -1,
+						claimedCount: 1
+					},
+					updatedAt: new Date()
+				})
+			]).then(() => {
+				resolve({})
+			}).catch(err => {
+				reject(err)
 			})
 		})
 	})

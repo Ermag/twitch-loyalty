@@ -3,13 +3,14 @@
 	"version": "0.4.0",
 	"private": true,
 	"scripts": {
-		"start": "node src/index.js",
+		"start": "cross-env NODE_ENV=production node src/index.js",
 		"start-dev": "cross-env NODE_ENV=development nodemon src/index.js",
 		"count": "cloc --exclude-dir=node_modules --exclude-list-file=.clocignore ."
 	},
 	"dependencies": {
 		"axios": "^0.18.0",
 		"body-parser": "^1.19.0",
+		"compression": "^1.7.4",
 		"cors": "^2.8.5",
 		"express": "^4.16.4",
 		"express-fileupload": "^1.1.4",

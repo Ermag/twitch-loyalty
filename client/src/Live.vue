@@ -106,7 +106,6 @@
 			},
 			fetchData () {
 				this.axios.get(`${process.env.VUE_APP_API}claim?cid=${this.channel._id}`).then(res => {
-					console.log(res.data)
 					this.claims = res.data
 					this.isLoading = false
 					this.hasError = false

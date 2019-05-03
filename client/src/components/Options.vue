@@ -80,7 +80,6 @@
 			Points
 		},
 		data () {
-			console.log()
 			return {
 				testRewardId: null,
 				isTesting: false,

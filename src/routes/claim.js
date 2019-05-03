@@ -29,28 +29,28 @@ router.get(`/${name}`, (req, res) => {
 	}
 
 	ClaimModel.find(params)
-	.sort('-createdAt')
-	.populate('channel')
-	.populate({ path: 'user', populate: { path: 'profile' } })
-	.populate('reward').then(docs => {
-		// Create the channel if we can't find it with some example rewards
-		if (!docs && !docs.length) {
-			res.status(404).json('No rewards found.')
-			return
-		}
-
-		let claims = []
-
-		docs.forEach(doc => {
-			if (!doc.reward.ref || doc.reward.ref === 'test' || req.query.rid) {
-				claims.push(doc)
+		.sort('-createdAt')
+		.populate('channel')
+		.populate({ path: 'user', populate: { path: 'profile' } })
+		.populate('reward').then(docs => {
+			// Create the channel if we can't find it with some example rewards
+			if (!docs && !docs.length) {
+				res.status(404).json('No rewards found.')
+				return
 			}
-		})
 
-		res.json(claims)
-	}).catch(err => {
-		res.status(500).json(err)
-	})
+			let claims = []
+
+			docs.forEach(doc => {
+				if (!doc.reward.ref || doc.reward.ref === 'test' || req.query.rid) {
+					claims.push(doc)
+				}
+			})
+
+			res.json(claims)
+		}).catch(err => {
+			res.status(500).json(err)
+		})
 })
 
 // POST
@@ -77,7 +77,7 @@ router.post(`/${name}`, (req, res) => {
 		}),
 		UserModel.findOne({
 			_id: req.body.user
-		})
+		}).populate('profile')
 	]).then(([reward, user]) => {
 		if (!reward && !user) {
 			res.status(404).json('Invalid data.')

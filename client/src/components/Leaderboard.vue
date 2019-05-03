@@ -32,7 +32,7 @@
 								<div>
 									<span></span>
 									<img width="26" height="26" :src="value.profile.avatar" />
-									<span class="name">{{ value.profile.displayName }}</span>
+									<span class="name clip-txt">{{ value.profile.displayName }}</span>
 								</div>
 							</td>
 							<td class="pr-3 text-xs-right primary--text" width="70">
@@ -105,6 +105,10 @@
 					display: block;
 				}
 			}
+
+			.name {
+				width: 128px;
+			}
 		}
 
 		tr:last-child td {
@@ -147,8 +151,10 @@
 				}
 
 				.name {
+					display: block;
 					position: relative;
 						z-index: 2;
+					width: 158px;
 				}
 			}
 		}

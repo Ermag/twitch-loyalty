@@ -5,7 +5,7 @@
 		<div class="info-stats">
 			<div class="username">
 				<v-tooltip bottom>
-					<h1 slot="activator">{{ user.profile.displayName }}</h1>
+					<h1 class="clip-txt" slot="activator">{{ user.profile.displayName }}</h1>
 					<span style="white-space: nowrap;">{{ user.profile.displayName }}</span>
 				</v-tooltip>
 			</div>
@@ -146,9 +146,6 @@
 				flex: 1;
 				margin: -7px 0 0 0;
 				color: #FFF;
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
 				font-size: 28px;
 			}
 

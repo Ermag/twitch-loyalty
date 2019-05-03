@@ -95,7 +95,7 @@
 					reward: this.initialRewardId,
 					user: this.user._id,
 					channel: this.user.channel._id
-				}).then(res => {
+				}).then(() => {
 					EventBus.$emit('claimedReward', {
 						points: this.initialPoints * -1,
 						experience: 0
