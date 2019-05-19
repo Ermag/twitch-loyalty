@@ -37,7 +37,7 @@ export const helpers = {
 			quantity = Math.abs(quantity)
 		}
 
-		if (quantity >= 100000) {
+		if (quantity >= 10000) {
 			let m = 1000000
 
 			if (quantity >= m) {

@@ -36,7 +36,7 @@
 					<v-spacer></v-spacer>
 
 					<v-toolbar-items>
-						<v-btn icon dark @click="isChangelogModal = false">
+						<v-btn :dark="isDarkTheme" @click="isChangelogModal = false" icon>
 							<v-icon>close</v-icon>
 						</v-btn>
 					</v-toolbar-items>

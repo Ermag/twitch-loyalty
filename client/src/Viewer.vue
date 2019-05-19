@@ -369,7 +369,8 @@
 			let uri = window.location.search.substring(1)
 			let params = new URLSearchParams(uri)
 
-			this.hasToggle = params.get('anchor') !== 'panel'
+			this.hasToggle = params.get('legacyComponentDesign') === 'true'
+
 			if (!this.hasToggle) {
 				this.isPanelActive = true
 			}

@@ -1,9 +1,11 @@
 const express = require('express')
+const mongoose = require('mongoose')
 const ChannelModel = require('../models/channel')
 const ProfileModel = require('../models/profile')
 const UserModel = require('../models/user')
 const router = express.Router()
 const name = 'user'
+
 const findOrCreate = (channel, req, res) => {
 	if (
 		!req.body.userId || !req.body.displayName || !req.body.username ||
@@ -116,53 +118,79 @@ const findOrCreateUser = (channel, profile, req, res) => {
 	})
 }
 
+const findAndSortUsers = (users, req, res) => {
+	if (!users && users.length) {
+		return res.status(404).send('No users found.')
+	} else {
+		let pos = '100 >'
+		let newUsers = []
+
+		for (let i = 0; i < users.length; i++) {
+			if (i > 99) {
+				break
+			}
+
+			if (String(users[i]._id) === req.query.uid) {
+				pos = i + 1
+			}
+
+			newUsers.push(users[i])
+		}
+
+		res.json({
+			pos,
+			users: newUsers
+		})
+	}
+}
+
 // GET all
 router.get(`/${name}s`, (req, res) => {
 	if (!req.query.cid) {
-		return res.status(400).send('Missing user cid.')
+		return res.status(400).send('Missing cid.')
 	}
 
-	let sort = '-points'
+	let sortReq = parseInt(req.query.sort)
 
-	/* eslint-disable */
-	if (req.query.sort == 1) {
-		sort = '-experience'
-	} else if (req.query.sort == 2) {
-		sort = '-claimedCount'
-	} else if (req.query.sort == 3) {
-		sort = '-battlesWon'
-	}
-	/* eslint-enable */
+	if (sortReq === 1) {
+		UserModel.aggregate([
+			{ '$match': { channel: mongoose.Types.ObjectId(req.query.cid) } },
+			{ '$lookup': {
+				'from': 'profiles',
+				'localField': 'profile',
+				'foreignField': '_id',
+				'as': 'profile'
+			} },
+			{ '$unwind': '$profile' },
+			{ '$group': {
+				'_id': '$_id',
+				'profile': { '$first': '$profile' }
+			} },
+			{ '$sort': { 'profile.experience': -1 } },
+			{ '$limit': 100 }
+		]).then(docs => {
+			console.log(docs)
+			findAndSortUsers(docs, req, res)
+		}).catch(err => {
+			res.status(500).json(err)
+		})
+	} else {
+		let sort = '-points'
 
-	UserModel.find({
-		channel: req.query.cid
-	}).sort(sort).limit(1000).populate('profile').then(docs => {
-		if (!docs && docs.length) {
-			return res.status(404).send('No users found.')
-		} else {
-			let pos = '100 >'
-			let users = []
-
-			for (let i = 0; i < docs.length; i++) {
-				if (i > 99) {
-					break
-				}
-
-				if (String(docs[i]._id) === req.query.uid) {
-					pos = i + 1
-				}
-
-				users.push(docs[i])
-			}
-
-			res.json({
-				pos,
-				users
-			})
+		if (sortReq === 2) {
+			sort = '-claimedCount'
+		} else if (sortReq === 3) {
+			sort = '-battlesWon'
 		}
-	}).catch(err => {
-		res.status(500).json(err)
-	})
+
+		UserModel.find({
+			channel: req.query.cid
+		}).sort(sort).limit(1000).populate('profile').then(docs => {
+			findAndSortUsers(docs, req, res)
+		}).catch(err => {
+			res.status(500).json(err)
+		})
+	}
 })
 
 // GET

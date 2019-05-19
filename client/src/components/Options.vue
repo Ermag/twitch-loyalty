@@ -24,7 +24,7 @@
 			<v-form ref="addForm">
 				<v-layout>
 					<v-flex xs12 md6 class="px-2">
-						<v-text-field label="Name" v-model="currencyName" :rules="[rules.required, rules.name]" maxlength="20" counter></v-text-field>
+						<v-text-field label="Name" v-model="currencyName" :rules="[rules.required, rules.name, rules.notBits]" maxlength="20" counter></v-text-field>
 					</v-flex>
 					<v-flex xs12 md6 class="px-2">
 						<div>
@@ -89,7 +89,8 @@
 				previewSound: new Audio(process.env.VUE_APP_API + 'default.wav'),
 				rules: {
 					required: value => !!value || 'Required',
-					name: value => (value && value.length <= 20) || 'Max 20 characters'
+					name: value => (value && value.length <= 20) || 'Max 20 characters',
+					notBits: value => value.trim().toLowerCase() !== 'bits' || 'Can\'t be Bits'
 				},
 				message: {
 					isVisible: false,
