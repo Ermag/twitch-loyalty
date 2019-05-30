@@ -83,8 +83,8 @@
 	import Authentication from './utils/twitch'
 	import { EventBus } from './utils/event-bus'
 	import Points from './components/Points'
-	import Options from './components/Options'
-	import Rewards from './components/Rewards'
+	import Rewards from './components/config/Rewards'
+	import Options from './components/config/Options'
 
 	export default {
 		name: 'Config',

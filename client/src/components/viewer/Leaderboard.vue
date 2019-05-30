@@ -52,7 +52,7 @@
 </template>
 
 <style lang="scss" scoped>
-	@import '../styles/_vars';
+	@import '../../styles/_vars';
 
 	.leaderboard {
 		height: 100%;
@@ -162,7 +162,7 @@
 </style>
 
 <script>
-	import { helpers } from '../utils/helpers'
+	import { helpers } from '../../utils/helpers'
 
 	export default {
 		name: 'Leaderboard',

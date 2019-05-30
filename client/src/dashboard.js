@@ -2,7 +2,7 @@ import Vue from 'vue'
 import moment from 'vue-moment'
 import './plugins/vuetify'
 import './plugins/axios'
-import App from './Live.vue'
+import App from './Dashboard.vue'
 
 Vue.config.productionTip = false
 

@@ -1,65 +1,3 @@
-<template>
-	<v-app :class="{ hide: !isVisible }" dark>
-		<div class="app-visible" @mousemove="mouseMove">
-			<div class="alt-wrapper" :class="{ offset: hasToggle, fullscreen: isFullScreen }">
-				<div class="alt-toggle pointer" v-if="hasToggle" @click="isPanelActive = !isPanelActive">
-					<div>
-						<transition name="fade" mode="out-in">
-							<img v-if="!hasNotification" src="./assets/icon.png" key="icon" />
-							<img v-else src="./assets/alert.png" key="alert" />
-						</transition>
-					</div>
-				</div>
-
-				<transition name="fade" mode="out-in">
-					<div class="alt-panel" v-if="isPanelActive">
-						<div v-if="isLoading" class="text-xs-center alt-loading">
-							<v-progress-circular :size="100" :width="7" color="primary" indeterminate></v-progress-circular>
-						</div>
-						<div v-else-if="hasMessage" class="my-2 mx-3 text-xs-center">
-							<v-alert :value="true" color="#513c80">
-								<h3 v-html="message"></h3>
-							</v-alert>
-							<img src="./assets/mascot.png" class="mt-5" style="max-width: 100%;" />
-						</div>
-						<div v-else-if="hasError" class="my-2 mx-3 text-xs-center">
-							<v-alert :value="true" color="error">
-								<h3>Something went wrong :(<br>Please, try again later!</h3>
-							</v-alert>
-						</div>
-						<div v-else class="alt-content">
-							<Info :user="user" :POINTS_NAME="POINTS_NAME" :POINTS_IMG="POINTS_IMG" />
-
-							<div class="alt-tabs-wrapper">
-								<ul class="alt-tabs">
-									<li class="pointer" v-for="ltab in tabs" :key="ltab" :class="[ltab.toLowerCase(), {  active: tab === ltab }]" @click="changeTab(ltab)" >
-										<v-tooltip top>
-											<div slot="activator"></div>
-											<span>{{ ltab }}</span>
-										</v-tooltip>
-									</li>
-									<li class="inactive"></li>
-								</ul>
-
-								<div class="alt-tab-content" v-bar>
-									<div>
-										<transition name="fade" mode="out-in">
-											<Profile v-if="tab === 'Profile'" :user="user" :changeTab="changeTab" :POINTS_NAME="POINTS_NAME" :POINTS_IMG="POINTS_IMG" />
-											<Shop v-if="tab === 'Rewards'" :user="user" :POINTS_NAME="POINTS_NAME" :POINTS_IMG="POINTS_IMG" />
-											<Battle v-if="tab === 'Battle'" :user="user" :POINTS_NAME="POINTS_NAME" :POINTS_IMG="POINTS_IMG" />
-											<Leaderboard v-if="tab === 'Leaderboard'" :user="user" :POINTS_NAME="POINTS_NAME" :POINTS_IMG="POINTS_IMG" />
-										</transition>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</transition>
-			</div>
-		</div>
-	</v-app>
-</template>
-
 <style lang="scss">
 	@import './styles/_vars';
 	@import './styles/main';
@@ -115,6 +53,7 @@
 			}
 		}
 	}
+
 	.alt-panel {
 		position: relative;
 		float: left;
@@ -126,6 +65,7 @@
 		box-sizing: border-box;
 		background: $secondary;
 		box-shadow: 10px 10px 0 0 rgba(0, 0, 0, .45);
+
 		&::before {
 			content: '';
 			position: absolute;
@@ -137,77 +77,12 @@
 			background: url('./assets/bg-overlay.png') no-repeat 0 0;
 			pointer-events: none;
 		}
+
 		.alt-content {
 			position: relative;
 				z-index: 9999;
 			width: 100%;
 			height: 100%;
-
-			.alt-tabs-wrapper {
-				height: calc(100% - 95px);
-				margin-top: 15px;
-				padding: 2px;
-				overflow: hidden;
-				background: url('./assets/tabs-wrapper-bg.jpg') no-repeat center center;
-			}
-
-			.alt-tab-content {
-				position: relative;
-				height: calc(100% - 40px);
-				overflow: auto;
-			}
-
-			.alt-tabs {
-				height: 40px;
-				padding: 0;
-				margin: 0;
-				list-style-type: none;
-				li {
-					width: 54px;
-					height: 100%;
-					float: left;
-					margin-right: 2px;
-					background: $secondary url('./assets/tabs-icons.png') no-repeat 0 0;
-					border-top-left-radius: 2px;
-					border-top-right-radius: 2px;
-					transition: all .5s ease-in-out;
-					&.profile {
-						background-position: 0 0;
-						&.active {
-							background-position: -0 -40px;
-						}
-					}
-					&.rewards {
-						background-position: -54px 0;
-						&.active {
-							background-position: -54px -40px;
-						}
-					}
-					&.battle {
-						background-position: -108px 0;
-						&.active {
-							background-position: -108px -40px;
-						}
-					}
-					&.leaderboard {
-						background-position: -162px 0;
-						&.active {
-							background-position: -162px -40px;
-						}
-					}
-					&.active {
-						background-color: transparent;
-					}
-					&.inactive {
-						width: 58px;
-						margin-right: 0;
-						background-position: -9999px;
-					}
-					& div {
-						height: 100%;
-					}
-				}
-			}
 		}
 
 		.alt-loading {
@@ -224,24 +99,58 @@
 	}
 </style>
 
+<template>
+	<v-app :class="{ hide: !isVisible }" dark>
+		<div class="app-visible" @mousemove="mouseMove">
+			<div class="alt-wrapper" :class="{ offset: hasToggle, fullscreen: isFullScreen }">
+				<div class="alt-toggle pointer" v-if="hasToggle" @click="isPanelActive = !isPanelActive">
+					<div>
+						<transition name="fade" mode="out-in">
+							<img v-if="!hasNotification" src="./assets/icon.png" key="icon" />
+							<img v-else src="./assets/alert.png" key="alert" />
+						</transition>
+					</div>
+				</div>
+
+				<transition name="fade" mode="out-in">
+					<div class="alt-panel" v-if="isPanelActive">
+						<div v-if="isLoading" class="text-xs-center alt-loading">
+							<v-progress-circular :size="100" :width="7" color="primary" indeterminate></v-progress-circular>
+						</div>
+						<div v-else-if="hasMessage" class="my-2 mx-3 text-xs-center">
+							<v-alert :value="true" color="#513c80">
+								<h3 v-html="message"></h3>
+							</v-alert>
+							<img src="./assets/mascot.png" class="mt-5" style="max-width: 100%;" />
+						</div>
+						<div v-else-if="hasError" class="my-2 mx-3 text-xs-center">
+							<v-alert :value="true" color="error">
+								<h3>Something went wrong :(<br>Please, try again later!</h3>
+							</v-alert>
+						</div>
+						<div v-else class="alt-content">
+							<Info :user="user" :POINTS_NAME="POINTS_NAME" :POINTS_IMG="POINTS_IMG" />
+							<Navigation :user="user" :POINTS_NAME="POINTS_NAME" :POINTS_IMG="POINTS_IMG" />
+						</div>
+					</div>
+				</transition>
+			</div>
+		</div>
+	</v-app>
+</template>
+
 <script>
 	import { APP_CONFIG } from './utils/constants'
 	import Authentication from './utils/twitch'
 	import { EventBus } from './utils/event-bus'
-	import Info from './components/Info'
-	import Profile from './components/Profile'
-	import Shop from './components/Shop'
-	import Battle from './components/Battle'
-	import Leaderboard from './components/Leaderboard'
+	import Info from './components/viewer/Info'
+	import Navigation from './components/viewer/Navigation'
 
 	export default {
 		name: 'Viewer',
 		components: {
 			Info,
-			Profile,
-			Shop,
-			Battle,
-			Leaderboard
+			Navigation
 		},
 		data () {
 			return {
@@ -263,8 +172,6 @@
 				},
 				counterInterval: null,
 				accessInterval: null,
-				tabs: ['Profile', 'Rewards', 'Battle', 'Leaderboard'],
-				tab: 'Profile',
 				hasNotification: false
 			}
 		},
@@ -298,9 +205,6 @@
 						this.isVisible = false
 					}
 				}, 10000)
-			},
-			changeTab (tab) {
-				this.tab = tab
 			},
 			fetchUser (data) {
 				this.axios.post(`${process.env.VUE_APP_API}user`, data).then(res => {

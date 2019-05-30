@@ -59,7 +59,7 @@
 	import Points from './components/Points'
 
 	export default {
-		name: 'Live',
+		name: 'Live Dashboard',
 		components: {
 			Points
 		},

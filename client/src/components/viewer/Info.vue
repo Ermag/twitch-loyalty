@@ -1,64 +1,5 @@
-<template>
-	<div class="info-wrapper">
-		<img :src="user.profile.avatar" :alt="user.profile.displayName" width="76" height="76" />
-
-		<div class="info-stats">
-			<div class="username">
-				<v-tooltip bottom>
-					<h1 class="clip-txt" slot="activator">{{ user.profile.displayName }}</h1>
-					<span style="white-space: nowrap;">{{ user.profile.displayName }}</span>
-				</v-tooltip>
-			</div>
-
-			<div class="metrics" slot="activator">
-				<div class="points">
-					<Points @click.native="isPointsInfo = true" :value="user.currentPoints" :name="POINTS_NAME" :img="POINTS_IMG" :size="24" pos="bottom" :css="'pointer large-points'" />
-				</div>
-				<v-tooltip bottom>
-					<div class="watch-time" slot="activator">{{ Math.floor(user.watchTime / 60) + '.' + user.watchTime % 60 }}h</div>
-					<span>Watch Time</span>
-				</v-tooltip>
-			</div>
-
-			<v-tooltip bottom>
-				<div class="level" slot="activator">
-					<div class="progress" :style="{ width: expProgress.toFixed(2) + '%' }"></div>
-					<div class="lvl-divider first"></div>
-					<div class="lvl-divider second"></div>
-					<div class="lvl-divider third"></div>
-					<div class="value"><span>{{ user.profile.level }}</span></div>
-				</div>
-				<div class="text-xs-center">
-					Level: {{ user.profile.level }}<br />
-					Experience: {{ user.profile.experience }}/{{ expNextLevel }}
-				</div>
-			</v-tooltip>
-		</div>
-
-		<v-dialog v-model="isPointsInfo" content-class="ma-3" attach="#app .alt-panel" full-width>
-			<v-card>
-				<v-card-title class="title pb-0 pr-0">
-					{{ POINTS_NAME }} Info
-				</v-card-title>
-
-				<v-card-text class="subheading">
-					By watching the channel you obtain <Points :value="-1" :name="POINTS_NAME" :img="POINTS_IMG" :size="16" /><span class="primary--text">{{ POINTS_NAME }}</span>
-					which you can spend on rewards or battle other viewers. You gain <Points :value="1" :name="POINTS_NAME" :img="POINTS_IMG" :size="16" css="mr-1" /> for every minute you watch.
-					Followers and subscribers receive a multiplier bonus x2/x4 respectively.
-				</v-card-text>
-
-				<v-card-actions >
-					<v-spacer></v-spacer>
-
-					<v-btn @click="isPointsInfo = false" small outline>Ok</v-btn>
-				</v-card-actions>
-			</v-card>
-		</v-dialog>
-	</div>
-</template>
-
 <style lang="scss" scoped>
-	@import '../styles/_vars';
+	@import '../../styles/_vars';
 
 	@keyframes Exp {
 		0% { background-position: 0% 5%; }
@@ -173,10 +114,69 @@
 	}
 </style>
 
+<template>
+	<div class="info-wrapper">
+		<img :src="user.profile.avatar" :alt="user.profile.displayName" width="76" height="76" />
+
+		<div class="info-stats">
+			<div class="username">
+				<v-tooltip bottom>
+					<h1 class="clip-txt" slot="activator">{{ user.profile.displayName }}</h1>
+					<span style="white-space: nowrap;">{{ user.profile.displayName }}</span>
+				</v-tooltip>
+			</div>
+
+			<div class="metrics" slot="activator">
+				<div class="points">
+					<Points @click.native="isPointsInfo = true" :value="user.currentPoints" :name="POINTS_NAME" :img="POINTS_IMG" :size="24" pos="bottom" :css="'pointer large-points'" />
+				</div>
+				<v-tooltip bottom>
+					<div class="watch-time" slot="activator">{{ Math.floor(user.watchTime / 60) + '.' + user.watchTime % 60 }}h</div>
+					<span>Watch Time</span>
+				</v-tooltip>
+			</div>
+
+			<v-tooltip bottom>
+				<div class="level" slot="activator">
+					<div class="progress" :style="{ width: expProgress.toFixed(2) + '%' }"></div>
+					<div class="lvl-divider first"></div>
+					<div class="lvl-divider second"></div>
+					<div class="lvl-divider third"></div>
+					<div class="value"><span>{{ user.profile.level }}</span></div>
+				</div>
+				<div class="text-xs-center">
+					Level: {{ user.profile.level }}<br />
+					Experience: {{ user.profile.experience }}/{{ expNextLevel }}
+				</div>
+			</v-tooltip>
+		</div>
+
+		<v-dialog v-model="isPointsInfo" content-class="ma-3" attach="#app .alt-panel" full-width>
+			<v-card>
+				<v-card-title class="title pb-0 pr-0">
+					{{ POINTS_NAME }} Info
+				</v-card-title>
+
+				<v-card-text class="subheading">
+					By watching the channel you obtain <Points :value="-1" :name="POINTS_NAME" :img="POINTS_IMG" :size="16" /><span class="primary--text">{{ POINTS_NAME }}</span>
+					which you can spend on rewards or battle other viewers. You gain <Points :value="1" :name="POINTS_NAME" :img="POINTS_IMG" :size="16" css="mr-1" /> for every minute you watch.
+					Followers and subscribers receive a multiplier bonus x2/x4 respectively.
+				</v-card-text>
+
+				<v-card-actions >
+					<v-spacer></v-spacer>
+
+					<v-btn @click="isPointsInfo = false" small outline>Ok</v-btn>
+				</v-card-actions>
+			</v-card>
+		</v-dialog>
+	</div>
+</template>
+
 <script>
-	import { EventBus } from '../utils/event-bus'
-	import { helpers } from '../utils/helpers'
-	import Points from './Points'
+	import { EventBus } from '../../utils/event-bus'
+	import { helpers } from '../../utils/helpers'
+	import Points from '../Points'
 
 	export default {
 		name: 'Info',
@@ -215,6 +215,10 @@
 		},
 		created () {
 			this.calcExp()
+
+			EventBus.$on('openPointsInfo', () => {
+				this.isPointsInfo = true
+			})
 		}
 	}
 </script>

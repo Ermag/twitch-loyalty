@@ -24,10 +24,10 @@ module.exports = {
 			title: 'Config'
 		},
 		live: {
-			entry: 'src/live.js',
+			entry: 'src/dashboard.js',
 			template: 'public/index.html',
 			filename: 'live.html',
-			title: 'Live'
+			title: 'Live Dashboard'
 		}
 	},
 

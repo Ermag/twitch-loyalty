@@ -15,7 +15,7 @@
 						<img :src="you.avatar" :alt="user.profile.displayName" width="76" height="76" />
 						<span>{{ user.profile.displayName }}</span>
 					</div>
-					<img src="../assets/vs.png" height="62" alt="Vs" />
+					<img src="../../assets/vs.png" height="62" alt="Vs" />
 					<div style="margin-left: 30px;">
 						<img :src="opponent.avatar" :alt="opponent.name" width="76" height="76" />
 						<span>{{ opponent.name }}</span>
@@ -36,7 +36,7 @@
 					<div v-else-if="result === null" class="text-xs-center mt-4" key="move">
 						<div class="headline mb-2">Choose Your Move</div>
 						<div v-for="(mv, i) in moves" :key="i" class="move pointer" @click="battle(mv)">
-							<img :src="require('../assets/move-' + mv + '.jpg')" />
+							<img :src="require('../../assets/move-' + mv + '.jpg')" />
 						</div>
 					</div>
 					<div v-else class="text-xs-center mt-4" key="result">
@@ -64,7 +64,7 @@
 </template>
 
 <style lang="scss" scoped>
-	@import '../styles/_vars';
+	@import '../../styles/_vars';
 
 	.alt-loading {
 		margin-left: -32px;
@@ -114,8 +114,8 @@
 </style>
 
 <script>
-	import { EventBus } from '../utils/event-bus'
-	import Points from './Points'
+	import { EventBus } from '../../utils/event-bus'
+	import Points from '../Points'
 
 	export default {
 		name: 'Battle',
@@ -158,7 +158,7 @@
 					// If you found yourself choose the Overseer
 					if (res.data._id === this.user._id) {
 						this.opponent.name = 'Overseer'
-						this.opponent.avatar = require('../assets/overseer.jpg')
+						this.opponent.avatar = require('../../assets/overseer.jpg')
 					} else {
 						this.opponent.id = res.data._id
 						this.opponent.name = res.data.profile.displayName
@@ -181,8 +181,8 @@
 						userMove: move
 					}).then(res => {
 						this.result = res.data.result
-						this.you.avatar = require(`../assets/move-${move}.jpg`)
-						this.opponent.avatar = require(`../assets/move-${res.data.opponentMove}.jpg`)
+						this.you.avatar = require(`../../assets/move-${move}.jpg`)
+						this.opponent.avatar = require(`../../assets/move-${res.data.opponentMove}.jpg`)
 						let points = 0
 
 						if (this.result === 0) {

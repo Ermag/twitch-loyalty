@@ -28,7 +28,7 @@
 					</v-flex>
 					<v-flex xs12 md6 class="px-2">
 						<div>
-							<v-text-field placeholder="Select PNG 24x24px" @click="pickFile()" label="Image"></v-text-field>
+							<v-text-field placeholder="Select PNG 48x48px" @click="pickFile()" label="Image"></v-text-field>
 							<input type="file" ref="image" accept="image/*" style="display: none;" />
 						</div>
 
@@ -70,8 +70,8 @@
 </style>
 
 <script>
-	import { EventBus } from '../utils/event-bus'
-	import Points from './Points'
+	import { EventBus } from '../../utils/event-bus'
+	import Points from '../Points'
 
 	export default {
 		name: 'Options',
@@ -150,8 +150,8 @@
 							let img = new Image()
 
 							img.onload = () => {
-								if (img.width !== 24 && img.height !== 24) {
-									this.setMessage('error', 'Currency image size should be 24x24 pixels.')
+								if (img.width !== 48 && img.height !== 48) {
+									this.setMessage('error', 'Currency image size should be 48x48 pixels.')
 									window.scrollTo(0, 0)
 								} else {
 									data = new FormData()

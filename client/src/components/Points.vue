@@ -1,12 +1,3 @@
-<template>
-	<v-tooltip :top="pos === 'top'" :bottom="pos === 'bottom'" style="font-size: 0; vertical-align: middle;">
-		<span slot="activator" class="point-wrap">
-			<img :src="baseURL + img" :alt="name" :width="size" /> <span class="point-num" :class="[css]">{{ value >= 0 ? formatQuantity(Math.abs(displayNumber)) : '' }}</span>
-		</span>
-		<span>{{ this.name }}</span>
-    </v-tooltip>
-</template>
-
 <style lang="scss" scoped>
 	@import '../styles/_vars';
 
@@ -30,6 +21,15 @@
 		vertical-align: middle;
 	}
 </style>
+
+<template>
+	<v-tooltip :top="pos === 'top'" :bottom="pos === 'bottom'" style="font-size: 0; vertical-align: middle;">
+		<span slot="activator" class="point-wrap">
+			<img :src="baseURL + img" :alt="name" :width="size" /> <span class="point-num" :class="[css]">{{ value >= 0 ? formatQuantity(Math.abs(displayNumber)) : '' }}</span>
+		</span>
+		<span>{{ this.name }}</span>
+    </v-tooltip>
+</template>
 
 <script>
 	import { helpers } from '../utils/helpers'

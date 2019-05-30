@@ -1,3 +1,48 @@
+<style lang="scss" scoped>
+	@import '../../styles/_vars';
+
+	.alt-loading {
+		margin-left: -32px;
+	}
+
+	.preview-image {
+		height: 80px;
+		background: url('../../assets/mascot.png') no-repeat center;
+		background-size: contain;
+	}
+
+	.reward {
+		border-bottom: 2px solid $primary;
+		font-size: 15px;
+
+		.image {
+			float: left;
+			width: 67px;
+			height: 65px;
+			border: 2px solid $primary;
+			border-bottom: 0;
+			vertical-align: top;
+			background: url('../../assets/mascot.png') no-repeat center;
+			background-size: contain;
+			cursor: pointer;
+		}
+	}
+
+	.reward-header {
+		display: flex;
+
+		> span:first-child {
+			flex: 1;
+			padding-right: 10px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			font-size: 16px;
+			margin-top: -3px;
+		}
+	}
+</style>
+
 <template>
 	<transition name="fade" mode="out-in">
 		<div v-if="isLoading" class="text-xs-center alt-loading" style="margin: -32px 0 0 -32px;">
@@ -17,16 +62,25 @@
 
 				<transition name="fade" mode="out-in">
 					<div v-if="reward.confirm" key="confirm">
-						<div style="margin: 0px 0 8px 0;">
+						<div style="margin: 0px 0 6px;">
 							<v-text-field
 								class="ma-0 pa-0"
 								height="26"
 								v-model="reward.message"
-								:rules="[rules.name]"
-								placeholder="Message (optional)" maxlength="100" counter autofocus hide-details></v-text-field>
+								placeholder="Message (optional)"
+								maxlength="100"
+								counter autofocus hide-details></v-text-field>
 						</div>
-						<v-btn class="ma-0 mr-2" color="success" @click="claim(index)" small outline>Confirm</v-btn>
-						<v-btn class="ma-0 mr-2" color="error" @click="confirm(index, false)" small outline>Cancel</v-btn>
+						<v-container class="pa-0" fluid>
+							<v-layout row wrap>
+								<v-flex class="pr-2" xs6>
+									<v-btn class="ma-0" color="success" @click="claim(index)" block small outline>Confirm</v-btn>
+								</v-flex>
+								<v-flex xs6>
+									<v-btn class="ma-0" @click="confirm(index, false)" block small outline>Cancel</v-btn>
+								</v-flex>
+							</v-layout>
+						</v-container>
 					</div>
 					<div v-else key="details">
 						<div class="reward-header">
@@ -57,7 +111,6 @@
 							class="ma-0 mt-1 pa-0"
 							ref="modalMessage"
 							v-model="rewards[previewReward].message"
-							:rules="[rules.name]"
 							placeholder="Message (optional)"
 							maxlength="100"
 							rows="3"
@@ -73,58 +126,30 @@
 					</v-card-actions>
 				</v-card>
 			</v-dialog>
+
+			<v-dialog v-model="isLiveWarning" content-class="ma-3" attach="#app .alt-panel" full-width>
+				<v-card>
+					<v-card-title class="title pb-0 pr-0">Warning!</v-card-title>
+
+					<v-card-text class="subheading">
+						<span class="primary--text">{{ user.channel.name }}</span> doesn't appear to be LIVE. Are you sure you want to claim this reward anyway?
+					</v-card-text>
+
+					<v-card-actions>
+						<v-spacer></v-spacer>
+
+						<v-btn @click="claim(previewReward, true)" color="primary" class="ml-2" small outline>Yes</v-btn>
+						<v-btn @click="isLiveWarning = false" small outline>Cancel</v-btn>
+					</v-card-actions>
+				</v-card>
+			</v-dialog>
 		</div>
 	</transition>
 </template>
 
-<style lang="scss" scoped>
-	@import '../styles/_vars';
-
-	.alt-loading {
-		margin-left: -32px;
-	}
-
-	.preview-image {
-		height: 80px;
-		background: url('../assets/mascot.png') no-repeat center;
-		background-size: contain;
-	}
-
-	.reward {
-		border-bottom: 2px solid $primary;
-		font-size: 15px;
-
-		.image {
-			float: left;
-			width: 67px;
-			height: 65px;
-			border: 2px solid $primary;
-			border-bottom: 0;
-			vertical-align: top;
-			background: url('../assets/mascot.png') no-repeat center;
-			background-size: contain;
-			cursor: pointer;
-		}
-	}
-
-	.reward-header {
-		display: flex;
-
-		> span:first-child {
-			flex: 1;
-			padding-right: 10px;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			font-size: 16px;
-			margin-top: -3px;
-		}
-	}
-</style>
-
 <script>
-	import { EventBus } from '../utils/event-bus'
-	import Points from './Points'
+	import { EventBus } from '../../utils/event-bus'
+	import Points from '../Points'
 
 	export default {
 		name: 'Shop',
@@ -137,13 +162,11 @@
 				isLoading: true,
 				hasError: false,
 				isPreview: false,
+				isLiveWarning: false,
 				previewReward: 0,
 				rewards: [],
 				previewSound: new Audio(''),
-				baseURL: process.env.VUE_APP_API,
-				rules: {
-					name: value => (value && value.length <= 100) || 'Max 100 characters'
-				}
+				baseURL: process.env.VUE_APP_API
 			}
 		},
 		methods: {
@@ -168,8 +191,16 @@
 					this.$refs.modalMessage.$el.querySelector('textarea').focus()
 				}, 0)
 			},
-			claim (index) {
+			claim (index, bypassWarning) {
 				let reward = this.rewards[index]
+
+				if (!this.user.channel.isLive && !bypassWarning) {
+					this.previewReward = index
+					this.isLiveWarning = true
+					return
+				}
+
+				this.isLiveWarning = false
 
 				this.axios.post(`${process.env.VUE_APP_API}claim`, {
 					reward: reward._id,

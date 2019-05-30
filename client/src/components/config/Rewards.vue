@@ -49,7 +49,7 @@
 			</template>
 		</v-data-table>
 
-		<v-dialog v-model="isRewardDialog" max-width="600px">
+		<v-dialog v-model="isRewardDialog" max-width="600px" persistent>
 			<v-card>
 				<v-card-title class="headline grey darken-2" primary-title>
 					<span style="color: #FFF;">{{ reward.id === false ? 'Add' : 'Edit' }} Reward</span>
@@ -95,8 +95,8 @@
 
 				<v-card-actions>
 					<v-spacer></v-spacer>
-					<v-btn color="grey" @click="isRewardDialog = false" flat>Cancel</v-btn>
 					<v-btn color="success" @click="saveReward" flat>Save</v-btn>
+					<v-btn color="grey" @click="isRewardDialog = false" flat>Cancel</v-btn>
 				</v-card-actions>
 			</v-card>
 		</v-dialog>
@@ -113,8 +113,8 @@
 
 				<v-card-actions>
 					<v-spacer></v-spacer>
-					<v-btn color="grey" @click="isDeleteDialog = false" flat>Cancel</v-btn>
 					<v-btn color="error" @click="removeReward" flat>Yes</v-btn>
+					<v-btn color="grey" @click="isDeleteDialog = false" flat>Cancel</v-btn>
 				</v-card-actions>
 			</v-card>
 		</v-dialog>
@@ -142,7 +142,7 @@
 </template>
 
 <script>
-	import Points from './Points'
+	import Points from '../Points'
 
 	export default {
 		name: 'Rewards',
