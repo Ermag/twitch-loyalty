@@ -217,8 +217,6 @@
 					if (this.user.channel.pointsImg) {
 						this.POINTS_IMG = this.user.channel.pointsImg
 					}
-				}).catch(() => {
-					this.hasError = true
 				}).then(() => {
 					if (this.user.channel._id) {
 						this.isLoading = false
@@ -226,9 +224,13 @@
 					} else {
 						this.hasError = true
 					}
+				}).catch(() => {
+					this.hasError = true
 				})
 			},
 			startCounter () {
+				clearInterval(this.counterInterval)
+
 				this.counterInterval = setInterval(() => {
 					this.axios.get(`${process.env.VUE_APP_API}user?id=${this.user._id}`).then(res => {
 						this.$set(this.user.profile, 'displayName', res.data.profile.displayName)
@@ -295,6 +297,9 @@
 				})
 
 				this.twitch.onAuthorized(auth => {
+					if (this.Auth) {
+						return
+					}
 					this.Auth = new Authentication(auth)
 					let userId = this.Auth.getUserId()
 

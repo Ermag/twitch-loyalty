@@ -11,11 +11,7 @@ const APP_CONFIG = require('./constants')
 const mongooseConnect = require('./services/mongoose')
 const cronInit = require('./services/cron')
 const staticRoutes = require('./routes/static')
-const channelRoutes = require('./routes/channel')
-const rewardRoutes = require('./routes/reward')
-const userRoutes = require('./routes/user')
-const claimRoutes = require('./routes/claim')
-const battleRoutes = require('./routes/battle')
+const listRoutes = require('./routes')
 const app = express()
 const isDevEnv = process.env.NODE_ENV === 'development'
 
@@ -70,11 +66,9 @@ mongooseConnect().then(() => {
 	}))
 
 	// Set our REST end points
-	app.use(channelRoutes)
-	app.use(rewardRoutes)
-	app.use(userRoutes)
-	app.use(claimRoutes)
-	app.use(battleRoutes)
+	listRoutes.forEach(route => {
+		app.use(route)
+	})
 
 	// Send 500 status code with simple message to the client when unhandled errors occur
 	app.use((err, req, res, next) => {

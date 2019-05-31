@@ -63,8 +63,6 @@ ClaimSchema.statics.addClaim = function (channelId, message, reward, user) {
 				isLevelUp = true
 			}
 
-			console.log(user.profile._id)
-
 			Promise.all([
 				ProfileModel.updateOne({
 					_id: user.profile._id
