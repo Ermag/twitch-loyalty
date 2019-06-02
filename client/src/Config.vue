@@ -13,7 +13,7 @@
 				<v-card>
 					<v-alert v-model="isNewInstall" color="success" icon="check_circle" dismissible>
 						Thank you for installing {{ NAME }}! Below you can set rewards for your viewers, we ve hooked you up with our basic template to get you started.
-						To set alerts or change your currency name/image go to the <a href="#" @click="changeTab(1)">Options</a> tab.
+						To set alerts or change your loyalty points name/image go to the <a href="#" @click="changeTab(1)">Options</a> tab.
 					</v-alert>
 
 					<v-alert v-model="isPointsInfo" color="info" icon="info" dismissible>

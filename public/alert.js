@@ -10,7 +10,6 @@ $(document).ready(function() {
 	}
 
 	var chid = $.urlParam('chid');
-	var hasSound = $.urlParam('sound');
 	var screenTime = $.urlParam('screenTime');
 	var time = new Date();
 	var alerts = [];
@@ -65,7 +64,7 @@ $(document).ready(function() {
 
 		$('#app .alert-wrapper').addClass('show');
 
-		if (hasSound === 'yes') {
+		if (volume > 0) {
 			sound = new Audio(alert.reward.sound || 'default.wav');
 			sound.autoplay = true;
 			sound.volume = volume;

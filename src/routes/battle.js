@@ -77,10 +77,6 @@ router.post(`/${name}`, (req, res) => {
 
 				// Save the battle
 				newBattle.save().then(battle => {
-					if (!battle || battle.length === 0) {
-						return res.status(500).json(err)
-					}
-
 					let exp = result === 0 ? points : 0
 					let isLevelUp = false
 					let expNextLevel = Math.round(175 * Math.pow(doc.level + 1, 1.5))

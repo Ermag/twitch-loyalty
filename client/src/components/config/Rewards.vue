@@ -34,7 +34,7 @@
 						<v-btn class="ma-0 mx-1" @click="viewImage(props.item)" flat icon small>
 							<v-icon small>insert_photo</v-icon>
 						</v-btn>
-						<v-btn class="ma-0"  @click="playSound(props.item)" flat icon small>
+						<v-btn class="ma-0" @click="toggleSound(props.item.sound)" flat icon small>
 							<v-icon small>volume_up</v-icon>
 						</v-btn>
 					</td>
@@ -157,6 +157,8 @@
 				toDelete: null,
 				isViewImage: false,
 				imageToView: null,
+				previewSound: new Audio(''),
+				baseURL: process.env.VUE_APP_API,
 				message: {
 					isVisible: false,
 					type: '',
@@ -190,10 +192,18 @@
 			}
 		},
 		methods: {
-			playSound (reward) {
-				let sound = new Audio(process.env.VUE_APP_API + (reward.sound || 'default.wav'))
-				sound.autoplay = true
-				sound.volume = 0.25
+			toggleSound (sound) {
+				sound = sound || 'default.wav'
+				this.previewSound.currentTime = 0
+
+				if (sound === this.previewSound.alterSrc) {
+					this.previewSound.paused ? this.previewSound.play() : this.previewSound.pause()
+				} else {
+					this.previewSound.src = this.baseURL + sound
+					this.previewSound.alterSrc = sound
+
+					this.previewSound.play()
+				}
 			},
 			viewImage (reward) {
 				this.imageToView = process.env.VUE_APP_API + (reward.image || 'default.png')
@@ -342,6 +352,8 @@
 			}
 		},
 		created () {
+			this.previewSound.volume = 0.25
+
 			this.fetchRewards()
 		}
 	}

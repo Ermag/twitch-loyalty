@@ -29,7 +29,7 @@ router.post(`/${name}`, (req, res) => {
 					transactionId: decoded.data.transactionId
 				}).then(payment => {
 					if (payment) {
-						return res.status(404).send('Nice try.')
+						return res.status(401).send('Nice try.')
 					} else {
 						let product = PAYMENTS[decoded.data.product.sku]
 
@@ -47,9 +47,9 @@ router.post(`/${name}`, (req, res) => {
 							transactionReceipt: req.body.transactionReceipt
 						})
 
-						// Save the battle
+						// Save the payment
 						newPayment.save().then(payment => {
-							// Update the user
+							// Add points to the user
 							UserModel.updateOne({
 								_id: doc._id
 							}, {
@@ -58,7 +58,7 @@ router.post(`/${name}`, (req, res) => {
 									currentPoints: payment.points
 								},
 								updatedAt: new Date()
-							}, (err) => {
+							}, err => {
 								if (err) {
 									return res.status(500).json(err)
 								}

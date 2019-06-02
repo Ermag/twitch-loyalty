@@ -7,7 +7,7 @@
 				<li>Open your streaming software (OBS, XSplit, etc.).</li>
 				<li>Select the scene in which the alerts to appear.</li>
 				<li>Add new browser source with Width -> 500 and Height - 320</li>
-				<li>Copy and paste the URL -> <input :value="baseURL + 'alert.html?chid=' + channel._id + '&sound=yes&screenTime=8'" size="60" onClick="this.select(); document.execCommand('copy')" readonly autofocus /></li>
+				<li>Copy and paste the URL -> <input :value="baseURL + 'alert.html?chid=' + channel._id + '&screenTime=8'" size="60" onClick="this.select(); document.execCommand('copy')" readonly autofocus /></li>
 			</ol>
 			<v-tooltip top>
 				<template #activator="data">
@@ -19,7 +19,7 @@
 
 		<div class="ma-3 pb-4">
 			<h5 class="headline">
-				Currency <Points :value="-1" :name="POINTS_NAME" :img="POINTS_IMG" :size="24" />
+				Loyalty Points <Points :value="-1" :name="POINTS_NAME" :img="POINTS_IMG" :size="24" />
 			</h5>
 			<v-form ref="addForm">
 				<v-layout>
