@@ -1,3 +1,15 @@
+<style lang="scss">
+	@import './styles/_vars';
+	@import './styles/main';
+
+	.table thead th {
+		padding: 0 20px 5px 0;
+	}
+	.table tbody td {
+		padding-right: 20px;
+	}
+</style>
+
 <template>
 	<v-app :dark="isDarkTheme">
 		<div v-if="isLoading" class="ma-3 text-xs-center">
@@ -65,30 +77,25 @@
 					</v-tabs>
 				</v-card>
 			</v-flex>
+
+			<IntroModal :isDarkTheme="isDarkTheme" />
 		</v-layout>
 	</v-app>
 </template>
-
-<style scoped lang="scss">
-	.table thead th {
-		padding: 0 20px 5px 0;
-	}
-	.table tbody td {
-		padding-right: 20px;
-	}
-</style>
 
 <script>
 	import { APP_CONFIG } from './utils/constants'
 	import Authentication from './utils/twitch'
 	import { EventBus } from './utils/event-bus'
 	import Points from './components/Points'
+	import IntroModal from './components/config/Intro'
 	import Rewards from './components/config/Rewards'
 	import Options from './components/config/Options'
 
 	export default {
 		name: 'Config',
 		components: {
+			IntroModal,
 			Rewards,
 			Options,
 			Points
@@ -104,7 +111,7 @@
 				isRewardDialog: false,
 				channel: null,
 				tab: null,
-				tabs: ['Rewards', 'Options', 'Analytics']
+				tabs: ['Options', 'Rewards', 'Analytics']
 			}
 		},
 		created () {
