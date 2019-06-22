@@ -48,7 +48,7 @@ mongooseConnect().then(() => {
 
 	// Log requests in the console
 	app.use((req, res, next) => {
-		console.log(`${new Date().toString()} => ${req.originalUrl}`, req.body)
+		console.log(`${new Date().toLocaleString()} => ${req.originalUrl}`, req.body)
 		next()
 	})
 

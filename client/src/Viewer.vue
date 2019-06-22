@@ -300,6 +300,7 @@
 					if (this.Auth) {
 						return
 					}
+
 					this.Auth = new Authentication(auth)
 					let userId = this.Auth.getUserId()
 
@@ -355,7 +356,7 @@
 				})
 			} else {
 				this.isLoading = false
-				window.location.reload()
+				this.hasError = true
 			}
 		},
 		beforeDestroy () {

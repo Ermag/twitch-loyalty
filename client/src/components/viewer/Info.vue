@@ -128,7 +128,7 @@
 
 			<div class="metrics" slot="activator">
 				<div class="points">
-					<Points @click.native="isPointsInfo = true" :value="user.currentPoints" :name="POINTS_NAME" :img="POINTS_IMG" :size="24" pos="bottom" :css="'pointer large-points'" />
+					<Points @clicked="isPointsInfo = true" :value="user.currentPoints" :name="POINTS_NAME" :img="POINTS_IMG" :size="24" pos="bottom" :css="'large-points'" />
 				</div>
 				<v-tooltip bottom>
 					<div class="watch-time" slot="activator">{{ Math.floor(user.watchTime / 60) + '.' + user.watchTime % 60 }}h</div>
@@ -154,13 +154,15 @@
 		<v-dialog v-model="isPointsInfo" content-class="ma-3" attach="#app .alt-panel" full-width>
 			<v-card>
 				<v-card-title class="title pb-0 pr-0">
-					{{ POINTS_NAME }} Info
+					<Points :value="-1" :name="POINTS_NAME" :img="POINTS_IMG" :size="20" css="mr-1" /> {{ POINTS_NAME }}
 				</v-card-title>
 
 				<v-card-text class="subheading">
-					By watching the channel you obtain <Points :value="-1" :name="POINTS_NAME" :img="POINTS_IMG" :size="16" /><span class="primary--text">{{ POINTS_NAME }}</span>
-					which you can spend on rewards or battle other viewers. You gain <Points :value="1" :name="POINTS_NAME" :img="POINTS_IMG" :size="16" css="mr-1" /> for every minute you watch.
-					Followers and subscribers receive a multiplier bonus x2/x4 respectively.
+					By watching the channel you obtain <span class="primary--text">{{ POINTS_NAME }}</span>.
+					<span>You gain <Points :value="pointsPerMinute" :name="POINTS_NAME" :img="POINTS_IMG" :size="16" css="mr-1 subheading" /> for every minute you watch</span>
+					<span v-if="!user.isFollowing">, follow the channel for a bonus of <span class="primary--text subheading">+1</span></span>
+					<span v-else-if="!user.isSubscriber">, subscribe to the channel for a bonus of <span class="primary--text subheading">+3</span></span>
+					<span v-else>.</span>
 				</v-card-text>
 
 				<v-card-actions >
@@ -189,6 +191,13 @@
 				expProgress: 0,
 				expNextLevel: 0,
 				isPointsInfo: false
+			}
+		},
+		computed: {
+			pointsPerMinute () {
+				if (this.user.isSubscriber) return 4
+				if (this.user.isFollowing) return 2
+				return 1
 			}
 		},
 		methods: {

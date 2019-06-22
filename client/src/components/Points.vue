@@ -6,6 +6,11 @@
 		font-size: 0;
 		line-height: normal;
 	}
+	.point-tooltip {
+		font-size: 0;
+		vertical-align: middle;
+		white-space: nowrap;
+	}
 	.point-num {
 		position: relative;
 		font-weight: bold;
@@ -23,8 +28,8 @@
 </style>
 
 <template>
-	<v-tooltip :top="pos === 'top'" :bottom="pos === 'bottom'" style="font-size: 0; vertical-align: middle;">
-		<span slot="activator" class="point-wrap">
+	<v-tooltip :top="pos === 'top'" :bottom="pos === 'bottom'" class="point-tooltip">
+		<span slot="activator" class="point-wrap" @click="clicked" :class="{ pointer: $listeners.clicked }">
 			<img :src="baseURL + img" :alt="name" :width="size" /> <span class="point-num" :class="[css]">{{ value >= 0 ? formatQuantity(Math.abs(displayNumber)) : '' }}</span>
 		</span>
 		<span>{{ this.name }}</span>
@@ -64,7 +69,10 @@
 			}
 		},
 		methods: {
-			formatQuantity: helpers.formatQuantity
+			formatQuantity: helpers.formatQuantity,
+			clicked () {
+				this.$emit('clicked');
+			}
 		},
 		mounted () {
 			this.displayNumber = this.value ? this.value : 0

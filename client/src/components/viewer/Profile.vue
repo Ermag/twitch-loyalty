@@ -50,13 +50,13 @@
 			<h2 class="text-xs-center mb-1 px-2">Welcome to your Alter profile!</h2>
 			<p class="text-xs-center mb-3 subheading px-2" style="line-height: normal;">
 				By watching <span class="primary--text">{{ user.channel.name }}</span> you obtain
-				<Points @click.native="emitPointsInfo" :value="-1" :name="POINTS_NAME" :img="POINTS_IMG" :size="16" /><span @click="emitPointsInfo" class="primary--text pointer">{{ POINTS_NAME }}</span>
+				<Points @clicked="emitPointsInfo" :value="-1" :name="POINTS_NAME" :img="POINTS_IMG" :size="16" /><span @click="emitPointsInfo" class="primary--text pointer">{{ POINTS_NAME }}</span>
 				which you can spend on cool <a @click="changeTab('Rewards')">rewards</a> or <a @click="changeTab('Battle')">battle</a> other viewers.
 				Claim your welcome gift below!
 			</p>
 
 			<div class="text-xs-center">
-				<Points :value="initialPoints" :name="POINTS_NAME" :img="POINTS_IMG" :size="24" css="mx-1 title" />
+				<Points @clicked="emitPointsInfo" :value="initialPoints" :name="POINTS_NAME" :img="POINTS_IMG" :size="24" css="mx-1 title" />
 				<v-btn class="title" color="primary" @click="claimInitial" small outline>Claim</v-btn>
 			</div>
 		</div>

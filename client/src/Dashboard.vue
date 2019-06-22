@@ -31,7 +31,7 @@
 		<v-dialog v-model="isChangelogModal" fullscreen>
 			<v-card>
 				<v-toolbar>
-					<v-toolbar-title>Version 0.4.0</v-toolbar-title>
+					<v-toolbar-title>Changelog 0.5.0</v-toolbar-title>
 
 					<v-spacer></v-spacer>
 
@@ -43,10 +43,11 @@
 				</v-toolbar>
 
 				<ul class="pa-4">
-					<li class="pb-2">Subscribers now receive their bonus currency for watching.</li>
-					<li class="pb-2">Added option to change the volume of alerts.</li>
-					<li class="pb-2">Fixed an issue showing duplicated users in the leaderboard.</li>
+					<li class="pb-2">Added shop tab for viewers, loyalty points can now be purchased for bits. You receive 80% of the revenue from every purchase made!</li>
+					<li class="pb-2">Added tutorial on the configuration page when setting up Alter for the first time.</li>
 					<li class="pb-2">Added various UI/UX improvements and bug fixes.</li>
+
+					<div class="text-xs-center mt-2"><v-btn :dark="isDarkTheme" @click="isChangelogModal = false">Close</v-btn></div>
 				</ul>
 			</v-card>
 		</v-dialog>
@@ -72,7 +73,7 @@
 				channel: null,
 				claims: [],
 				fetchInterval: null,
-				hasNewVersion: !localStorage.getItem('loyal-live-version040'),
+				hasNewVersion: !localStorage.getItem('loyal-live-version050'),
 				isChangelogModal: false,
 				reFetchInterval: 30 // seconds
 			}
@@ -80,7 +81,7 @@
 		watch: {
 			hasNewVersion (val) {
 				if (!val) {
-					localStorage.setItem('loyal-live-version040', true)
+					localStorage.setItem('loyal-live-version050', true)
 				}
 			}
 		},

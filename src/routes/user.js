@@ -152,7 +152,7 @@ router.get(`/${name}s`, (req, res) => {
 
 	let sortReq = parseInt(req.query.sort)
 
-	if (sortReq === 1) {
+	if (sortReq === 2) {
 		UserModel.aggregate([
 			{ '$match': { channel: mongoose.Types.ObjectId(req.query.cid) } },
 			{ '$lookup': {
@@ -169,7 +169,6 @@ router.get(`/${name}s`, (req, res) => {
 			{ '$sort': { 'profile.experience': -1 } },
 			{ '$limit': 100 }
 		]).then(docs => {
-			console.log(docs)
 			findAndSortUsers(docs, req, res)
 		}).catch(err => {
 			res.status(500).json(err)
@@ -177,7 +176,7 @@ router.get(`/${name}s`, (req, res) => {
 	} else {
 		let sort = '-points'
 
-		if (sortReq === 2) {
+		if (sortReq === 1) {
 			sort = '-claimedCount'
 		} else if (sortReq === 3) {
 			sort = '-battlesWon'
@@ -216,7 +215,7 @@ router.get(`/${name}Rand`, (req, res) => {
 		return res.status(400).send('Missing channel id.')
 	}
 
-	UserModel.count({
+	UserModel.countDocuments({
 		channel: req.query.cid
 	}).exec(function (err, count) {
 		if (err) {

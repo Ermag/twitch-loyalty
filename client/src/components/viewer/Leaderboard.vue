@@ -37,8 +37,8 @@
 							</td>
 							<td class="pr-3 text-xs-right primary--text" width="70">
 								<span v-if="sortIndex == 0">{{ formatQuantity(value.points) }}</span>
-								<span v-else-if="sortIndex == 1">{{ formatQuantity(value.profile.experience) }}</span>
-								<span v-else-if="sortIndex == 2">{{ formatQuantity(value.claimedCount) }}</span>
+								<span v-else-if="sortIndex == 1">{{ formatQuantity(value.claimedCount) }}</span>
+								<span v-else-if="sortIndex == 2">{{ formatQuantity(value.profile.experience) }}</span>
 								<span v-else>{{ formatQuantity(value.battlesWon) }}</span>
 							</td>
 						</tr>
@@ -172,7 +172,7 @@
 				isLoading: true,
 				hasError: false,
 				sort: this.$props.POINTS_NAME,
-				sorts: [this.$props.POINTS_NAME, 'Experience', 'Claimed Rewards', 'Battles Won'],
+				sorts: [this.$props.POINTS_NAME, 'Claimed Rewards', 'Experience', 'Battles Won'],
 				sortIndex: 0,
 				users: [],
 				position: 'n/a',
