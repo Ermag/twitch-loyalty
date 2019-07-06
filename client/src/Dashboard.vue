@@ -1,8 +1,6 @@
 <template>
 	<v-app :dark="isDarkTheme">
-		<v-alert v-model="hasNewVersion" color="info" icon="info" dismissible>
-			A new version of <strong>Alter</strong> has been rolled out, click  <a href="#" @click="isChangelogModal = true">HERE</a> to see the changelog.
-		</v-alert>
+		<Changelog :isDarkTheme="isDarkTheme" />
 
 		<div v-if="isLoading" class="ma-3 text-xs-center">
 			<v-progress-circular :size="70" :width="7" color="primary" indeterminate></v-progress-circular>
@@ -27,42 +25,20 @@
 				</v-alert>
 			</div>
 		</div>
-
-		<v-dialog v-model="isChangelogModal" fullscreen>
-			<v-card>
-				<v-toolbar>
-					<v-toolbar-title>Changelog 0.5.0</v-toolbar-title>
-
-					<v-spacer></v-spacer>
-
-					<v-toolbar-items>
-						<v-btn :dark="isDarkTheme" @click="isChangelogModal = false" icon>
-							<v-icon>close</v-icon>
-						</v-btn>
-					</v-toolbar-items>
-				</v-toolbar>
-
-				<ul class="pa-4">
-					<li class="pb-2">Added shop tab for viewers, loyalty points can now be purchased for bits. You receive 80% of the revenue from every purchase made!</li>
-					<li class="pb-2">Added tutorial on the configuration page when setting up Alter for the first time.</li>
-					<li class="pb-2">Added various UI/UX improvements and bug fixes.</li>
-
-					<div class="text-xs-center mt-2"><v-btn :dark="isDarkTheme" @click="isChangelogModal = false">Close</v-btn></div>
-				</ul>
-			</v-card>
-		</v-dialog>
 	</v-app>
 </template>
 
 <script>
 	import { APP_CONFIG } from './utils/constants'
 	import Authentication from './utils/twitch'
+	import Changelog from './components/dashboard/Changelog'
 	import Points from './components/Points'
 
 	export default {
-		name: 'Live Dashboard',
+		name: 'LiveDashboard',
 		components: {
-			Points
+			Points,
+			Changelog
 		},
 		data () {
 			return {
@@ -73,16 +49,7 @@
 				channel: null,
 				claims: [],
 				fetchInterval: null,
-				hasNewVersion: !localStorage.getItem('loyal-live-version050'),
-				isChangelogModal: false,
 				reFetchInterval: 30 // seconds
-			}
-		},
-		watch: {
-			hasNewVersion (val) {
-				if (!val) {
-					localStorage.setItem('loyal-live-version050', true)
-				}
 			}
 		},
 		methods: {

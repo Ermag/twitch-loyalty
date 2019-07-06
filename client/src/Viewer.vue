@@ -30,10 +30,12 @@
 		border-radius: 2px;
 		box-shadow: 3px 3px 0 0 rgba(0, 0, 0, .45);
 		text-align: center;
+
 		img {
 			margin-top: 4px;
 			pointer-events: none;
 		}
+
 		> div {
 			position: absolute;
 				top: 0;
@@ -46,6 +48,7 @@
 			background: $secondary;
 			transition: all .15s;
 		}
+
 		&:active {
 			& > div {
 				top: 3px;
@@ -78,6 +81,36 @@
 			pointer-events: none;
 		}
 
+		.wave-wrapper {
+			position: absolute;
+				top: 0;
+				left: 0;
+				z-index: 98;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			background: #4B367C;
+			transform: rotate(180deg);
+
+			& > span {
+				width: 610px;
+				height: 1000px;
+				position: absolute;
+					top: -69px;
+					left: 50%;
+				margin-left: -305px;
+				margin-top: -500px;
+				border-radius: 35%;
+				background: $secondary;
+				animation: wave 90s infinite linear;
+			}
+
+			@keyframes wave {
+				from { transform: rotate(0deg); }
+				from { transform: rotate(360deg); }
+			}
+		}
+
 		.alt-content {
 			position: relative;
 				z-index: 9999;
@@ -102,7 +135,7 @@
 <template>
 	<v-app :class="{ hide: !isVisible }" dark>
 		<div class="app-visible" @mousemove="mouseMove">
-			<div class="alt-wrapper" :class="{ offset: hasToggle, fullscreen: isFullScreen }">
+			<div class="alt-wrapper">
 				<div class="alt-toggle pointer" v-if="hasToggle" @click="isPanelActive = !isPanelActive">
 					<div>
 						<transition name="fade" mode="out-in">
@@ -114,6 +147,8 @@
 
 				<transition name="fade" mode="out-in">
 					<div class="alt-panel" v-if="isPanelActive">
+						<div class="wave-wrapper"><span></span></div>
+
 						<div v-if="isLoading" class="text-xs-center alt-loading">
 							<v-progress-circular :size="100" :width="7" color="primary" indeterminate></v-progress-circular>
 						</div>
@@ -163,7 +198,6 @@
 				hasMessage: false,
 				message: '',
 				hasToggle: true,
-				isFullScreen: false,
 				user: {
 					currentPoints: 0,
 					watchTime: 0,
@@ -289,12 +323,6 @@
 						this.twitch.actions.requestIdShare()
 					}
 				}, 3000)
-
-				this.twitch.onContext((context, fields) => {
-					if (fields.indexOf('isTheatreMode') !== -1 || fields.indexOf('isFullScreen') !== -1) {
-						this.isFullScreen = context.isFullScreen || context.isTheatreMode
-					}
-				})
 
 				this.twitch.onAuthorized(auth => {
 					if (this.Auth) {

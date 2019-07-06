@@ -53,8 +53,6 @@ function updateChannel (req, res, query = {}) {
 		_id: req.query.cid
 	}, {
 		...query,
-		pointsName: req.body.name,
-		alertsVolume: req.body.volume,
 		updatedAt: new Date()
 	}, {
 		new: true
@@ -74,9 +72,24 @@ router.put(`/${name}`, (req, res) => {
 		return res.status(400).send('Missing channel id.')
 	}
 
-	// Check for valid name and points
-	if (!req.body.name || !req.body.name.length > 20) {
-		return res.status(400).send('Request contains invalid data.')
+	let query = {}
+
+	// Check for valid points name
+	if (req.body.name) {
+		if (req.body.name.length <= 0 || req.body.name.length > 20) {
+			return res.status(400).send('Request contains invalid name.')
+		}
+
+		query.pointsName = req.body.name
+	}
+
+	// Check for valid volume
+	if (req.body.volume) {
+		if (isNaN(req.body.volume) || req.body.volume < 0 || req.body.volume > 1) {
+			return res.status(400).send('Request contains invalid volume.')
+		}
+
+		query.alertsVolume = req.body.volume
 	}
 
 	let jwt = jwtDecode(req.headers.authorization)
@@ -93,19 +106,26 @@ router.put(`/${name}`, (req, res) => {
 		}
 
 		if (req.files && req.files.image) {
+			let validFileTypes = ['jpg', 'jpeg', 'gif', 'png', 'bmp']
 			let imageFile = req.files.image
 			let imageExt = imageFile.name.split('.').pop()
 			let imageName = `c-${req.query.cid}.${imageExt}`
+
+			if (validFileTypes.indexOf(imageExt) === -1) {
+				return res.status(400).send('Request contains invalid image.')
+			}
+
+			query.pointsImg = imageName
 
 			imageFile.mv(`./public/${imageName}`, err => {
 				if (err) {
 					return res.status(500).send(err)
 				} else {
-					updateChannel(req, res, { pointsImg: imageName })
+					updateChannel(req, res, query)
 				}
 			})
 		} else {
-			updateChannel(req, res)
+			updateChannel(req, res, query)
 		}
 	})
 })

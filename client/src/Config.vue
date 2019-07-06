@@ -11,7 +11,7 @@
 </style>
 
 <template>
-	<v-app :dark="isDarkTheme">
+	<v-app :dark="true" style="overflow: auto;">
 		<div v-if="isLoading" class="ma-3 text-xs-center">
 			<v-progress-circular :size="70" :width="7" color="primary" indeterminate></v-progress-circular>
 		</div>
@@ -23,52 +23,9 @@
 		<v-layout v-else>
 			<v-flex sm12 md8 offset-md2>
 				<v-card>
-					<v-alert v-model="isNewInstall" color="success" icon="check_circle" dismissible>
-						Thank you for installing {{ NAME }}! Below you can set rewards for your viewers, we ve hooked you up with our basic template to get you started.
-						To set alerts or change your loyalty points name/image go to the <a href="#" @click="changeTab(1)">Options</a> tab.
-					</v-alert>
-
-					<v-alert v-model="isPointsInfo" color="info" icon="info" dismissible>
-						Viewers start with <Points :value="STARTING_POINTS" :name="POINTS_NAME" :img="POINTS_IMG" /> and receive <strong style="font-size: 15px;">X</strong> amount every minute they watch your stream, based on their status.
-						<table class="table pt-2">
-							<thead>
-								<tr>
-									<th class="text-xs-left">Time/Status</th>
-									<th>Minute</th>
-									<th>Hour</th>
-									<th>Day</th>
-									<th>Week</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<th class="text-xs-left">Viewer</th>
-									<td class="text-xs-right"><Points :value="BASE_POINTS" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
-									<td class="text-xs-right"><Points :value="BASE_POINTS * 60" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
-									<td class="text-xs-right"><Points :value="BASE_POINTS * 1440" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
-									<td class="text-xs-right"><Points :value="BASE_POINTS * 10080" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
-								</tr>
-								<tr>
-									<th class="text-xs-left">Follower</th>
-									<td class="text-xs-right"><Points :value="BASE_POINTS * FOLLOWER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
-									<td class="text-xs-right"><Points :value="BASE_POINTS * 60 * FOLLOWER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
-									<td class="text-xs-right"><Points :value="BASE_POINTS * 1440 * FOLLOWER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
-									<td class="text-xs-right"><Points :value="BASE_POINTS * 10080 * FOLLOWER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
-								</tr>
-								<tr>
-									<th class="text-xs-left">Subscriber</th>
-									<td class="text-xs-right"><Points :value="BASE_POINTS * SUBSCRIBER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
-									<td class="text-xs-right"><Points :value="BASE_POINTS * 60 * SUBSCRIBER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
-									<td class="text-xs-right"><Points :value="BASE_POINTS * 1440 * SUBSCRIBER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
-									<td class="text-xs-right"><Points :value="BASE_POINTS * 10080 * SUBSCRIBER_MULTIPLIER" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
-								</tr>
-							</tbody>
-						</table>
-					</v-alert>
-
 					<v-tabs v-model="tab" grow>
 						<v-tabs-slider></v-tabs-slider>
-						<v-tab v-for="tab in tabs" :key="tab" :disabled="tab === 'Analytics'">{{ tab }}</v-tab>
+						<v-tab class="title" v-for="tab in tabs" :key="tab" :disabled="tab === 'Analytics'">{{ tab }}</v-tab>
 
 						<v-tab-item v-for="tab in tabs" :key="tab">
 							<Rewards v-if="tab === 'Rewards'" :channel="channel" :changeTab="changeTab" :POINTS_NAME="POINTS_NAME" :POINTS_IMG="POINTS_IMG" />
@@ -78,7 +35,7 @@
 				</v-card>
 			</v-flex>
 
-			<IntroModal :isDarkTheme="isDarkTheme" />
+			<IntroModal :channel="channel" :POINTS_NAME="POINTS_NAME" :POINTS_IMG="POINTS_IMG" />
 		</v-layout>
 	</v-app>
 </template>
@@ -87,7 +44,6 @@
 	import { APP_CONFIG } from './utils/constants'
 	import Authentication from './utils/twitch'
 	import { EventBus } from './utils/event-bus'
-	import Points from './components/Points'
 	import IntroModal from './components/config/Intro'
 	import Rewards from './components/config/Rewards'
 	import Options from './components/config/Options'
@@ -97,31 +53,23 @@
 		components: {
 			IntroModal,
 			Rewards,
-			Options,
-			Points
+			Options
 		},
 		data () {
 			return {
 				...APP_CONFIG,
-				isDarkTheme: false,
 				isLoading: true,
 				hasError: false,
-				isNewInstall: !localStorage.getItem('loyal-config-dismissed_OFF'),
-				isPointsInfo: true,
 				isRewardDialog: false,
 				channel: null,
 				tab: null,
-				tabs: ['Options', 'Rewards', 'Analytics']
+				tabs: ['Rewards', 'Options', 'Analytics']
 			}
 		},
 		created () {
 			this.twitch = window.Twitch ? window.Twitch.ext : null
 
 			if (this.twitch) {
-				this.twitch.onContext((context, delta) => {
-					this.isDarkTheme = context.theme === 'dark'
-				})
-
 				this.twitch.onAuthorized(auth => {
 					this.Auth = new Authentication(auth)
 
@@ -161,13 +109,6 @@
 			},
 			changeTab (tab) {
 				this.tab = tab
-			}
-		},
-		watch: {
-			isNewInstall (val) {
-				if (!val) {
-					localStorage.setItem('loyal-config-dismissed', true)
-				}
 			}
 		}
 	}

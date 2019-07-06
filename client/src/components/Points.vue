@@ -71,7 +71,7 @@
 		methods: {
 			formatQuantity: helpers.formatQuantity,
 			clicked () {
-				this.$emit('clicked');
+				this.$emit('clicked')
 			}
 		},
 		mounted () {

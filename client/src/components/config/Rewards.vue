@@ -1,5 +1,7 @@
 <template>
 	<div>
+		<PointsTable :POINTS_NAME="POINTS_NAME" :POINTS_IMG="POINTS_IMG" />
+
 		<div style="display: flex; align-items: center;">
 			<h5 class="headline pa-3" style="flex-grow: 1;">Total - {{ rewards.data.length }}</h5>
 			<v-tooltip top>
@@ -22,25 +24,25 @@
 			hide-actions>
 			<template slot="headers" slot-scope="props">
 				<tr>
-					<th v-for="header in props.headers" :key="header.text">
+					<th class="subheading" v-for="header in props.headers" :key="header.text">
 						{{ header.text }}
 					</th>
 				</tr>
 			</template>
 			<template slot="items" slot-scope="props">
 				<tr>
-					<td>
+					<td class="subheading">
 						{{ props.item.name }}
-						<v-btn class="ma-0 mx-1" @click="viewImage(props.item)" flat icon small>
+						<v-btn class="ma-0 mx-1" color="indigo lighten-2" @click="viewImage(props.item)" flat icon small>
 							<v-icon small>insert_photo</v-icon>
 						</v-btn>
-						<v-btn class="ma-0" @click="toggleSound(props.item.sound)" flat icon small>
+						<v-btn class="ma-0" color="indigo lighten-2" @click="toggleSound(props.item.sound)" flat icon small>
 							<v-icon small>volume_up</v-icon>
 						</v-btn>
 					</td>
 					<td class="text-xs-right"><Points :value="props.item.points" :name="POINTS_NAME" :img="POINTS_IMG" /></td>
-					<td class="text-xs-center"><a @click="changeTab(1)">{{ props.item.alert ? 'Yes' : 'No' }}</a></td>
-					<td class="text-xs-right">{{ props.item.claimedCount }} times</td>
+					<td class="text-xs-center subheading"><a @click="changeTab(1)">{{ props.item.alert ? 'Yes' : 'No' }}</a></td>
+					<td class="text-xs-right subheading">{{ props.item.claimedCount }} times</td>
 					<td class="text-xs-center">
 						<v-btn color="info" @click="openRewardDialog(props.item)" icon flat><v-icon>edit</v-icon></v-btn>
 						<v-btn color="error" @click="openDeleteDialog(props.item)" icon flat><v-icon>delete</v-icon></v-btn>
@@ -56,8 +58,8 @@
 				</v-card-title>
 
 				<v-card-text>
-					<v-alert :value="true" color="info" icon="info" outline>
-						Try adding creative rewards for your viwers, like playing a game together, do a challenge, show a magic trick, draw, play music etc.
+					<v-alert class="subheading" :value="true" color="info" icon="info">
+						Try adding creative rewards for your viewers, like spicy memes, playing a game together, do a challenge, show a magic trick, draw, play music etc.
 					</v-alert>
 
 					<v-form ref="addForm">
@@ -107,7 +109,7 @@
 					<span style="color: #FFF;">Confirmation</span>
 				</v-card-title>
 
-				<v-card-text>Are you sure you want to delete this reward?</v-card-text>
+				<v-card-text class="subheading">Are you sure you want to delete this reward?</v-card-text>
 
 				<v-divider></v-divider>
 
@@ -142,11 +144,13 @@
 </template>
 
 <script>
+	import PointsTable from './PointsTable'
 	import Points from '../Points'
 
 	export default {
 		name: 'Rewards',
 		components: {
+			PointsTable,
 			Points
 		},
 		props: ['channel', 'changeTab', 'POINTS_NAME', 'POINTS_IMG'],

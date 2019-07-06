@@ -1,7 +1,7 @@
 # Alter
 Twitch extension for driving engagement, improving content, and delivering a more rich experience for viewers and streamers.
 
-## EBS
+## Server
 Node.js and MongoDB RESTful API, using Express and Mongoose as middleware.
 
 ### Setup

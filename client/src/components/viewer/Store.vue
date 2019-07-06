@@ -3,10 +3,12 @@
 
 	.chest {
 		display: block;
-		width: $chestWidth;
+		width: 100%;
+		max-width: $chestWidth;
 		height: 102px;
 		margin-top: 4px;
 		background: url('../../assets/chests.png') no-repeat;
+		background-size: cover;
 		transition: opacity .25s;
 
 		&:hover {
@@ -26,8 +28,18 @@
 		}
 	}
 
-	.flex:nth-child(even) {
-		padding-left: 13px !important;
+	.flex {
+		width: 50%;
+
+		&:nth-child(even) {
+			.chest {
+				float: right;
+			}
+
+			.point-wrap {
+				margin-left: 10px;
+			}
+		}
 	}
 </style>
 
@@ -37,7 +49,7 @@
 			<v-layout row wrap>
 				<v-flex @click="makePurchase(product)" v-for="product in products" :key="product.sku" class="px-0 pointer" xs6>
 					<v-tooltip nudge-top="120" bottom>
-						<div :class="['chest', 'mb-1', product.sku]" slot="activator"></div>
+						<span :class="['chest', 'mb-1', product.sku]" slot="activator"></span>
 						<span>{{ product.name }}</span>
 					</v-tooltip>
 
