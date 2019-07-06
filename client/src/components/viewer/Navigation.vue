@@ -157,8 +157,7 @@
 			}
 		},
 		created () {
-			// window.Twitch.ext.features.isBitsEnabled
-			this.hasBits = true
+			this.hasBits = window.Twitch.ext.features.isBitsEnabled
 		}
 	}
 </script>

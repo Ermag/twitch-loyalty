@@ -44,7 +44,7 @@
 			</v-toolbar>
 
 			<div class="title pa-5">
-				<v-layout class="pa-3">
+				<v-layout class="pa-3 py-5">
 					<v-flex sm12 md10 offset-md1>
 						<div v-if="step === 1">
 							<img src="../../assets/hello.png" width="30%" alt="Hello!" />
@@ -52,7 +52,7 @@
 								This is an introduction guide to help you get started.
 								{{ NAME }} is designed to expand your viewership, engage your audience and be another source of income for you!
 								By watching your channel, viewers will earn loyalty points every minute (followers and subscribers receive more).
-								Viewers can use loyalty points to claim rewards, challenges and memes that will appear on stream.
+								Loyalty points can be used by your viewers to claim rewards, play sounds, show memes on stream or climb the ladder.
 								Also loyalty points can be purchased with bits, for which you receive 80% of the revenue.
 								Click 'Next' to continue...
 							</div>
@@ -93,8 +93,8 @@
 								We hope we can help you grow and remember - never limit your creativity!
 								Happy streaming!
 								<div class="mt-3">
-									<a :href="TWITTER"><img src="../../assets/twitter.png" width="48" alt="Twitter" /></a>
-									<a :href="DISCORD"><img src="../../assets/discord.png" width="48" alt="Discord" /></a>
+									<a :href="TWITTER" target="_blank"><img src="../../assets/twitter.png" width="48" alt="Twitter" /></a>
+									<a :href="DISCORD" target="_blank"><img src="../../assets/discord.png" width="48" alt="Discord" /></a>
 								</div>
 							</div>
 						</div>
