@@ -2,6 +2,7 @@ const cron = require('node-cron')
 const setPoints = require('../crons/points')
 const setLiveChannels = require('../crons/liveChannels')
 const updateChannels = require('../crons/updateChannels')
+const backup = require('../crons/backup')
 
 module.exports = () => {
 	// Every minute
@@ -26,6 +27,15 @@ module.exports = () => {
 	cron.schedule('*/30 * * * *', () => {
 		try {
 			updateChannels()
+		} catch (err) {
+			console.log(err)
+		}
+	})
+
+	// Every day
+	cron.schedule('30 11 * * *', () => {
+		try {
+			backup()
 		} catch (err) {
 			console.log(err)
 		}
