@@ -99,7 +99,7 @@
 					<span>{{ tab }}</span>
 				</v-tooltip>
 			</li>
-			<li v-if="!hasBits" class="inactive"></li>
+			<li class="inactive"></li>
 		</ul>
 
 		<div class="alt-tab-content" v-bar>
@@ -122,7 +122,6 @@
 	import Rewards from './Shop'
 	import Battle from './Battle'
 	import Leaderboard from './Leaderboard'
-	import Shop from './Store'
 
 	export default {
 		name: 'Navigation',
@@ -131,22 +130,16 @@
 			Profile,
 			Rewards,
 			Battle,
-			Leaderboard,
-			Shop
+			Leaderboard
 		},
 		data () {
 			return {
-				currentTab: 'Profile',
-				hasBits: false
+				currentTab: 'Profile'
 			}
 		},
 		computed: {
 			tabs () {
 				let list = ['Profile', 'Rewards', 'Battle', 'Leaderboard']
-
-				if (this.hasBits) {
-					list.push('Shop')
-				}
 
 				return list
 			}
@@ -155,9 +148,6 @@
 			changeTab (tab) {
 				this.currentTab = tab
 			}
-		},
-		created () {
-			this.hasBits = window.Twitch.ext.features.isBitsEnabled
 		}
 	}
 </script>

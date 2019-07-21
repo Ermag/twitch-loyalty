@@ -1,0 +1,93 @@
+{
+  "allowHttpBackend": false,
+  "backendCommand": "",
+  "backendFolderName": "",
+  "certificateExceptions": [],
+  "extensionViews": [],
+  "frontendCommand": "",
+  "frontendFolderName": "",
+  "manifest": {
+    "anchor": "panel",
+    "assetUrls": [],
+    "authorName": "AltStudio",
+    "bitsEnabled": true,
+    "canInstall": true,
+    "configUrl": "https://localhost.rig.twitch.tv:8080/config.html",
+    "configurationLocation": "custom",
+    "description": "Alter connects streamers and viewers by providing live rewards, achievements, and recognition. By watching your channel, viewers will earn loyalty points (followers and subscribers receive more), or they can buy them with bits. Loyalty points can be used by your viewers to claim rewards, play sounds, show memes on stream or climb the ladder. You can customize virtually every part of Alter to make it unique to your personal and viewer’s experience! Our mission is to make fun and interactive experiences on Twitch and we would love to get your feedback!",
+    "eulaTosUrl": "",
+    "hasChatSupport": false,
+    "iconUrl": "https://extensions-discovery-images.twitch.tv/cx4rlgwlppmertltfy1dql4twr2cw6/0.4.0/logodf65bb9a-9cce-414e-9ef7-94788ce74f4e",
+    "iconUrls": {
+      "100x100": "https://extensions-discovery-images.twitch.tv/cx4rlgwlppmertltfy1dql4twr2cw6/0.4.0/logodf65bb9a-9cce-414e-9ef7-94788ce74f4e",
+      "24x24": "https://extensions-discovery-images.twitch.tv/cx4rlgwlppmertltfy1dql4twr2cw6/0.5.0/taskbarf3582e18-e78d-4730-8e2c-3632db6a34a9",
+      "300x200": "https://extensions-discovery-images.twitch.tv/cx4rlgwlppmertltfy1dql4twr2cw6/0.4.0/discovery7a7f7cbe-29de-4ee3-bca4-f06927d17f42"
+    },
+    "id": "cx4rlgwlppmertltfy1dql4twr2cw6",
+    "installationCount": -42,
+    "liveConfigUrl": "https://localhost.rig.twitch.tv:8080/live.html",
+    "name": "Alter",
+    "panelHeight": 496,
+    "privacyPolicyUrl": "",
+    "requestIdentityLink": true,
+    "requiredBroadcasterAbilities": [],
+    "screenshotUrls": [
+      "https://extensions-discovery-images.twitch.tv/cx4rlgwlppmertltfy1dql4twr2cw6/0.5.0/screenshot91b2fc15-4113-4111-a6a1-7cd32d3a33a6",
+      "https://extensions-discovery-images.twitch.tv/cx4rlgwlppmertltfy1dql4twr2cw6/0.5.0/screenshotd3a54097-e682-4d82-90f9-bf8c29e76337",
+      "https://extensions-discovery-images.twitch.tv/cx4rlgwlppmertltfy1dql4twr2cw6/0.5.0/screenshot8afd261b-508a-4553-b791-96accfd46e5a",
+      "https://extensions-discovery-images.twitch.tv/cx4rlgwlppmertltfy1dql4twr2cw6/0.5.0/screenshot85485d01-54d4-4fc0-b1c2-940fe2a1bf59",
+      "https://extensions-discovery-images.twitch.tv/cx4rlgwlppmertltfy1dql4twr2cw6/0.5.0/screenshot1befa834-901f-4c27-b910-9b6d7ed131a5",
+      "https://extensions-discovery-images.twitch.tv/cx4rlgwlppmertltfy1dql4twr2cw6/0.5.0/screenshot15ec8af5-a494-4ab6-9c08-cd9601995d2f"
+    ],
+    "sku": "",
+    "state": "Testing",
+    "subscriptionsSupportLevel": "optional",
+    "summary": "Alter is designed to expand your viewership, engage your community and be another source of income!",
+    "supportEmail": "team@4lter.com",
+    "vendorCode": "",
+    "version": "0.5.0",
+    "viewerSummary": "",
+    "viewerUrl": "https://localhost.rig.twitch.tv:8080/index.html",
+    "viewerUrls": {
+      "component": "https://localhost.rig.twitch.tv:8080/index.html",
+      "panel": "https://localhost.rig.twitch.tv:8080/index.html"
+    },
+    "views": {
+      "component": {
+        "aspectHeight": 10000,
+        "aspectRatioX": 15900,
+        "aspectRatioY": 24800,
+        "aspectWidth": 5000,
+        "autoscale": true,
+        "canLinkExternalContent": false,
+        "scalePixels": 318,
+        "size": 0,
+        "targetHeight": 10000,
+        "viewerUrl": "https://localhost.rig.twitch.tv:8080/index.html",
+        "zoom": false,
+        "zoomPixels": 0
+      },
+      "config": {
+        "canLinkExternalContent": true,
+        "viewerUrl": "https://localhost.rig.twitch.tv:8080/config.html"
+      },
+      "liveConfig": {
+        "canLinkExternalContent": true,
+        "viewerUrl": "https://localhost.rig.twitch.tv:8080/live.html"
+      },
+      "panel": {
+        "canLinkExternalContent": false,
+        "height": 496,
+        "viewerUrl": "https://localhost.rig.twitch.tv:8080/index.html"
+      }
+    },
+    "whitelistedConfigUrls": [
+      "https://www.twitch.tv/",
+      " https://twitter.com/",
+      " https://discord.gg/"
+    ],
+    "whitelistedPanelUrls": []
+  },
+  "name": "Alter",
+  "version": 1
+}
