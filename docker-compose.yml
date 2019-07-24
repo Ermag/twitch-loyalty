@@ -1,0 +1,22 @@
+version: "3"
+services:
+    alter:
+        container_name: alter
+        environment:
+            - DOCKER=true
+        build: .
+        ports:
+            - 443:443
+            - 8080:8080
+        links:
+            - mongo
+        volumes:
+            - ./server:/usr/src/alter/server
+            - ./client:/usr/src/alter/client
+            - /usr/src/alter/server/node_modules
+            - /usr/src/alter/client/node_modules
+    mongo:
+        container_name: mongodb
+        image: mongo
+        ports:
+            - "27017:27017"

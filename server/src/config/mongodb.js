@@ -1,6 +1,8 @@
+console.log(typeof process.env.DOCKER, process.env.DOCKER) 
+
 module.exports = {
 	dev: {
-		host: 'localhost',
+		host: process.env.DOCKER === 'true' ? 'mongo' : 'localhost',
 		database: 'alter'
 	},
 	prod: {
