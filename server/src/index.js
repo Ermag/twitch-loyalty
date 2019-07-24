@@ -87,7 +87,7 @@ mongooseConnect().then(() => {
 		https.createServer({
 			key: fs.readFileSync('../ssl/local.key'),
 			cert: fs.readFileSync('../ssl/local.pem')
-		}, app).listen(443, 'localhost.rig.twitch.tv', () => console.log(`Server running at https://localhost.rig.twitch.tv`))
+		}, app).listen(443, () => console.log(`Server running at https://localhost`))
 	} else {
 		app.listen(3000, () => console.log(`Server has started on 3000.`))
 	}

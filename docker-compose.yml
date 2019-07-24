@@ -1,22 +1,47 @@
 version: "3"
 services:
-    alter:
-        container_name: alter
+    alter_be:
+        container_name: server
         environment:
             - DOCKER=true
-        build: .
+        build:
+            context: .
+            dockerfile: docker-be
+        depends_on:
+            - mongo
+        networks:
+            main:
+                aliases:
+                - alter
         ports:
             - 443:443
-            - 8080:8080
-        links:
-            - mongo
         volumes:
             - ./server:/usr/src/alter/server
-            - ./client:/usr/src/alter/client
             - /usr/src/alter/server/node_modules
+    alter_fe:
+        container_name: client
+        build:
+            context: .
+            dockerfile: docker-fe
+        depends_on:
+            - alter_be
+        networks:
+            main:
+                aliases:
+                - alter_fe
+        ports:
+            - 9000:9000
+        volumes:
+            - ./client:/usr/src/alter/client
             - /usr/src/alter/client/node_modules
     mongo:
         container_name: mongodb
         image: mongo
+        networks:
+            main:
+                aliases:
+                - mongo
         ports:
             - "27017:27017"
+networks:
+    main:

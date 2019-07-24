@@ -3,7 +3,7 @@ const fs = require('fs')
 module.exports = {
 	runtimeCompiler: true,
 	devServer: {
-		host: 'localhost.rig.twitch.tv',
+		port: 9000,
 		https: {
 			key: fs.readFileSync('../ssl/local.key'),
 			cert: fs.readFileSync('../ssl/local.pem')
