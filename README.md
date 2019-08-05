@@ -51,5 +51,5 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 ## Docker
 Start Docker in development mode with watcher for code changes:
 ```
-docker-compose up && docker-compose down -v
+docker-compose up
 ```
