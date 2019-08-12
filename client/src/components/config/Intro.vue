@@ -132,6 +132,9 @@
 			}
 		},
 		methods: {
+			setRequiredConfig () {
+				this.axios.put(`${process.env.VUE_APP_API}channelSetRequiredConfig?cid=${this.channel.tid}`)
+			},
 			nextIntroStep () {
 				this.step += 1
 
@@ -147,7 +150,13 @@
 				} else {
 					this.status = false
 					localStorage.setItem('loyal-config-intro', true)
+					this.setRequiredConfig()
 				}
+			}
+		},
+		created () {
+			if (!this.status) {
+				this.setRequiredConfig()
 			}
 		}
 	}

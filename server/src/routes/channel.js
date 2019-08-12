@@ -1,5 +1,8 @@
 const express = require('express')
+const axios = require('axios')
+const jwt = require('jsonwebtoken');
 const jwtDecode = require('jwt-decode')
+const APP_CONFIG = require('../constants')
 const ChannelModel = require('../models/channel')
 const router = express.Router()
 const name = 'channel'
@@ -38,7 +41,7 @@ router.get(`/${name}ById`, (req, res) => {
 		_id: req.query.cid
 	}).then(doc => {
 		if (!doc) {
-			res.status(500).json('No channel with such id.')
+			res.status(500).send('No channel with such id.')
 		} else {
 			res.json(doc)
 		}
@@ -128,6 +131,34 @@ router.put(`/${name}`, (req, res) => {
 			updateChannel(req, res, query)
 		}
 	})
+})
+
+router.put(`/${name}SetRequiredConfig`, async (req, res) => {
+	if (!req.query.cid) {
+		return res.status(400).send('Missing channel id.')
+	}
+
+	const token = jwt.sign({
+		user_id: APP_CONFIG.twitchOwnerId,
+		role: 'external'
+	}, Buffer.from(APP_CONFIG.twitchSecret, 'base64'), { expiresIn: '1h' })
+
+	try {
+		const twitchRes = await axios.put(`https://api.twitch.tv/extensions/${APP_CONFIG.clientId}/${process.env.npm_package_version}/required_configuration?channel_id=${req.query.cid}`, {
+			required_configuration: 'tutorial'
+		}, {
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+				'Client-ID': APP_CONFIG.clientId
+			}
+		})
+
+		return res.status(twitchRes.status).send('Ok')
+	} catch (e) {
+		console.log(e.response.data)
+		return res.status(e.response.status).send('Error')
+	}
 })
 
 module.exports = router

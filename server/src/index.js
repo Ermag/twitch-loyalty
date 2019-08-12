@@ -16,7 +16,7 @@ const app = express()
 const isDevEnv = process.env.NODE_ENV === 'development'
 
 console.log(Array.from(Array(20), () => '-').join(''))
-console.log(`Running in ${isDevEnv ? 'DEVELOPMENT' : 'PRODUCTION'} mode.`)
+console.log(`Running v${process.env.npm_package_version} in ${isDevEnv ? 'DEVELOPMENT' : 'PRODUCTION'} mode.`)
 
 // Connect to MongoDB via Mongoose
 mongooseConnect().then(() => {
